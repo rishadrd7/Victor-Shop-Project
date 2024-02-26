@@ -1,0 +1,268 @@
+<%- include("../layouts/header") %>
+<%- include("../layouts/mobileNav") %>
+ 
+
+<header class="header header-11">
+    <div class="header-middle sticky-header">
+        <div class="container">
+            <div class="header-left">
+
+                
+                <nav class="main-nav">
+                    <ul class="menu sf-arrows">
+                        <li><a href="homepage">home</a></li>
+                        
+                        <li class="megamenu-container active">
+                            <a href="registration" class="sf-with-ul">SignUp</a>
+
+                           
+                        </li>
+                       
+                    </ul><!-- End .menu -->
+                </nav><!-- End .main-nav -->
+
+                <button class="mobile-menu-toggler">
+                    <span class="sr-only">Toggle mobile menu</span>
+                    <i class="icon-bars"></i>
+                </button>
+            </div><!-- End .header-left -->
+
+            <div class="header-center">
+                <a  class="logo">
+                    <img class="victor-logo" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo" width="82" height="25">
+                </a>
+            </div><!-- End .header-center -->
+
+            <div class="header-right">
+                <div class="header-search header-search-extended header-search-visible">
+                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                    <!-- <form action="#" method="get">
+                        <div class="header-search-wrapper">
+                            <label for="q" class="sr-only">Search</label>
+                            <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
+                            <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                        </div>
+                    </form> -->
+                </div><!-- End .header-search -->
+                
+                <!-- <a href="wishlist.html" class="wishlist-link">
+                    <i class="icon-heart-o"></i>
+                    <span class="wishlist-count">3</span>
+                </a> -->
+
+                <div class="dropdown cart-dropdown">
+                    <!-- <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                        <i class="icon-shopping-cart"></i>
+                        <span class="cart-count">2</span>
+                    </a> -->
+
+                    <!-- <div class="dropdown-menu dropdown-menu-right">
+                       
+
+                        <div class="dropdown-cart-total">
+                            <span>Total</span>
+
+                            <span class="cart-total-price">$160.00</span>
+                        </div>
+
+                        <div class="dropdown-cart-action">
+                            <a href="cart.html" class="btn btn-primary">View Cart</a>
+                            <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                        </div>
+                    </div> -->
+
+                </div><!-- End .cart-dropdown -->
+            </div><!-- End .header-right -->
+        </div><!-- End .container -->
+    </div><!-- End .header-middle -->
+</header><!-- End .header -->
+<!-- form -->
+
+<div class="page-wrapper">
+    <main class="main">
+
+        <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
+            style="background-image: url('user/assets/images/new/bg-img4.png')">
+            <div class="container">
+                <div class="form-box">
+                    <div class="form-tab">
+                        <ul class="nav nav-pills nav-fill" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="register-tab-2" data-toggle="tab"
+                                     role="tab" aria-controls="register-2"
+                                    aria-selected="true">Sign UP</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+
+                            <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+                                <% if (typeof message !== "undefined") { %>
+                                <h6 style="color: black; font-weight: 500;" class="text-center"><%= message %></h6>
+                                <% } %>
+
+                            <div class="tab-pane fade show active" id="register-2" role="tabpanel"
+                                aria-labelledby="register-tab-2">
+                                
+                                <form  action="/registration" method="post">
+
+                                  <div class="form-group">
+                                    <label for="register-name-2">Full Name *</label>
+                                    <input type="text" class="form-control" id="register-name-2" name="name" required>
+                                    <div class="error-message" id="name-error"></div>
+                                </div>
+                                
+                                    <div class="form-group">
+                                        <label for="register-email-2">Your email address *</label>
+                                        <input type="email" class="form-control" id="register-email-2"
+                                            name="email" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                      <label for="register-mobile">Your Mobile Number *</label>
+                                      <input type="tel" class="form-control" id="register-mobile" name="mobile" required pattern="[0-9]{10}">
+                                      <!-- Changing type to "tel" to specify it's for telephone numbers, and adding pattern="[0-9]{10}" to restrict to 10 digits -->
+                                  </div>
+                                  
+
+                                    <div class="form-group">
+                                        <label for="register-password-2">Password *</label>
+                                        <input type="password" class="form-control" id="register-password-2"
+                                            name="password" required>
+                                    </div>
+
+                  
+                                     <!-- <div class="form-group">
+                                       <label for="confirm-password">Confirm Password *</label>
+                                       <input type="password" class="form-control" id="confirm-password" name="confirmPassword" required>
+                                       <div class="confirm-password-error error-message"></div>
+                                   </div> -->
+
+                                    <div class="form-footer">
+
+
+                                        
+                                      <form action="/home" method="get">
+                                        <button type="submit" class="btn btn-outline-primary-2" style="margin-left: 170px;">
+                                           <span>SIGN UP</span>
+                                            <i class="icon-long-arrow-right"></i>
+                                        </button>
+                                      <!-- </form> -->
+<!-- 
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                id="register-policy-2" required>
+                                            <label class="custom-control-label" for="register-policy-2">I
+                                                agree to the <a href="">privacy policy</a> *</label>
+                                        </div> -->
+                                        <!-- End .custom-checkbox -->
+
+
+                                        <div class="form-footer">
+                                        </div>
+
+                                        <div class="error-message">
+                                            <%= typeof err !=='undefined' ? err : '' %>
+                                        </div>
+
+                                    </div><!-- End .form-footer -->
+                                     
+
+
+
+                                    <!-- google and Facebook -->
+
+                                    <div class="form-choice">
+                                        <p class="text-center">or sign in with</p>
+                                        <div class="row">
+                                          <div class="col-sm-6">
+                                            <a href="/auth/google" class="btn btn-login btn-g">
+                                              <i class="icon-google"></i>
+                                              Login With Google
+                                            </a>
+                                          </div>
+                                          <!-- End .col-6 -->
+                                          <div class="col-sm-6">
+                                            <a href="/auth/facebook" class="btn btn-login btn-f">
+                                              <i class="icon-facebook-f"></i>
+                                              Login With Facebook
+                                            </a>
+                                          </div>
+                                          <!-- End .col-6 -->
+                                        </div>
+                                        <!-- End .row -->
+                                      </div>
+                                      
+
+                                <h4 class="text-last">Don't have an account? <a href="login"> Login</a></h4>
+
+
+
+                          </form>
+                                
+                            </div><!-- .End .tab-pane -->
+                        </div><!-- End .tab-content -->
+                    </div><!-- End .form-tab -->
+                </div><!-- End .form-box -->
+            </div><!-- End .container -->
+        </div><!-- End .login-page section-bg -->
+    </main><!-- End .main -->
+
+
+</div><!-- End .page-wrapper -->
+
+
+</div>
+<!-- End .page-wrapper -->
+
+
+<script>
+  // Function to validate full name
+  function validateName() {
+      var nameInput = document.getElementById("register-name-2");
+      var nameError = document.getElementById("name-error");
+
+      // Check if the name field contains at least one non-space character
+      if (!/\S/.test(nameInput.value)) {
+          nameError.textContent = "Please enter your full name.";
+          nameInput.classList.add("is-invalid"); // Add Bootstrap's is-invalid class for styling
+          return false;
+      } else {
+          nameError.textContent = "";
+          nameInput.classList.remove("is-invalid");
+          return true;
+      }
+  }
+
+  // Event listener to validate full name on input change
+  document.getElementById("register-name-2").addEventListener("input", validateName);
+
+
+
+  // Function to validate password
+  function validatePassword() {
+      var passwordInput = document.getElementById("register-password-2");
+      var passwordError = document.getElementById("password-error");
+
+      // Check if the password field contains at least one non-space character
+      if (!/\S/.test(passwordInput.value)) {
+          passwordError.textContent = "Please enter a password.";
+          passwordInput.classList.add("is-invalid"); // Add Bootstrap's is-invalid class for styling
+          return false;
+      } else {
+          passwordError.textContent = "";
+          passwordInput.classList.remove("is-invalid");
+          return true;
+      }
+  }
+
+  // Event listener to validate password on input change
+  document.getElementById("register-password-2").addEventListener("input", validatePassword);
+</script>
+
+
+
+
+
+
+
+<%- include("../layouts/footer") %>

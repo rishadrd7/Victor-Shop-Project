@@ -1,0 +1,95 @@
+
+<%- include("../layouts/header") %>
+<%- include("../layouts/navbar") %>
+<%- include("../layouts/mobileNav") %>
+
+
+
+<title>Reset Password</title>
+<style>
+    /* Form container styles */
+    .reset {
+        max-width: 400px;
+        height: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f2f2f2;
+        border-radius: 8px;
+    }
+
+    /* Form title styles */
+    .reset h4 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    /* Form input styles */
+    .reset label {
+        font-weight: bold;
+    }
+
+    .reset input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .reset input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .reset input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+   
+body, html {
+    height: 100%;
+}
+
+.login-page {
+    min-height: 100vh; /* Ensure that the login page takes at least the height of the viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-image {
+    background-image: url('user/assets/images/new/bg-img4.png');
+    background-size: cover;
+}
+
+footer {
+    margin-top: auto; /* Push the footer to the bottom */
+}
+
+</style>
+
+<div
+class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
+style="
+   background-image: url('user/assets/images/new/bg-img4.png');
+
+"
+>
+
+<div class="reset">
+    <h4>Reset Password</h4>
+    <form action="/login" method="post">
+        <!-- <label for="password">Enter your new password:</label><br>
+        <input type="password" id="password" name="password" required><br>
+        <label for="confirm-password">Confirm your new password:</label><br>
+        <input type="password" id="confirm-password" name="confirm-password" required><br> -->
+        <input type="submit" value="Reset Password">
+    </form>
+</div>
+</div>
+
