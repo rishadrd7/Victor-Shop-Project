@@ -1,14 +1,20 @@
 <%- include("../layouts/header") %>
-<%- include("../layouts/navbar") %>
-<%- include("../layouts/mobileNav") %>
+
 
 
 <style>
+  body, html {
+    overflow: hidden;
+}
+.container {
+    overflow: hidden;
+    
+}
+
   .forgot-pass {
   color: black;
   font-size: small;
-  padding-top: 30px;
-  padding-left: 50px;
+  padding-top: 40px;
   text-decoration: none; /* Remove underline */
 }
 
@@ -19,158 +25,72 @@
 
 
 
+
 </style>
 
+  <!-- <a >
+      <img class="victor-log" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo">
+  </a> -->
 
-    <div
-      class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
-      style="
-        background-color: rgb(173, 166, 166);
-      "
-    >
-      <div class="container">
+
+  <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url(/user/assets/images/new/bg-image.jpg);">
+    <div class="container">
         <div class="form-box">
-          <div class="form-tab">
-            <ul class="nav nav-pills nav-fill" role="tablist">
-              <!-- <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="signin-tab-2"
-                  data-toggle="tab"
-                  href="registration"
-                  role="tab"
-                  aria-controls="signin-2"
-                  aria-selected="false"
-                  >Sign UP</a
-                >
-              </li> -->
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="register-tab-2"
-                  data-toggle="tab"
-                  
-                  role="tab"
-                  aria-controls="register-2"
-                  aria-selected="true"
-                  >Admin Login</a
-                >
-              </li>
-            </ul>
-            <div class="tab-content">
-              
-            
-              
-             <div
-                   class="tab-pane fade show active"
-                   id="register-2"
-                   role="tabpanel"
-                   aria-labelledby="register-tab-2">
-
-              
-                <form action="#">
-                  <!-- <div class="form-group">
-                    <label for="register-email-2">Your email address *</label>
-                    <input
-                        type="email"
-                        class="form-control"
-                        id="register-email-2"
-                        name="register-email"
-                        required
-                    />
-                    <div class="invalid-feedback">Please enter a valid email address.</div>
-                </div> -->
-                <!-- End .form-group -->
-<!--             
-                <div class="form-group">
-                    <label for="register-password-2">Password *</label>
-                    <input
-                        type="password"
-                        class="form-control"
-                        id="register-password-2"
-                        name="register-password"
-                        required
-                        minlength="8" 
-                    />
-                    <div class="invalid-feedback">Password must be at least 8 characters long.</div>
-                </div> -->
-                  <!-- End .form-group -->
-
-                  
-                  <div class="form-footer">
-                    <a href="">
-                    <button type="submit" class="btn btn-outline-primary-2" style="margin-left: 130%;">
-                     <span>SIGN UP</span>
-                      <i class="icon-long-arrow-right"></i>
-                    </button>
-                    </a>
-
-                    <!-- <div class="custom-control custom-checkbox">
-                      <input
-                        type="checkbox"
-                        class="custom-control-input"
-                        id="register-policy-2"
-                        required
-                      />
-                      <label
-                        class="custom-control-label"
-                        for="register-policy-2"
-                        >I agree to the <a href="#">privacy policy</a> *</label
-                      >
-                    </div> -->
-                    <!-- End .custom-checkbox -->
-                  </div>
-                  <!-- End .form-footer -->
-                </form>
+            <div class="form-tab">
+                <ul class="nav nav-pills nav-fill" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="register-tab-2" data-toggle="tab" role="tab" aria-controls="register-2" aria-selected="true">Admin Login</a>
+                    </li>
+                </ul>
 
 
-                <!-- google facebook option -->
-                
-                <div class="form-choice">
-                  <p class="text-center">or sign in with</p>
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <a href="#" class="btn btn-login btn-g">
-                        <i class="icon-google"></i>
-                        Login With Google
-                      </a>
+
+                <div class="tab-content">
+                  <% if (typeof message !== "undefined") { %>
+                    <h6 style="color: black;" class="text-center"><%= message %></h6>
+                    <% } %>
+                    
+                    <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+
+                        <form action="dashboard" method="post">
+
+                            <div class="form-group">
+                                <label for="register-email-2">Admin Email *</label>
+                                <input type="email" class="form-control" id="register-email-2" name="email" required />
+                                <div class="invalid-feedback">Please enter a valid email address.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="register-password-2">Password *</label>
+                                <input type="password" class="form-control" id="register-password-2" name="password" required />
+                               
+                            </div>
+
+                            <div class="form-footer">
+                                <a href="">
+                                    <button type="submit" class="btn btn-outline-primary-2" style="margin-left: 130%;" value="login">
+                                        <span>SIGN UP</span>
+                                        <i class="icon-long-arrow-right"></i>
+                                    </button>
+                                </a>
+                            </div>
+                        </form>
+
+                        <div class="form-choice">
+                            <a class="forgot-pass" href="/forgotPass">Forgot Password?</a>
+                        </div>
                     </div>
-                    <!-- End .col-6 -->
-                    <div class="col-sm-6">
-                      <a href="#" class="btn btn-login btn-f">
-                        <i class="icon-facebook-f"></i>
-                        Login With Facebook
-                      </a>
-                    </div>
-                    <a class="forgot-pass" href="/forgotPass">Forgot Password?</a>
- 
-
-                    <!-- End .col-6 -->
-                  </div>
-                  <!-- End .row -->
                 </div>
-
-
-                <!-- End .form-choice -->
-              </div>
-              <!-- .End .tab-pane -->
             </div>
-            <!-- End .tab-content -->
-          </div>
-          <!-- End .form-tab -->
         </div>
-        <!-- End .form-box -->
-      </div>
-      <!-- End .container -->
     </div>
-    <!-- End .login-page section-bg -->
-
 </div>
 
 
-<script>
+
+<!-- <script>
   // Add event listener for form submission
-  document.getElementById('registration-form').addEventListener('submit', function(event) {
+  document.getElementById('registration').addEventListener('submit', function(event) {
       // Get form elements
       const emailInput = document.getElementById('register-email-2');
       const passwordInput = document.getElementById('register-password-2');
@@ -185,8 +105,8 @@
       // Add 'was-validated' class to display validation feedback
       this.classList.add('was-validated');
   });
-</script>
+</script> -->
 
 
-<%- include("../layouts/footerNav") %>
-<%- include("../layouts/footer") %>
+
+
