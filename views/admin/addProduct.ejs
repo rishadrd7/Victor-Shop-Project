@@ -1,0 +1,86 @@
+<%- include('../layouts/adminHeader')  %>
+
+
+
+
+  <title>Add Product Form</title>
+  <style>
+
+    /* Style for the form container */
+    .form-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+   
+    .form-side {
+      width: 28%; /* Adjust as needed */
+    }
+  </style>
+
+
+  <h2>Add Product</h2>
+  <form action="/admin/submit_product" method="post" enctype="multipart/form-data">
+    <div class="form-container">
+      <div class="form-side">
+        
+        <br><br><br><br><br>
+        
+        <label for="productName">Product Name:</label><br>
+        <input type="text" id="productName" name="name" required><br><br>
+
+        <label for="category">Category:</label><br>
+    <select id="category" name="category" required>
+        <option value="">Select Category</option>
+        <!-- Iterate over categories and generate options -->
+        <% category.forEach(category => { %>
+            <option value="<%= category._id %>"><%= category.name %></option>
+        <% }); %>
+    </select><br><br>
+
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price" min="0" required><br><br>
+
+        <label for="status">Status:</label><br>
+        <input type="hidden" name="status" value="false"> <!-- Hidden field for status -->
+        <input type="checkbox" id="status" name="status" checked><br><br>
+        
+      </div>
+
+      <div class="form-side">
+      <br><br><br><br><br>
+        
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="quantity" min="0" required><br><br>
+
+        <label for="date">Date:</label><br>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <label for="image">Image:</label><br>
+        <input type="file" id="image" name="image" multiple  required><br><br>
+      </div>
+    </div>
+
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description" required></textarea><br><br>
+    
+    <label for="offerPrice">Offer Price:</label><br>
+    <input type="number" id="offerPrice" name="offerPrice" min="0" required><br><br>
+
+    <!-- <label for="offer">Offer:</label><br>
+    <input type="number" id="offer" name="offer" min="0" max="100" required><br><br> -->
+
+   <input type="submit" value="Submit" class="sub" style="font-size: 20px; ">
+
+<!-- successModal.ejs -->
+
+
+
+
+  </form>
+
+
+
+  
+
+  <%- include('../layouts/adminFooter')  %>

@@ -1,86 +1,80 @@
 const User=require("../models/userModel");
-const Product = require('../models/adminProduct'); // Import the Product model
-const multer = require("multer");
-const sharp = require("sharp");
-// const upload = multer({ dest: "uploads/" });
+const Product = require('../models/productModel');
+const mongoose = require('mongoose') 
+const Category=require('../models/categoryModel')
+const ObjectId = mongoose.Types.ObjectId  
+const multer=require('multer');
+const path=require('path')
+
+const id = new ObjectId()
 
 // set up adminproduct
-const product= async(req,res)=>{
-    try {
-        res.render('admin/productPage')
-    } catch (error) {
+
+    const product= async(req,res)=>{
+        try {
+            
+            const products = await Product.find().populate('category');
+            // console.log(products)
+            res.render('admin/productPage', { products });
+            // res.render('admin/productPage')
+        } catch (error) {
+            console.log(error);
+            
+        }
+    }
+
+
+
+//add product
+
+const productAdd = async(req,res)=>{
+    try{
+        const category=await Category.find()
+        res.render('admin/addProduct',{category})
+    }catch(error){
         console.log(error);
-        
     }
 }
 
-// set usersPage
-const userpage =async(req,res)=>{
+
+const addProduct = async (req, res) => {
     try {
-        const users = await User.find();
-        // console.log(users,'users in dashboars'); 
-        res.render('admin/adminUser',{users})
-    } catch (error) {
-        console.log(error);
+        console.log('Adding product...');
+        const { name, category, price, quantity, date, description, offerPrice, offer } = req.body;
+        const images = req.files.map(file => file.filename);
         
-    }
-}
+        // Convert status to Boolean
+        const status = req.body.status === 'on';
 
+        // Create a new Product document
+        const newProduct = new Product({
+            name,
+            category,
+            price,
+            status,
+            quantity,
+            date,
+            image: images,
+            description,
+            offerPrice,
+            offer
+        });
 
+        await newProduct.save();
 
-// Controller function to fetch all products
-const getAllProducts = async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.json(products);
+        res.send('successModal');
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
 };
-
-
-// Route handler for creating a new product
-const createProduct = async (req, res) => {
-    const { name, description, price, category, quantity } = req.body;
-    const imageUrl = req.file.path; // Path to uploaded image
-
-    // Perform image cropping using Sharp (example)
-    const croppedImageBuffer = await sharp(imageUrl)
-        .resize(200, 200)
-        .toBuffer();
-
-    // Save the cropped image to a new file or cloud storage
-    // Example: save to a new file
-    const croppedImagePath = "uploads/cropped-" + req.file.filename;
-    await sharp(croppedImageBuffer).toFile(croppedImagePath);
-
-    // Create a new product with cropped image URL
-    const product = new Product({
-        name,
-        description,
-        price,
-        category,
-        quantity,
-        imageUrl,
-        croppedImageUrl: croppedImagePath
-    });
-
-    try {
-        const newProduct = await product.save();
-        res.status(201).json(newProduct);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-
-
-
 
 
 module.exports = {
     product,
-    userpage,
-    getAllProducts,
-    createProduct,
+    productAdd,
+    addProduct
+
+    
 };
+    

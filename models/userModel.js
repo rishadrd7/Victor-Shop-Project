@@ -21,17 +21,25 @@ const userSchema= new mongoose.Schema({
         required:true
     },
 
-    is_admin:{
+    is_admin:{  
         type:Boolean,
         required:true
     },
     is_blocked:{
         type:Boolean,
-        required:false
+        default:true
     },
     dateJoined:{
         type:Date,
         default:Date.now
+    },
+    // status:{
+    //     type:String,
+    //     enum:['active','blocked'],
+    //     default:'active'
+    // },
+    googleId:{
+        type:String
     }
 });
 

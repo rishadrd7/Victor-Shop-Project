@@ -1,6 +1,80 @@
 <%- include('../layouts/adminHeader')  %>
 
 
+
+<style>
+
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-table th,
+.user-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.user-table th {
+    background-color: #f2f2f2;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.block-btn {
+    background-color: #ff5733; /* Red color for block button */
+    color: white;
+}
+
+.unblock-btn {
+    background-color: #28a745; /* Green color for unblock button */
+    color: white;
+}
+
+.action-btn:hover {
+    opacity: 0.8; /* Reduce opacity on hover */
+}
+.block-btn {
+    background-color: #ff5733; /* Red color for block button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.block-btn:hover {
+    background-color: #d63c11b8; /* Darker shade of red on hover */
+}
+
+.unblock-btn {
+    background-color: #28a746bc; /* Green color for unblock button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.unblock-btn:hover {
+    background-color: #2188377d; /* Darker shade of green on hover */
+}
+
+
+
+</style>
+
+
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
@@ -15,227 +89,7 @@
             <div class="row">
 
 
-              <!-- <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Striped Table</h4>
-                    <p class="card-description"> Add class <code>.table-striped</code>
-                    </p>
-                    <div class="table-responsive">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th> User </th>
-                            <th> First name </th>
-                            <th> Progress </th>
-                            <th> Amount </th>
-                            <th> Deadline </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-1.png" alt="image" />
-                            </td>
-                            <td> Herman Beck </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 77.99 </td>
-                            <td> May 15, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-2.png" alt="image" />
-                            </td>
-                            <td> Messsy Adam </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $245.30 </td>
-                            <td> July 1, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-3.png" alt="image" />
-                            </td>
-                            <td> John Richards </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $138.00 </td>
-                            <td> Apr 12, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-4.png" alt="image" />
-                            </td>
-                            <td> Peter Meggik </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 77.99 </td>
-                            <td> May 15, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-1.png" alt="image" />
-                            </td>
-                            <td> Edward </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 160.25 </td>
-                            <td> May 03, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-2.png" alt="image" />
-                            </td>
-                            <td> John Doe </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-info" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 123.21 </td>
-                            <td> April 05, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td class="py-1">
-                              <img src="/admin/assets/images/faces-clipart/pic-3.png" alt="image" />
-                            </td>
-                            <td> Henry Tom </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 150.00 </td>
-                            <td> June 16, 2015 </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-
-
-
-              <!-- <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Bordered table</h4>
-                    <p class="card-description"> Add class <code>.table-bordered</code>
-                    </p>
-                    <div class="table-responsive">
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th> # </th>
-                            <th> First name </th>
-                            <th> Progress </th>
-                            <th> Amount </th>
-                            <th> Deadline </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td> 1 </td>
-                            <td> Herman Beck </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 77.99 </td>
-                            <td> May 15, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td> 2 </td>
-                            <td> Messsy Adam </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $245.30 </td>
-                            <td> July 1, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td> 3 </td>
-                            <td> John Richards </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $138.00 </td>
-                            <td> Apr 12, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td> 4 </td>
-                            <td> Peter Meggik </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 77.99 </td>
-                            <td> May 15, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td> 5 </td>
-                            <td> Edward </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 160.25 </td>
-                            <td> May 03, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td> 6 </td>
-                            <td> John Doe </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-info" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 123.21 </td>
-                            <td> April 05, 2015 </td>
-                          </tr>
-                          <tr>
-                            <td> 7 </td>
-                            <td> Henry Tom </td>
-                            <td>
-                              <div class="progress">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                            </td>
-                            <td> $ 150.00 </td>
-                            <td> June 16, 2015 </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-
-
+      
 
 
               <div class="col-lg-12 grid-margin stretch-card">
@@ -250,13 +104,14 @@
                         <thead>
                           <tr>
                             <th>  No </th>
-                            <th>  ID</th>
+                            <!-- <th>  ID</th> -->
                             <th>  Name</th>
                             <th>  Email</th>
                             <th>  Phone </th>
                             <th>  Date of Joined </th>
                             <th>  Verified </th>
-                            <th>  Status </th>
+                            <!-- <th>  Status </th> -->
+                            <th class="-td-action" style="text-align: center;" >  Actions </th>
                           </tr>
 
 
@@ -265,11 +120,11 @@
 
                                 <tr>
                                     <td><%= i+1 %></td>
-                                    <td><%= users[i]._id %></td>
+                                    <!-- <td><%= users[i]._id %></td>  -->
                                     <td><%= users[i].name %></td>
                                     <td><%= users[i].email %></td>
                                     <td><%= users[i].mobile %></td>
-                                    <td><%= users[i].dateJoined %></td>
+                                    <td><%= formatDate(users[i].dateJoined) %></td>
 
                                     <td>
                                         <% if(users[i].is_verified == 0) { %>
@@ -278,9 +133,42 @@
                                             <p>Verified</p>
                                         <% } %>
                                     </td>
-                                    <td><%= users[i].is_blocked%></td>
+
+                                    <!-- <td><%= users[i].is_blocked ? 'Blocked' : 'Active' %></td>   -->
                                     
-                                </tr>
+                                   <!-- Block and Unblock Button -->
+                                   <td class="user-actions">
+                                        <% if (users[i].is_blocked) { %>
+                                            <button id="unblock<%= i %>" class="action-btn unblock-btn" onclick="unblockUser('<%= users[i]._id %>','<%=i%>')">
+                                                Unblock
+                                            </button>
+                                        <% } else { %>
+                                            <button id="block<%= i %>" class="action-btn block-btn" onclick="blockUser('<%= users[i]._id %>','<%=i%>')">
+                                                Block
+                                            </button>
+                                        <% } %>
+                                  </td>
+                                
+                                    <!-- <td>
+                                        <% if (users[i].is_blocked) { %>
+                                            <button class="action-btn unblock-btn" onclick="unblockUser('<%= users[i]._id %>')">
+                                                Unblock
+                                            </button>
+                                        <% } else { %>
+                                            <button class="action-btn block-btn" onclick="blockUser('<%= users[i]._id %>')">
+                                                Block
+                                            </button>
+                                        <% } %>
+                                    </td> -->
+
+                                
+                                  
+                                  
+                              </tr>
+                                  
+                                  
+                                    
+                                                            
                             <% } %>
                         <% } else { %>
                             <tr>
@@ -305,6 +193,105 @@
             </div>
           </div>
           <!-- content-wrapper ends -->
+
+
+ <script>
+          function blockUser(usersId,i) {
+            const block = document.getElementById(`block${i}`);
+              swal.fire({
+                  title: "Are You Sure?",
+                  text: "Are You Sure?",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Yes",
+                  cancelButtonText: "cancel",
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                    block.innerHTML='Unblock';
+                    block.classList.remove('block-btn');
+                    block.classList.add('unblock-btn')
+                      $.ajax({
+                          url: "/admin/adminUser",
+                          data: {
+                              usersId: usersId,
+                          },
+                          method: "post",
+                          success: (response) => {
+                              if (response.remove) {
+                                  location.reload();
+                                  swal.fire({
+                                      title: "Done",
+                                      text: "Success",
+                                      icon: "success",
+                                      timer: 1500,
+                                      showConfirmButton: false,
+                                  });
+                              }
+                          },
+                          
+                      });
+                  }
+              });
+          }
+
+
+     function unblockUser(usersId,i) {
+        const unblock = document.getElementById(`unblock${i}`);
+
+        swal.fire({
+            title: "Are You Sure?",
+            text: "Are You Sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+            cancelButtonText: "cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                unblock.innerHTML='block';
+                    unblock.classList.remove('unblock-btn');
+                    unblock.classList.add('block-btn')
+                $.ajax({
+                    url: "/admin/adminUser",
+                    data: {
+                        usersId: usersId,
+                    },
+                    method: "post",
+                    success: (response) => {
+                        if (response.unblocked) {
+                            location.reload();
+                            swal.fire({
+                                title: "Done",
+                                text: "Success",
+                                icon: "success",
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                });
+            }
+        });
+    }
+ </script>
+      
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      
+
+<!-- date formate -->
+          <script>
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const formattedDate = date.toLocaleDateString('en-US');
+                return formattedDate;
+            }
+          </script>
+
+
 
 
 

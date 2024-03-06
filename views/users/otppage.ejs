@@ -1,283 +1,244 @@
-<%- include('../layouts/header.ejs') %>
+<%- include('../layouts/header') %>
 
-    <style>
-        /* Import Google font - Poppins */
-        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+    <div class="page-wrapper">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
-        }
+         <main class="main">
 
-        /* body {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #4070f4;
-    } */
-        :where(.container-2, form, .input-field, header) {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-        }
-
-        .container-2 {
-            background: #fff;
-            width: fit-content;
-            padding: 30px 65px;
-            border-radius: 12px;
-            row-gap: 20px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .container-2 header {
-            height: 65px;
-            width: 65px;
-            background: #4070f4;
-            color: #fff;
-            font-size: 2.5rem;
-            border-radius: 50%;
-        }
-
-        .container-2 h4 {
-            font-size: 1.25rem;
-            color: #333;
-            font-weight: 500;
-        }
-
-        form .input-field {
-            flex-direction: row;
-            column-gap: 10px;
-        }
-
-        .input-field input {
-            height: 45px;
-            width: 42px;
-            border-radius: 6px;
-            outline: none;
-            font-size: 1.125rem;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        .input-field input:focus {
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .input-field input::-webkit-inner-spin-button,
-        .input-field input::-webkit-outer-spin-button {
-            display: none;
-        }
-
-        form button {
-            margin-top: 25px;
-            width: 100%;
-            color: #fff;
-            font-size: 1rem;
-            border: none;
-            padding: 9px 0;
-            cursor: pointer;
-            border-radius: 6px;
-            /* pointer-events: none; */
-            background: #6e93f7;
-            transition: all 0.2s ease;
-        }
-
-        form button.active {
-            background: #4070f4;
-            pointer-events: auto;
-        }
-
-        form button:hover {
-            background: #0e4bf1;
-        }
-
-        .login-page {
-            background-image: url("user/assets/images/new/bg-img4.png");
-            background-size: cover;
-            /* Ensure the background image covers the entire container */
-            background-position: center;
-            /* Center the background image */
-            height: 100vh;
-            /* Ensure the element fills the full height of the viewport */
-        }
-   
-        /* Existing styles ... */
-
-        form.resend-link {
-            display: none;
-            /* Initially hide the Resend OTP link */
-            margin-top: 15px;
-            /* Adjust the margin as needed */
-            color: #fff;
-            /* Set the color of the link */
-            text-decoration: none;
-            /* Remove the underline */
-            background-color: #6e93f7;
-            /* Set the background color */
-            padding: 9px 0;
-            /* Adjust the padding as needed */
-            border-radius: 6px;
-            /* Add border-radius for rounded corners */
-            text-align: center;
-            /* Center the text */
-            cursor: pointer;
-            /* Add pointer cursor on hover */
-            width: 185px;
-            height: 40px;
-        }
-
-        /* ... Existing styles */
-    </style>
-
-    <main class="main">
-        <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
-            style="background-image: url('user/assets/images/new/bg-img4.png')">
-            <div class="container">
-                <div class="form-box">
-                    <div class="form-tab">
-                        <ul class="nav nav-pills nav-fill" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="otp-verification" data-toggle="tab" role="tab"
-                                    aria-controls="register-2" aria-selected="true">OTP Verification</a>
-                            </li>
-                        </ul>
-                        <br />
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="signin-2" role="tabpanel"
-                                aria-labelledby="signin-tab-2">
-                                <div class="container-2">
-                                    <!-- <header>
-                                        <i class="bx bxs-check-shield"></i>
-                                    </header> -->
-                                    <h4>Enter OTP Code</h4>
-                                    <form action="/home " method="POST">
-
-                                        <span class="text-danger text-center"><%= otpMsg %></span>
-
-                                        <div class="input-field">
-                                            <input name="digit1" type="" required maxlength="1" class="otp-input" />
-                                            <input name="digit2" type="" required maxlength="1" class="otp-input" />
-                                            <input name="digit3" type="" required maxlength="1" class="otp-input" />
-                                            <input name="digit4" type="" required maxlength="1" class="otp-input" />
-                                            <input name="digit5" type="" required maxlength="1" class="otp-input" />
-                                            <input name="digit6" type="" required maxlength="1" class="otp-input" />
+            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">SignUp</a></li>
+                        <li class="breadcrumb-item active" aria-current="#">Otp</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
 
 
-                                            
+            <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/urban/show.jpg')">
+            	<div class="container">
+            		<div class="form-box">
+            			<div class="form-tab">
+	            			<ul class="nav nav-pills nav-fill" role="tablist">
+							    <li class="nav-item">
+							        <a class="nav-link active " id="signin-tab-2" data-toggle="tab" href="#" role="tab" aria-controls="signin-2" aria-selected="false">OTP</a>
+							    </li>
+							</ul>
 
-                                        </div>
-                                        <input type="text" name="id" hidden value="<%= locals.id %>"/>
-                                         <button type="submit" class="verify-button hidden" id="verifyOtpButton">Verify OTP</button>
+							<div class="tab-content">
+							    <div class="tab-pane show active" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
+
+							    	<form id="otpForm" action="/otpVerify" method="post">
 
 
-                                         <div id="timer">Time remaining: 1:00</div>
-                                         <span id="timer" style="margin-bottom: 10px; font-size: 1.25rem"></span>
-                                
-                                         <button class="btn btn-outline-primary-2" type="submit">
-                                            <a href="/resendotp?id=<%= locals.id %>" class="resend-link hidden " onclick="alertss()">Resend OTP</a>
-                                         </button>
-                                            
-                                        </form>
-                                    
-                                    
-                                    
-                                </div>
-                            </div>
-                            <!-- .End .tab-pane -->
-                        </div>
-                        <!-- End .tab-content -->
-                    </div>
-                    <!-- End .form-tab -->
-                </div>
-                <!-- End .form-box -->
-            </div>
-            <!-- End .container -->
-        </div>
-        <!-- End .login-page section-bg -->
-    </main>
-    <!-- End .main -->
+							    		<div class="form-group text-center mt-1">
+
+											<label for="otp1"><h4>Enter OTP :</h4></label><br>
+
+											<!-- <label for="otp1"><h4>Enter Otp</h4></label> -->
+
+											<!-- <div class="success-box" id="successBox">
+												Verification failed
+											</div><br> -->
+
+                                            <input type="text" name="inp1" id="otp1" class="otp-input" pattern="[0-9]" maxlength="1" onkeyup="moveToNext(this, 'otp2')" required> - 
+        									<input type="text" name="inp2" id="otp2" class="otp-input" pattern="[0-9]" maxlength="1" onkeyup="moveToNext(this, 'otp3')" required> - 
+       										<input type="text" name="inp3" id="otp3" class="otp-input" pattern="[0-9]" maxlength="1" onkeyup="moveToNext(this, 'otp4')" required> - 
+        									<input type="text" name="inp4" id="otp4" pattern="[0-9]" class="otp-input" maxlength="1">
+
+											<input type="email" hidden value="<%= queryEmail %>" name="email">
+
+											<br><br>
+
+											<div>
+												<p id="timer">
+
+												</p>
+											</div>
+
+							    		</div><!-- End .form-group -->
+
+							    		<div class="form-footer justify-content-center ">
+											
+							    			<button class="btn btn-outline-primary-2" style="margin-left: 20px;" type="submit">
+													<span id="verifyBtn">verify</span>
+			            						<i class="icon-long-arrow-right"></i>
+											</button>
+
+											<div class="justify-content-center" id="button-container" style="display: none;">
+                                                <button class="btn btn-outline-primary-2" id="resend-btn" onclick="alerts()" type="submit">
+                                                    <a href="/resendOtp?email=<%= queryEmail %>">Resend OTP</a>
+                                                </button>
+                                            </div>
+											
+			                				<!-- <div class="custom-control custom-checkbox">
+												<input type="checkbox" class="custom-control-input" id="signin-remember-2">
+												<label class="custom-control-label" for="signin-remember-2">Remember Me</label> -->
+											<!-- </div>End .custom-checkbox -->
+
+											<!-- <a href="#" class="forgot-link">Forgot Your Password?</a> -->
+											
+							    		</div><!-- End .form-footer -->
+
+							    	</form>
+							    	<p class="text-danger"><%=msg  %></p>
+							    </div><!-- .End .tab-pane -->
+							</div><!-- End .tab-content -->
+						</div><!-- End .form-tab -->
+            		</div><!-- End .form-box -->
+            	</div><!-- End .container -->
+            </div><!-- End .login-page section-bg -->
+            
+        </main>
+
+
+ <!-- Connect Footer -->
+
+</div><!-- End .page-wrapper -->
+
+
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
 
 
-    
-    
+<style>
+    .otp-input {
+        width: 30px;
+        height: 40px;
+        text-align: center;
+        margin: 0 5px;
+        font-size: 1.5rem;
+		border: 0px;
+		border-radius: 5px;
+		box-shadow: rgba(4, 126, 40, 0.35) 0px 1px 10px;
+    }
+	.success-box {
+        padding: 10px;
+        background-color: #f1343459;
+        border: 1px solid #c3e6cb;
+        color: #0c0c0c;
+        margin-top: 10px;
+        display: none;
+    }
+</style>
+
+<!-- Alert Message to Re-send OTP -->
+
+<script>function alerts() {
+
+	alert("Re-send Otp Has Been Sended Your Email...");
+
+}</script>
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/jquery.hoverIntent.min.js"></script>
+<script src="assets/js/jquery.waypoints.min.js"></script>
+<script src="assets/js/superfish.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<!-- Main JS File -->
+<script src="assets/js/main.js"></script>
+
+<!--column changing-->
 
 <script>
+	
+	function moveToNext(current, nextFieldID) {
 
-const timerDuration = 60;
+		if (current.value.length >= current.maxLength) {
 
-function startTimer() {
-    let timeLeft = timerDuration;
-    const timerElement = document.getElementById("timer");
+			document.getElementById(nextFieldID).focus();
 
-    // Update the timer every second
-    const countdown = setInterval(() => {
-        // Display the remaining time in the timer element
-        timerElement.textContent = `Resend OTP in ${timeLeft} seconds`;
+		}
+	}
 
-        // Decrease timeLeft by 1 second
-        timeLeft--;
+	document.getElementById("verifyBtn").addEventListener("click", function() {
 
-        // If the timer reaches 0, stop the countdown and enable the Resend OTP button
-        if (timeLeft < 0) {
-            clearInterval(countdown);
-            document.getElementById("resend-link").classList.remove("hidden");
-            timerElement.textContent = "Resend OTP";
-        }
-    }, 1000);
-}
-
-// Start the timer when the page loads
-startTimer();
-
-
-
-//otp forward and backward
-document.addEventListener('DOMContentLoaded', function() {
-    const otpInputs = document.querySelectorAll('.otp-input');
-    
-    otpInputs.forEach(function(input, index) {
-        input.addEventListener('input', function(event) {
-            const value = event.target.value;
-            
-            if (value.length === 1) {
-                if (index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                } else {
-                    document.getElementById('verifyOtpButton').click();
-                }
-            } else if (value.length === 0 && index > 0) {
-                otpInputs[index - 1].focus();
-            }
-        });
-        
-        input.addEventListener('keydown', function(event) {
-            if (event.key === 'Backspace' && index > 0 && input.value.length === 0) {
-                otpInputs[index - 1].focus();
-            }
-        });
+        var successBox = document.getElementById("successBox");
+        successBox.style.display = "block";
+		
     });
-});
+	
+	
+	// Resend-OTP Script :-
+	
+	 const timerDuration = 60;
+
+    function startTimer() {
+
+        let timeLeft = timerDuration;
+        const timerElement = document.getElementById("timer");
+
+        const countdown = setInterval(() => {
+
+            timerElement.textContent =`Resend OTP in ${timeLeft} seconds`;
+
+            timeLeft--;
+
+            if (timeLeft < 0) {
+
+                    clearInterval(countdown);
+                    document.getElementById("resend-btn").disabled = false;
+                    timerElement.textContent = "Resend OTP";
+
+            }
+
+        }, 1000);
+
+    }
+
+    window.onload = startTimer;
+
+	//	Timer For Visible Re-Send Button :-
+		
+	setTimeout(function() {
+		
+		document.getElementById('button-container').style.display = 'block';
+		
+	}, 60000); 
+
+		
+	const msg = document.getElementById('msg');
+		
+	if(msg.textContent == "Invalid OTP...!"){
+		
+		Swal.fire({
+		
+			title:'Error',
+			text:'Invalid OTP...!',
+			icon:'error',
+			confirmButtonText: 'OK',
+		
+		});
+				
+	} else if (msg.textContent == 'Verified Successfully') {  
+		
+		Swal.fire({
+		
+			title:'Success',
+			text:'Verified Successfully',
+			icon:'success',
+			confirmButtonText: 'OK'
+		
+		}).then(() => {
+		
+			window.location.href = '/'
+		
+		});
+				
+	} else if(msg.textContent == 'Invalid OTP!!!'){
+		
+		Swal.fire({
+		
+			title:'Error',
+			text:'Invalid OTP...!',
+			icon:'error',
+			confirmButtonText: 'OK',
+		
+		});
+		
+	}
 
 </script>
 
-
-<script> function alertss(){
-
-    alert("new OTP sended")
-
-}
-
-</script>
-
-
+<%- include('../layouts/footer.ejs') %>

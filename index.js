@@ -1,47 +1,49 @@
 
-const dotenv = require("dotenv").config()
 
 const mongoose=require("mongoose");
 mongoose.connect("mongodb://127.0.0.1:27017/Victor");
+require('dotenv').config();
 
 
 const express=require("express");
+const session = require("express-session");
 const app=express();
 const path=require("path");
 const userRoutes=require("./routes/userRouter");
 const adminRoute=require("./routes/adminRouter");
+const passport= require("passport");
+const nocache = require('nocache');
+const flash=require('express-flash');
 
-//express-session
-const flash = require('express-flash')
+app.use(nocache());
 app.use(flash())
 
-const session = require('express-session');
 
 app.use(session({
-    secret:"hfgx",
-    resave:true,
-    saveUninitialized:false,
-
+  secret:"secretsesion",
+  resave:false,
+  saveUninitialized:true
 }))
 
-//facebookLogin
 
+
+//google
 app.use(session({
-    resave: false,
-    saveUninitialized: true,
-    secret: 'SECRET'
-  }));
+  resave:false,
+  saveUninitialized: true,
+  secret: 'SECRET'
   
+}));
 
 
-//googlelogin
+//facebook
 app.use(session({
-    resave:false,
-    saveUninitialized:true,
-    secret:process.env.SESSION_SECRET
-}))
+  resave: false,
+  saveUninitialized: true,
+  secret: 'SECRET'
+}));
 
-    
+ 
 app.set("view engine","ejs");
 
 app.use(express.json());
@@ -59,13 +61,13 @@ app.get("/",(req,res)=>{
 })
 
 
-// //for admin route
+//for admin route
 app.get("/admin",(req,res)=>{
     res.render("admin/adminLogin")
 });
 
 
 
-app.listen(7070,()=>{
-    console.log("http://localhost:7070");
+app.listen(3000,()=>{
+    console.log("http://localhost:3000");
 })

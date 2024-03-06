@@ -15464,7 +15464,8 @@ button:focus {
 
 .form-box {
     margin: 0;
-    max-width: 575px;
+    max-width: 550px;
+    border-radius: 10px;
     margin-left: auto;
     margin-right: auto;
     background-color: #fff;

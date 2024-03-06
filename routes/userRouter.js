@@ -1,10 +1,26 @@
 
 const express=require("express");
+const session = require("express-session");
+const cookieSession = require('cookie-session');
+const config = require("../config/config");
 const router = express.Router();
 const userController=require("../controller/userController");
+const userAuth = require("../middleware/userAuth");
+require('dotenv').config();
 const passport = require("passport");
-require("../passport");
-const passportFacebook = require("passport-facebook");
+require('../passport');
+
+
+router.use(
+  session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: true
+    // cookie: { secure: true }
+  })
+)
+
+
 
 
 //homepage
@@ -21,6 +37,12 @@ router.get("/registration",userController.signUp);
 //verify user
 router.post("/registration",userController.insertUser);
 
+//home
+router.get('/home',userController.home);
+
+//logout home
+router.get('/login',userController.logoutHome);
+
 //homepage from login and signup
 router.get("/homepage",userController.logintoHome);
 
@@ -34,16 +56,10 @@ router.post("/resetpass",userController.resetPass);
 router.get("/otppage",userController.otpPage);
 
 //verify OTP
-router.post("/home",userController.verifyOTP);
+router.post("/otpVerify",userController.verifyOTP);
 
 //resend otp
 router.get('/resendOtp', userController.loadResendOtp);
-
-//home
-router.get('/home',userController.home);
-
-//logout home
-router.get('/',userController.logoutHome);
 
 //shop Page
 router.get('/shop',userController.shopPage)
@@ -53,68 +69,73 @@ router.get('/cart',userController.cartPage);
 
 
 
+//googlelogin
 
-
-
-//googleLogin
+//middleware
 router.use(passport.initialize());
 router.use(passport.session());
-router.get('/login',userController.loadAuth);
 
-//auth
-router.get("/login/google" , passport.authenticate('google', { scope:
-    ['email' ,'profile']
+//google
+router.use(session({
+  resave:false,
+  saveUninitialized: true,
+  secret: 'SECRET'
+  
 }));
 
-// auth callback
-router.get('/login/google/callback',
-    passport.authenticate('google',{
-        successRedirect:'/login',
-        failureRedirect:'/login'
+router.get('users/login',userController.loadAuth);
+
+// Google authentication callback route
+router.get('/auth/google', 
+    passport.authenticate('google', {
+        scope: ['email', 'profile']
     })
 );
 
-//success
-router.get('/homepage' , userController.succeccGoogleLogin);
-//failure
-router.get('/login',userController.failureGoogleLogin);
-
-
-
-
-
-
-//facebookLogin
-
-router.get('/login',(req,res)=>{
-    res.render("/users/login");
-})
-
-router.get('/homepage',isLoggedIn,(req,res)=>{
-    res.render("users/homepage")
-})
-
-
-router.get('/auth/facebook',passport.authenticate('facebook',{
-    scope:['public_profile', 'email']
-}));
-
-
-router.get('/auth/facebook/callback',function(){
-
-    passport.authenticate('facebook',{
-        successRedirect:'/homepage',
-        failureRedirect:'/login'
+// Google authentication route
+router.get('/auth/google/callback',
+    passport.authenticate('google', {
+        successRedirect: '/success',
+        failureRedirect: '/failer'
     })
-});
+);
 
-    function isLoggedIn(req, res, next){
-        if(req.isAuthenticated())
-        return next();
-    res.redirect('/homepage')
-    }
+// Success and failure routes
+router.get('/success', userController.successGoogleLogin);
+router.get('/failure', userController.failureLogin);
 
 
+
+
+//facebook
+router.get('users/login', isLoggedIn, function (req, res) {
+    res.render('users/home', {
+      
+    });
+  });
+  
+
+  router.get('users/login', isLoggedIn, function (req, res) {
+    res.render('users/login');
+  });
+  
+
+  router.get('/auth/facebook', passport.authenticate('facebook', {
+    scope: ['public_profile', 'email']
+  }));
+  
+
+  router.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+      successRedirect: '/home',
+      failureRedirect: '/login'
+    }));
+  
+  function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+      return next();
+    res.redirect('/');
+  }
 
 
 

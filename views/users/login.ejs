@@ -87,87 +87,77 @@
     <div
       class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
       style="
-        background-image: url('user/assets/images/new/bg-img4.png');
+        background-color: rgb(165, 119, 119);
       "
     >
       <div class="container">
         <div class="form-box">
           <div class="form-tab">
 
-            <ul class="nav nav-pills nav-fill" role="tablist">
-              <!-- <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="signin-tab-2"
-                  data-toggle="tab"
-                  href="registration"
-                  role="tab"
-                  aria-controls="signin-2"
-                  aria-selected="false"
-                  >Sign UP</a
-                >
-              </li> -->
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="register-tab-2"
-                  data-toggle="tab"
+                     <ul class="nav nav-pills nav-fill" role="tablist">
+              
+                        <li class="nav-item">
+                          <a
+                            class="nav-link active"
+                            id="register-tab-2"
+                            data-toggle="tab"
+                            
+                            role="tab"
+                            aria-controls="register-2"
+                            aria-selected="true"
+                            >Login</a
+                          >
+                        </li>
+                    </ul>
+
+
+                 <div class="tab-content">
+
+                    <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+                      <% if (typeof message !== "undefined") { %>
+                      <h6 style="color: black; " class="text-center"><%= message %></h6>
+                      <% } %>
+            
+                      <form method="post" id="form" action="/login" id="login-form">
+                        <div class="form-group">
+                          <label for="register-email-2">Your email address *</label>
+                          <input type="email" class="form-control" id="register-email-2" name="email" required/>
+                          <div class="invalid-feedback">Please enter a valid email address.</div>
+                      </div>
+                     
+                      
+                      <div class="form-group">
+                          <label for="register-password-2">Password *</label>
+                          <input type="password" class="form-control" id="register-password-2" name="password" required />
+                          <div class="invalid-feedback"></div>
+                      </div>
+                         
                   
-                  role="tab"
-                  aria-controls="register-2"
-                  aria-selected="true"
-                  >Login</a
-                >
-              </li>
-            </ul>
-
-
-            <div class="tab-content">
-
-              <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                <% if (typeof message !== "undefined") { %>
-                <h6 style="color: black; " class="text-center"><%= message %></h6>
-                <% } %>
-            
-                <form method="post" action="/login">
-                    <div class="form-group">
-                        <label for="register-email-2">Your email address *</label>
-                        <input type="email" class="form-control" id="register-email-2" name="email" required />
-                        <div class="invalid-feedback">Please enter a valid email address.</div>
-                    </div>
-                    <!-- End .form-group -->
-            
-                    <div class="form-group">
-                        <label for="register-password-2">Password *</label>
-                        <input type="password" class="form-control" name="password" />
-                        <!-- <div class="invalid-feedback">Password must be at least 8 characters long.</div> -->
-                    </div>
-                    <!-- End .form-group -->
-            
-                    <div class="form-footer">
-                        <a href="">
-                            <button type="submit" class="btn btn-outline-primary-2" style="margin-left: 130%;" value="login">
-                                <span>SIGN UP</span>
-                                <i class="icon-long-arrow-right"></i>
-                            </button>
-                        </a>
-                    </div>
-                    <!-- End .form-footer -->
-                </form>
+                          <div class="form-footer">
+                              <a href="">
+                                  <button type="submit" class="btn btn-outline-primary-2" style="margin-left: 130%;" value="login">
+                                      <span>SIGN IN</span>
+                                      <i class="icon-long-arrow-right"></i>
+                                  </button>
+                              </a>
+                          </div>
+                         
+                      </form>
             
                 <!-- Google and Facebook login options -->
                 <div class="form-choice">
                     <p class="text-center">or sign in with</p>
                     <div class="row">
                         <div class="col-sm-6">
-                            <a href="/login/google" class="btn btn-login btn-g">
+                              <a href="/auth/google" class="btn btn-login btn-g">
                                 <i class="icon-google"></i>
                                 Login With Google
                             </a>
+                            
                         </div>
                         <!-- End .col-6 -->
                         <div class="col-sm-6">
-                            <a href="/login/facebook" class="btn btn-login btn-f">
+                            <a href="/auth/facebook" class="btn btn-login btn-f">
                                 <i class="icon-facebook-f"></i>
                                 Login With Facebook
                             </a>
@@ -195,25 +185,34 @@
 
 </div>
 
+<script>
+    document.getElementById('login-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        
+        const formData = new FormData(this); // Get form data
+        
+        try {
+            const response = await fetch('/login', { // Make an AJAX request to the server
+                method: 'POST',
+                body: formData
+            });
 
-<!-- <script>
-  // Add event listener for form submission
-  document.getElementById('registration').addEventListener('submit', function(event) {
-      // Get form elements
-      const emailInput = document.getElementById('register-email-2');
-      const passwordInput = document.getElementById('register-password-2');
+            const data = await response.json(); // Parse JSON response
 
-      // Check if form is valid
-      if (!this.checkValidity()) {
-          // Prevent form submission if invalid
-          event.preventDefault();
-          event.stopPropagation();
-      }
-
-      // Add 'was-validated' class to display validation feedback
-      this.classList.add('was-validated');
-  });
-</script> -->
+            if (response.ok) {
+                // If login successful, redirect to home page
+                window.location.href = '/home';
+            } else {
+                // If login failed, display error message
+                document.querySelector('.text-center').textContent = data.message;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
 
 
 <%- include("../layouts/footer") %>
+
+
