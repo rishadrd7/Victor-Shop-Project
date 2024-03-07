@@ -7,11 +7,3 @@ module.exports= {
     }
 }
 
-
-
-// //express-session
-// const sessionSecret ="sessionsecrete";
-
-// module.exports={
-//     sessionSecret
-// }

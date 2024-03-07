@@ -153,7 +153,6 @@ const verifyLogin = async (req, res) => {
  }
  
 
-
 //setup registration page
 const signUp = async (req, res) => {
     
@@ -467,16 +466,16 @@ const home = async (req, res) => {
   }
 }
 
-
+//logout button
 const logoutHome = async (req, res) => {
   try {
+    console.log("session d")
     req.session.destroy()
     res.redirect('/')
   } catch (error) {
     console.log(error);
   }
 }
-
 
 //setup shopPage
 const shopPage= async(req,res)=>{

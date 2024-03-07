@@ -17,8 +17,8 @@ const createAdmin = async (req, res) => {
             const matchPas = await bcrypt.compare(bodyPass , adminData.password)
            
             if(matchPas){
-
                 req.session.admin_id = adminData._id
+
                 res.redirect('/admin/dashboard')
     
             }
@@ -87,7 +87,6 @@ const logout = async (req,res)=>{
 }
 
 
-
 // set usersPage
 const userpage =async(req,res)=>{
     try {
@@ -113,7 +112,6 @@ const formatDate = (dateString) => {
 const blockUser = async (req,res) => {
     try {
       const userId = req.body.usersId
-    //   console.log(userId);
       const blockedUser = await User.findOne({_id:userId})
         blockedUser.is_blocked=!blockedUser.is_blocked;
      const g =  await blockedUser.save()
@@ -125,6 +123,7 @@ const blockUser = async (req,res) => {
     }
   }
 
+  
   const unblockUser = async (req, res) => {
     try {
         console.log("helo");

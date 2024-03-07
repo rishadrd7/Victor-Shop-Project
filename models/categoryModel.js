@@ -12,9 +12,9 @@ const  mongoose= require("mongoose");
         type:String,
         required:true
     },
-    status:{
+    listed:{
         type:Boolean,
-        default:true
+        default:false
         
     }
  })

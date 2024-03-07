@@ -24,49 +24,23 @@ router.use(
 
 //================================userController====================================================
 
-//homepage
 router.get("/",userAuth.loginTrue,userController.loadHome);
-
-//loginpage
 router.get("/login",userAuth.loginTrue,userController.loginPage);
-
 router.post("/login",userController.verifyLogin);
-
-//registration page
 router.get("/registration",userAuth.loginTrue,userController.signUp);
-
-//verify user
 router.post("/registration",userController.insertUser);
-
-//home
-router.get('/home',userController.home);
-
-//logout home
+router.get('/home',userAuth.user,userController.home);
 router.post('/logout',userController.logoutHome);
-
-
-//homepage from login and signup
 // router.get("/homepage",userController.logintoHome);
-
-//forgotpassword
 router.get("/forgotpass",userController.forgotPass);
-
-//resetpass
 router.post("/resetpass",userController.resetPass);
-
-//otp page
 router.get("/otppage",userAuth.loginTrue,userController.otpPage);
-
-//verify OTP
 router.post("/otpVerify",userController.verifyOTP);
-
-//resend otp
 router.get('/resendOtp', userController.loadResendOtp);
 
-//shop Page
-router.get('/shop',userController.shopPage)
 
-//cart page
+//==========================views/pages===================================================================
+router.get('/shop',userController.shopPage)
 router.get('/cart',userController.cartPage);
 
 

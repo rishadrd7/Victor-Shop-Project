@@ -9,7 +9,7 @@ const category = async (req, res) => {
   try {
     const categories = await Category.find();
     // console.log("categories : ", categories);
-    res.render('admin/category',{categories});
+    res.render('admin/category', { categories });
   } catch (error) {
     console.log(error);
 
@@ -19,7 +19,7 @@ const category = async (req, res) => {
 //add catagory form
 const categoryAdd = async (req, res) => {
   const categoryId = req.params.id;
-    const category = await Category.findById(categoryId);
+  const category = await Category.findById(categoryId);
   try {
     res.render('admin/addCategory');
   } catch (error) {
@@ -33,7 +33,6 @@ const addCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
 
-  
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
       return res.status(400).json({ success: false, message: 'Category with this name already exists' });
@@ -44,10 +43,10 @@ const addCategory = async (req, res) => {
       description: description
     });
 
-  
+
     await newCategory.save();
 
-   
+
     res.json({ success: true, message: 'Category added successfully!' });
   } catch (error) {
     console.error(error);
@@ -56,66 +55,26 @@ const addCategory = async (req, res) => {
 };
 
 
-//category edit option
-const getEditCategory = async (req, res) => {
+//category edit 
+const editCAtegory = async (req, res) => {
   try {
-      const categoryId = req.params.id;
-      const category = await Category.findById(categoryId);
-      if (!category) {
-          return res.status(404).send('Category not found');
-      }
-      res.render('admin/editCategory', { category: category });
+    const { categoryId, editedDescription, editedName } = req.body;
+    console.log(categoryId, editedDescription, editedName);
+    await Category.updateOne({ _id: categoryId }, { $set: { name: editedName, description: editedDescription } });
+    res.json(true);
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+    console.log(error.message);
   }
-};
-
-
-const postEditCategory = async (req, res) => {
-  try {
-      const categoryId = req.params.id;
-      const { categoryName, categoryDescription } = req.body;
-
-      const updatedCategory = await Category.findByIdAndUpdate(categoryId, { name: categoryName, description: categoryDescription }, { new: true });
-      if (!updatedCategory) {
-          return res.status(404).send('Category not found');
-      }
-
-      res.redirect('/admin/categories');
-  } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-  }
-};
-
-
+}
 
 //category delete option
-  const postDeleteCategory = async (req, res) => {
-    try {
-      console.log("fddf");
-      const categoryId = req.params.id;
-      // Delete the category from the database
-      await Category.findByIdAndDelete(categoryId);
-      // Redirect to the category listing page
-      res.redirect('/admin/categories');
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-    }
-  };
-
-
-  
-const toggleCategory = async (req, res) => {
+const postDeleteCategory = async (req, res) => {
   try {
+    console.log("fddf");
     const categoryId = req.params.id;
-    const { listed } = req.body;
-    const updatedCategory = await Category.findByIdAndUpdate(categoryId, { listed }, { new: true });
-    if (!updatedCategory) {
-      return res.status(404).send('Category not found');
-    }
+    // Delete the category from the database
+    await Category.findByIdAndDelete(categoryId);
+    // Redirect to the category listing page
     res.redirect('/admin/categories');
   } catch (error) {
     console.error(error);
@@ -124,12 +83,34 @@ const toggleCategory = async (req, res) => {
 };
 
 
+// category list and unlist
+const listUnlistCategory = async (req, res) => {
+  try {
+    const { id, listed } = req.body;
+    console.log(listed)
+    if (listed==='true') {
+      const idd = await Category.updateOne({ _id: id }, { $set: { listed: false } })
+      console.log(idd)
+      res.json({status:false})
+    } else {
+      await Category.updateOne({ _id: id }, { $set: { listed: true } })
+      res.json({status:true})
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+
+
 module.exports = {
   category,
   addCategory,
   categoryAdd,
-  getEditCategory,
+  editCAtegory,
   postDeleteCategory,
-  postEditCategory,
-  toggleCategory
+  listUnlistCategory
 }

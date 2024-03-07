@@ -83,7 +83,8 @@
                                     </div><!-- End .product-price -->   
 
                                     <div class="product-content">
-                                        <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus. </p>
+                                        <!-- <p><%= pro.description %></p> -->
+                                        <!-- <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus. </p> -->
                                     </div>
 
                                     <div class="details-filter-row details-row-size">
@@ -133,9 +134,8 @@
 
                                     <div class="product-details-footer">
                                         <div class="product-cat">
-                                            <span>Category:</span>
-                                            <a href="#">Men</a>,
-                                            <a href="#">Dresses</a>,
+                                            <span><%= pro.category?.name %>
+                                            </span>
                                             <!-- <a href="#">Yellow</a> -->
                                         </div><!-- End .product-cat -->
 

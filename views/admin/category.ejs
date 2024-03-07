@@ -24,8 +24,8 @@
                   
                    
                     </p>
-                    <div class="table-responsive">
-                      <table class="table table-dark">
+                    <div class="table-responsive" >
+                      <table class="table table-dark" style="color: white;">
                         <thead>
                           <tr>
                             <th>No</th>
@@ -39,23 +39,38 @@
                           <% locals?.categories?.forEach((category, index) => { %>
                             <tr>
                               <td><%= index + 1 %></td>
-                              <td><%= category.name %></td>
-                              <td><%= category.description %></td>
+                              <td class="name"><%= category.name %></td>
+                              <td class="description"><%= category.description %></td>
 
                               <td>
+
+                                <!-- edit option -->
                                 <a href="#" class="btn btn-primary edit-category" data-category-id="<%= category._id %>" data-category-name="<%= category.name %>" data-category-description="<%= category.description %>">Edit</a>
 
+                                <!-- delete option -->
+                                <!-- <a href="/admin/categories/delete/<%= category._id %>" class="btn btn-danger">Delete</a> -->
 
-                                <a href="/admin/categories/delete/<%= category._id %>" class="btn btn-danger">Delete</a>
 
-
+                                <!-- list and unlist option -->
                                 <form id="toggleForm_<%= category._id %>" action="/admin/category/<%= category._id %>/toggle" method="post" style="display: inline;">
-                                  <button id="toggleButton_<%= category._id %>" type="button" class="btn <%= category.listed ? 'btn-warning' : 'btn-success' %>">
-                                    <%= category.listed ? 'Unlist' : 'List' %>
+                                  <% if(category.listed){ %>
+                                  <button id="toggleButton_<%= category._id %>"  type="button" onclick="submitForm('<%= category._id %>','<%= category.listed %>','<%= index %>')"  class="btn btn-warning" data-toggle="modal" data-target="#confirmationModal">
+                                      <%= category.listed ? 'Unlist' : 'List' %>
                                   </button>
+                                  <%}else{%>
+                                    <button id="toggleButton_<%= category._id %>"  type="button" onclick="submitForm('<%= category._id %>','<%= category.listed %>','<%= index %>')"  class="btn btn-success" data-toggle="modal" data-target="#confirmationModal">
+                                      <%= category.listed ? 'Unlist' : 'List' %>
+                                  </button>
+                                    <% } %>
                                   <input type="hidden" name="_method" value="PUT">
                                   <input type="hidden" name="listed" value="<%= !category.listed %>">
-                                </form>
+                              </form>
+                              
+
+                              
+                        <!-- Bootstrap Modal for Confirmation -->
+                    
+
                               
                               </td>
                               
@@ -74,6 +89,7 @@
             </div>
           </div>
 
+          
 
           
 <!-- SweetAlert CSS -->
@@ -81,9 +97,64 @@
 
 <!-- SweetAlert JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 
-    
+<!-- -------------------------------sumbit button list unlist-------------------------- -->
+<script>
+ async function submitForm(id,listed,i) {
+
+  console.log(listed)
+     const toggleButton = document.getElementById(`toggleButton_${id}`)
+      const response = await axios.patch('/admin/list-unlist',{id,listed});
+
+console.log(response.data.status);
+      if(response.data.status){
+        console.log('ininininin')
+        toggleButton.classList.remove('btn-success');
+        toggleButton.classList.add('btn-warning');
+        toggleButton.innerHTML='Unlist'
+        
+      }else{
+        console.log('in')
+        toggleButton.classList.remove('btn-warning')
+        toggleButton.classList.add('btn-success')
+        toggleButton.innerHTML='List'
+      }
+  }
+</script>
+
+
+<!-- category list and unlist  -->
+<script>
+  async function toggleCategory(categoryId, listed) {
+      try {
+          const response = await fetch(`/admin/categories/${categoryId}/toggle`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ listed: !listed })
+          });
+
+          if (!response.ok) {
+              throw new Error('Failed to toggle category');
+          }
+
+          const button = document.getElementById(`toggleButton_${categoryId}`);
+          button.classList.toggle('btn-warning');
+          button.classList.toggle('btn-success');
+          button.textContent = listed ? 'List' : 'Unlist';
+      } catch (error) {
+          console.error(error);
+          // Handle error
+      }
+  }
+</script>
+
+
+
+    <!-- category edit function -->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
       // Get all elements with class "edit-category"
@@ -101,10 +172,12 @@
   
               // Open SweetAlert modal
               Swal.fire({
+                
                   title: 'Edit Category',
                   html: `
-                      <input type="text" id="categoryName" class="swal2-input" value="${categoryName}" placeholder="Category Name">
-                      <textarea id="categoryDescription" class="swal2-textarea" placeholder="Category Description">${categoryDescription}</textarea>
+                      <input type="text" id="categoryName" name="name" class="swal2-input" value="${categoryName}" placeholder="Category Name">
+                      <textarea id="categoryDescription" description="description" class="swal2-textarea" placeholder="Category Description">${categoryDescription}</textarea>
+                 
                   `,
                   showCancelButton: true,
                   confirmButtonText: 'Save',
@@ -113,18 +186,12 @@
                       // Retrieve edited values
                       const editedName = Swal.getPopup().querySelector('#categoryName').value;
                       const editedDescription = Swal.getPopup().querySelector('#categoryDescription').value;
-                      
-                      // Example: Update category data locally
-                      // You should replace this with your actual logic to save/update the data
-  
-                      // Update the local variables with the edited values
-                      categoryName = editedName;
-                      categoryDescription = editedDescription;
-  
-                      // Optionally, you can send the edited data to the server using AJAX
-                      // Example AJAX request:
-                      /*
-                      fetch('/update-category', {
+
+                      // const name = document.querySelectorAll('.name');
+                      // const description = document.querySelectorAll('.description');
+
+
+                      fetch('/admin/update-category', {
                           method: 'POST',
                           headers: {
                               'Content-Type': 'application/json'
@@ -136,12 +203,12 @@
                           })
                       })
                       .then(response => {
-                          // Handle response from server
+                          
                       })
                       .catch(error => {
                           console.error('Error:', error);
                       });
-                      */
+                    
   
                       // Return the edited values
                       return {

@@ -24,8 +24,7 @@
                    
                     </p>
                     <div class="table-responsive">
-                          <!-- Render product list -->
-                          <table class="table table-dark">
+                          <table class="table table-dark" style="color: white;">
                               <thead>
                                 <tr>
                                   <th>No</th>
@@ -59,20 +58,61 @@
                             
                                       <td>
                                         
-                                        <a href="/admin/products/<%= product._id %>/edit" class="btn btn-primary">Edit</a>
+                                        <!-- product edit option -->
+                                        <a href="/admin/editProduct/<%= product._id %>" class="btn btn-primary">Edit</a>
 
-                                        <form action="/admin/products/<%= product._id %>/delete" method="post" style="display: inline;">
+
+
+
+                                        <!-- product delete option -->
+                                        <!-- <form action="/admin/products/<%= product._id %>/delete" method="post" style="display: inline;">
                                           <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
+                                        </form> -->
+
+                                        <!-- product lit and unlist option -->
                                         <% if (product.status) { %>
-                                          <form action="/admin/products/<%= product._id %>/unlist" method="post" style="display: inline;">
-                                            <button type="submit" class="btn btn-warning">Unlist</button>
+                                          <form id="unlistForm_<%= product._id %>" action="/admin/products/<%= product._id %>/unlist" method="post" style="display: inline;">
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">Unlist</button>
                                           </form>
                                         <% } else { %>
-                                          <form action="/admin/products/<%= product._id %>/list" method="post" style="display: inline;">
-                                            <button type="submit" class="btn btn-success">List</button>
+                                          <form id="listForm_<%= product._id %>" action="/admin/products/<%= product._id %>/list" method="post" style="display: inline;">
+                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">List</button>
                                           </form>
                                         <% } %>
+                                        
+                                        <!-- Bootstrap Modal for Confirmation -->
+                                        <div class="modal fade" id="confirmationModal_<%= product._id %>" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel_<%= product._id %>" aria-hidden="true">
+                                          <div class="modal-dialog" role="document">
+                                              <div class="modal-content" style="color: white;">
+
+                                                  <div class="modal-header">
+                                                      <h5 class="modal-title" id="confirmationModalLabel_<%= product._id %>">Confirmation</h5>
+                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                          <span aria-hidden="true">&times;</span>
+                                                      </button>
+                                                  </div>
+                                                  
+
+                                                  <form id="confirmationForm_<%= product._id %>" style="display: inline;">
+                                                      <div class="modal-body">
+                                                          Are you sure you want to <%= product.status ? 'unlist' : 'list' %> this product?
+                                                      </div>
+                                                     <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                        <% if (product.status) { %>
+                                                            <button type="button" onclick="confirmAction('/admin/products/<%= product._id %>/unlist',` <%= JSON.stringify(product) %>`)" class="btn btn-warning">Confirm Unlist</button>
+                                                        <% } else { %>
+                                                            <button type="button" onclick="confirmAction('/admin/products/<%= product._id %>/list', `<%= JSON.stringify(product) %>`)" class="btn btn-success">Confirm List</button>
+                                                        <% } %>
+                                                    </div>                                   
+                                                  </form>
+
+                                                  
+                                              </div>
+                                          </div>
+                                      </div>
+                                        
+
                                       </td>
 
 
@@ -92,7 +132,34 @@
           </div>
        
 
+        <script>
 
+function confirmAction(actionUrl, product) {
+    // Get the form ID based on the action URL
+    var formId = actionUrl.includes('unlist') ? 'confirmationForm_' + product._id : 'confirmationForm_' + product._id;
+
+    // Fetch API request
+    fetch(actionUrl, {
+        method: 'POST',
+        body: new FormData(document.getElementById(formId)),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        // Close the modal
+        $('#confirmationModal_' + product._id).modal('hide');
+        // Optionally, update the product list on the page without reloading
+        // You can do this using JavaScript or by fetching updated data via fetch
+    })
+    .catch(error => {
+        // Handle errors if needed
+        console.error('There was a problem with your fetch operation:', error);
+    });
+}
+
+
+        </script>
 
 
 <%- include('../layouts/adminFooter')  %>

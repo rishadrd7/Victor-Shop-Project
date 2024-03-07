@@ -15,6 +15,7 @@ const passport= require("passport");
 const nocache = require('nocache');
 const flash=require('express-flash');
 
+
 app.use(nocache());
 app.use(flash())
 
@@ -55,13 +56,13 @@ app.use('/admin',adminRoute);
 
 
 
-//for user route
+//====================================for user route=====================================================
 app.get("/",(req,res)=>{
     res.render("users/homepage")
 })
 
 
-//for admin route
+//=====================================for admin route======================================================
 app.get("/admin",(req,res)=>{
     res.render("admin/adminLogin")
 });

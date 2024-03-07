@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Category", // Refers to the Category model
+        ref: "Category", 
         required: true
     },
     price: {
@@ -24,11 +24,11 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     date: {
-        type: Date, // Changed to Date type for better date handling
+        type: Date, 
         required: true
     },
     image: {
-        type: Array, // Changed to String as it will store image paths
+        type: Array, 
         required: true
     },
     description: {
@@ -40,7 +40,7 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     offer: {
-        type: Number // Offer field is not marked as required
+        type: Number
     }
 });
 

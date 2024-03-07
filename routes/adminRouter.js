@@ -31,9 +31,9 @@ const upload = multer({ storage: storage });
 //================================admin side controller============================================
 
 // adminRouter.get('/dashboard', adminController.createAdmin);
-adminRouter.get("/admin",adminController.Login);
-adminRouter.post("/dashboard",adminController.createAdmin);
-adminRouter.get("/dashboard",adminAuth.isLogin,adminController.dashboard);
+adminRouter.get("/admin",adminAuth.isLogin,adminController.Login);
+adminRouter.post("/dashboard",adminAuth.isLogout,adminController.createAdmin);
+adminRouter.get("/dashboard",adminController.dashboard);
 adminRouter.get('/admin',adminController.logout);
 adminRouter.get("/forgotAdmin",adminController.adminForgot);
 adminRouter.post("/resetpassAdmin",adminController.resetPass);
@@ -48,6 +48,12 @@ adminRouter.post('/adminUser',adminController.unblockUser);
 adminRouter.get('/products',productController.product);
 adminRouter.get('/addProduct',productController.productAdd);
 adminRouter.post('/submit_product',upload.array("image"),productController.addProduct);
+adminRouter.post('/:id/toggle', productController.toggleProductStatus);
+adminRouter.get('/editProduct/:productId', productController.editProduct);
+adminRouter.post('/products/:productId/edit', productController.updateProduct);
+
+
+
 
 
 //==========================================catagory side controller======================================
@@ -55,10 +61,9 @@ adminRouter.post('/submit_product',upload.array("image"),productController.addPr
 adminRouter.get('/category',categoryController.category);
 adminRouter.get('/addCategory',categoryController.categoryAdd);
 adminRouter.post('/submit_category',categoryController.addCategory);
-adminRouter.get('/categories/:id/edit', categoryController.getEditCategory);
-adminRouter.post('/categories/:id/edit', categoryController.postEditCategory);
+adminRouter.post('/update-category',categoryController.editCAtegory);
 adminRouter.get('/categories/delete/:id', categoryController.postDeleteCategory);
-adminRouter.put('/categories/:id/toggle', categoryController.toggleCategory);
+adminRouter.patch('/list-unlist',categoryController.listUnlistCategory);
 
 
 //============================================================================================================
