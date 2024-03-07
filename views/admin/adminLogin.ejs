@@ -1,5 +1,29 @@
 <%- include("../layouts/header") %>
 
+<header class="header header-11">
+    <div class="header-middle sticky-header">
+        <div class="container">
+            
+            <div class="header-left">
+        
+            </div>
+  
+            <div class="header-center">
+                <a  class="logo">
+                    <img class="victor-logo" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo" width="82" height="25">
+                </a>
+            </div>
+  
+            <div class="header-right">
+                <div class="header-search header-search-extended header-search-visible">
+                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+        
+                </div>
+            </div><!-- End .header-right -->
+        </div><!-- End .container -->
+    </div><!-- End .header-middle -->
+  </header><!-- End .header -->
+ 
 
 
 
@@ -57,7 +81,14 @@
                     
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
 
-                        <form action="dashboard" method="post">
+
+                        <form action="/admin/dashboard" method="post">
+                                        
+                                    <% if (locals.msgg) { %>
+
+                                        <p class="text-center text-danger"><%= locals.msgg %></p>
+                                        
+                                <%  } %>
 
                             <div class="form-group">
                                 <label for="register-email-2">Admin Email *</label>
@@ -82,7 +113,7 @@
                         </form>
 
                         <div class="form-choice">
-                            <a class="forgot-pass" href="/forgotPass">Forgot Password?</a>
+                            <a class="forgot-pass" href="forgotAdmin">Forgot Password?</a>
                         </div>
                     </div>
                 </div>

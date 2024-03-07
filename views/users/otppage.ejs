@@ -1,21 +1,80 @@
 <%- include('../layouts/header') %>
 
+<style>
+	body, html {
+    height: 100%;
+}
+
+.login-page {
+    min-height: 100vh; /* Ensure that the login page takes at least the height of the viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-image {
+    background-size: cover;
+}
+footer {
+    margin-top: auto; /* Push the footer to the bottom */
+}
+.otp-input {
+        width: 30px;
+        height: 40px;
+        text-align: center;
+        margin: 0 5px;
+        font-size: 1.5rem;
+		border: 0px;
+		border-radius: 5px;
+		box-shadow: rgba(4, 126, 40, 0.35) 0px 1px 10px;
+    }
+	.success-box {
+        padding: 10px;
+        background-color: #f1343459;
+        border: 1px solid #c3e6cb;
+        color: #0c0c0c;
+        margin-top: 10px;
+        display: none;
+    }
+</style>
+
+<header class="header header-11">
+	<div class="header-middle sticky-header">
+		<div class="container">
+			<div class="header-left">
+  
+				
+				<nav class="main-nav">
+					<ul class="menu sf-arrows">
+						<li><a href="homepage">home</a></li>
+						
+						<li><a href="login" class="sf-with-ul">login</a></li>					   
+					</ul><!-- End .menu -->
+				</nav><!-- End .main-nav -->
+  
+			</div><!-- End .header-left -->
+  
+			<div class="header-center">
+				<a  class="logo">
+					<img class="victor-logo" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo" width="82" height="25">
+				</a>
+			</div><!-- End .header-center -->
+  
+			<div class="header-right">
+			
+			</div><!-- End .header-right -->
+		</div><!-- End .container -->
+	</div><!-- End .header-middle -->
+  </header><!-- End .header -->
+  
+  
+
     <div class="page-wrapper">
 
          <main class="main">
 
-            <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
-                <div class="container">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">SignUp</a></li>
-                        <li class="breadcrumb-item active" aria-current="#">Otp</li>
-                    </ol>
-                </div><!-- End .container -->
-            </nav><!-- End .breadcrumb-nav -->
+       	     <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"     
+			  style=" background-image: url('/user/assets/images/backgrounds/login-bg.jpg')">
 
-
-            <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/urban/show.jpg')">
             	<div class="container">
             		<div class="form-box">
             			<div class="form-tab">
@@ -35,8 +94,7 @@
 
 											<label for="otp1"><h4>Enter OTP :</h4></label><br>
 
-											<!-- <label for="otp1"><h4>Enter Otp</h4></label> -->
-
+							
 											<!-- <div class="success-box" id="successBox">
 												Verification failed
 											</div><br> -->
@@ -70,13 +128,7 @@
                                                     <a href="/resendOtp?email=<%= queryEmail %>">Resend OTP</a>
                                                 </button>
                                             </div>
-											
-			                				<!-- <div class="custom-control custom-checkbox">
-												<input type="checkbox" class="custom-control-input" id="signin-remember-2">
-												<label class="custom-control-label" for="signin-remember-2">Remember Me</label> -->
-											<!-- </div>End .custom-checkbox -->
-
-											<!-- <a href="#" class="forgot-link">Forgot Your Password?</a> -->
+										
 											
 							    		</div><!-- End .form-footer -->
 
@@ -100,28 +152,6 @@
 <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
 
-
-<style>
-    .otp-input {
-        width: 30px;
-        height: 40px;
-        text-align: center;
-        margin: 0 5px;
-        font-size: 1.5rem;
-		border: 0px;
-		border-radius: 5px;
-		box-shadow: rgba(4, 126, 40, 0.35) 0px 1px 10px;
-    }
-	.success-box {
-        padding: 10px;
-        background-color: #f1343459;
-        border: 1px solid #c3e6cb;
-        color: #0c0c0c;
-        margin-top: 10px;
-        display: none;
-    }
-</style>
-
 <!-- Alert Message to Re-send OTP -->
 
 <script>function alerts() {
@@ -142,7 +172,9 @@
 <!--column changing-->
 
 <script>
-	
+
+
+	// otp column forward 
 	function moveToNext(current, nextFieldID) {
 
 		if (current.value.length >= current.maxLength) {

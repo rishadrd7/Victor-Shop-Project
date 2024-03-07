@@ -14,11 +14,12 @@
   display: flex;
   align-items: center;
 }
-.victor-logo{
+.victor-logo {
   height: 100px;
   width: 100px;
-  background-color: #ffffff;
-  
+  /* background-color: #ffffff; */
+  mix-blend-mode: screen;
+  filter: invert();
 }
 
 .header.header-11 .header-middle {
@@ -137,6 +138,7 @@
   border-top-width: 0;
   border-bottom-width: 0;
   padding: 6rem 2rem;
+  z-index: 0;
 }
 .intro-content .btn.btn-outline-white {
   text-transform: uppercase;
@@ -158,6 +160,7 @@
   line-height: 1;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+
 }
 .intro-subtitle.cross-txt {
   top: 0;

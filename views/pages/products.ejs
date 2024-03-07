@@ -1,39 +1,6 @@
+<%- include('../layouts/header')  %>
 
 
-
-<!DOCTYPE html>
-<html lang="en">
-
-
-<!-- molla/product.html  22 Nov 2019 09:54:50 GMT -->
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Molla - Bootstrap eCommerce Template</title>
-    <meta name="keywords" content="HTML5 Template">
-    <meta name="description" content="Molla - Bootstrap eCommerce Template">
-    <meta name="author" content="p-themes">
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/user/assets/images/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/user/assets/images/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/user/assets/images/icons/favicon-16x16.png">
-    <link rel="manifest" href="/user/assets/images/icons/site.html">
-    <link rel="mask-icon" href="/user/assets/images/icons/safari-pinned-tab.svg" color="#666666">
-    <link rel="shortcut icon" href="/user/assets/images/icons/favicon.ico">
-    <meta name="apple-mobile-web-app-title" content="Molla">
-    <meta name="application-name" content="Molla">
-    <meta name="msapplication-TileColor" content="#cc9966">
-    <meta name="msapplication-config" content="/user/assets/images/icons/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
-    <!-- Plugins CSS File -->
-    <link rel="stylesheet" href="/user/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/user/assets/css/plugins/owl-carousel/owl.carousel.css">
-    <link rel="stylesheet" href="/user/assets/css/plugins/magnific-popup/magnific-popup.css">
-    <!-- Main CSS File -->
-    <link rel="stylesheet" href="/user/assets/css/style.css">
-    <link rel="stylesheet" href="/user/assets/css/plugins/nouislider/nouislider.css">
-</head>
 
 <body>
     <div class="page-wrapper">
@@ -43,21 +10,23 @@
                 <div class="container d-flex align-items-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/home">Home</a></li>
+
+                        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
                       
                         <li class="breadcrumb-item active" aria-current="page">Product Details</li>
                     </ol>
 
                     <nav class="product-pager ml-auto" aria-label="Product">
-                        <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous" tabindex="-1">
+                        <a class="product-pager-link product-pager-prev" href="" aria-label="Previous" tabindex="-1">
                             <i class="icon-angle-left"></i>
                             <span>Prev</span>
                         </a>
 
-                        <a class="product-pager-link product-pager-next" href="#" aria-label="Next" tabindex="-1">
+                        <a class="product-pager-link product-pager-next" href="" aria-label="Next" tabindex="-1">
                             <span>Next</span>
                             <i class="icon-angle-right"></i>
                         </a>
-                    </nav><!-- End .pager-nav -->
+                    </nav>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
 
@@ -67,12 +36,13 @@
                 <div class="container">
                     <div class="product-details-top">
                         <div class="row">
+
                             <div class="col-md-6">
                                 <div class="product-gallery product-gallery-vertical">
                                     <div class="row">
                                         
-                                        <figure class="product-main-image">
-                                            <img id="product-zoom" src="/uploads/<%= pro.image[0] %>" data-zoom-image="/user/assets/images/new/flip-img1.webp" alt="product image">
+                                        <figure class="product-main-image imf">
+                                            <img id="imf" class="mainIM" src="/uploads/<%= pro.image[0] %>" >
 
                                             <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                                 <i class="icon-arrows"></i>
@@ -80,10 +50,10 @@
                                         </figure><!-- End .product-main-image -->
 
                                         <div id="product-zoom-gallery" class="product-image-gallery">
-                                            <% pro.image.forEach(img => { %>
+                                            <% pro.image.forEach((img ,i)=> { %>
                                                 
                                       
-                                            <a class="product-gallery-item active" href="#" data-image="/user/assets/images/new/flip-img1.webp" data-zoom-image="/user/assets/images/new/flip-img1.webp">
+                                            <a class="product-gallery-item "  onclick="show('/uploads/<%= img %>','<%=i%>')" id="ii<%=i  %>" href="#" data-image="/user/assets/images/new/flip-img1.webp" data-zoom-image="/user/assets/images/new/flip-img1.webp">
                                                 <img src="/uploads/<%= img %>" alt="product side">
                                             </a>
 
@@ -106,13 +76,15 @@
                                         <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
                                     </div><!-- End .rating-container -->
 
-                                    <div class="product-price">
-                                        <%= pro.price  %>
-                                    </div><!-- End .product-price -->
+                                    <div class="product-price">₹
+                                        <%= pro.offerPrice  %>
+                                        <p class="offer-price">₹  <%= pro.price  %></p>
+                                        <span class="discount">77% off</span>
+                                    </div><!-- End .product-price -->   
 
                                     <div class="product-content">
                                         <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus. </p>
-                                    </div>End .product-content
+                                    </div>
 
                                     <div class="details-filter-row details-row-size">
                                         <label>Color:</label>
@@ -536,6 +508,105 @@
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
 
+
+    <!-- image zoom function -->
+    <script>
+     const galIm0=document.getElementById('ii0')
+     console.log(galIm0);
+            const mainIm=document.querySelector('.mainIM')
+            //image galarry
+            window.onload=()=>{galIm0.classList.add('active')}
+            function show(e,i){
+                console.log(i);
+                const gal=document.getElementById(`ii${i}`);
+                console.log(gal);
+                const removeActive=document.getElementsByClassName('active')[1]
+                removeActive.classList.remove('active')
+                gal.classList.add('active');
+                console.log(mainIm);
+                mainIm.src=e
+                
+
+            }
+        // image hovering zoom
+        const elem = document.querySelector('.imf');
+        let x, y, height, width;
+        elem.onmouseenter = () => {
+            const size = elem.getBoundingClientRect();
+            x = size.x;
+            y = size.y;
+            width = size.width;
+            height = size.height;
+
+        }
+        elem.onmousemove = e => {
+            const horizontel = (e.clientX - x) / width * 100;
+            const vertical = (e.clientY - y) / height * 100;
+    
+
+            elem.style.setProperty('--x', horizontel + '%')
+            elem.style.setProperty('--y', vertical + '%')
+          
+        }
+      </script>
+
+      <!-- style zoom -->
+      <style>
+        /* image zoom */
+            body::-webkit-scrollbar {
+                width: 0;
+            }
+
+        
+            .imf {
+                overflow: hidden;
+            }
+
+            .imf img {
+
+                transform: scale(var(--zoom, 1));
+                object-fit: cover;
+                transform-origin: var(--x) var(--y);
+                transition: cubic-bezier(0.18, 0.9, 0.33, 1.01) 1s;
+                /* opacity: 0.3; */
+            }
+
+            .imf:hover {
+                --zoom: 1.8;
+                cursor: crosshair;
+            }
+
+
+            /* product offer-price */
+            .product-price {
+               display: inline-block;
+              }
+
+            .original-price {
+                text-decoration: line-through;
+                color: #999; /* You can change the color of the original price */
+                margin-right: 5px; /* Add some space between the original price and offer price */
+            }
+
+            .offer-price {
+                font-size: medium;
+                margin-right: 10px; /* Add some space between the offer price and discount */
+            }
+
+            .discount {
+                font-size: medium;
+                color: green; /* You can change the color of the discount text */
+            }
+            .offer-price {
+                margin-left: 5px;
+                text-decoration: line-through;
+                text-align: center; /* Center align the text */
+                display: inline-block; /* Ensure inline-block so the underline spans the width of the text */
+                width: fit-content; /* Set width to fit the content */
+            }
+
+
+      </style>
 
 
 </body>

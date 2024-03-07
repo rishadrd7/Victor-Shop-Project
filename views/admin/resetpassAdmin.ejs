@@ -1,15 +1,44 @@
 
 <%- include("../layouts/header") %>
-<%- include("../layouts/navbar") %>
-<%- include("../layouts/mobileNav") %>
 
+<header class="header header-11">
+    <div class="header-middle sticky-header">
+        <div class="container">
+            <div class="header-left">
+  
+                
+                <nav class="main-nav">
+                    <ul class="menu sf-arrows">
+                      <!-- <li><a href="homepage">home</a></li> -->
+                      
+                        <li class="megamenu-container active">
+                            <a href="admin" class="sf-with-ul">Back to Login</a>
+                        </li>
+                       
+                    </ul><!-- End .menu -->
+                </nav><!-- End .main-nav -->
+
+            </div><!-- End .header-left -->
+  
+            <div class="header-center">
+                <a  class="logo">
+                    <img class="victor-logo" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo" width="82" height="25">
+                </a>
+            </div><!-- End .header-center -->
+  
+            <div class="header-right">
+        
+            </div><!-- End .header-right -->
+        </div><!-- End .container -->
+    </div><!-- End .header-middle -->
+  </header><!-- End .header -->
 
 
 <title>Reset Password</title>
 <style>
     /* Form container styles */
     .reset {
-        max-width: 400px;
+        width: 400px;
         height: 400px;
         margin: 0 auto;
         padding: 20px;
@@ -75,19 +104,17 @@ footer {
 
 <div
 class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
-style="
-   background-image: url('user/assets/images/new/bg-img4.png');
+style="background-image: url(/user/assets/images/new/bg-image.jpg);">
 
-"
->
+
 
 <div class="reset">
     <h4>Reset Password</h4>
     <form action="/adminLlogin" method="post">
-        <!-- <label for="password">Enter your new password:</label><br>
+        <label for="password">Enter your new password:</label><br>
         <input type="password" id="password" name="password" required><br>
         <label for="confirm-password">Confirm your new password:</label><br>
-        <input type="password" id="confirm-password" name="confirm-password" required><br> -->
+        <input type="password" id="confirm-password" name="confirm-password" required><br>
         <input type="submit" value="Reset Password">
     </form>
 </div>

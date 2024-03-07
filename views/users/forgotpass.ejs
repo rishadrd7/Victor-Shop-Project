@@ -1,14 +1,72 @@
 <%- include("../layouts/header") %>
-<%- include("../layouts/navbar") %>
-<%- include("../layouts/mobileNav") %>
+
+
+<header class="header header-11">
+    <div class="header-middle sticky-header">
+        <div class="container">
+            <div class="header-left">
+  
+                
+                <nav class="main-nav">
+                    <ul class="menu sf-arrows">
+                      <li><a href="/">home</a></li>
+                      
+                        <li class="megamenu-container active">
+                            <a href="login" class="sf-with-ul">Back to Login</a>
+                        </li>
+                       
+                    </ul><!-- End .menu -->
+                </nav><!-- End .main-nav -->
+  
+                <button class="mobile-menu-toggler">
+                    <span class="sr-only">Toggle mobile menu</span>
+                    <i class="icon-bars"></i>
+                </button>
+            </div><!-- End .header-left -->
+  
+            <div class="header-center">
+                <a  class="logo">
+                    <img class="victor-logo" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo" width="82" height="25">
+                </a>
+            </div><!-- End .header-center -->
+  
+            <div class="header-right">
+                <div class="header-search header-search-extended header-search-visible">
+                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                    <!-- <form action="#" method="get">
+                        <div class="header-search-wrapper">
+                            <label for="q" class="sr-only">Search</label>
+                            <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
+                            <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                        </div>
+                    </form> -->
+                </div><!-- End .header-search -->
+                
+                <!-- <a href="wishlist.html" class="wishlist-link">
+                    <i class="icon-heart-o"></i>
+                    <span class="wishlist-count">3</span>
+                </a> -->
+  
+                <div class="dropdown cart-dropdown">
+                    
+  
+  
+  
+                </div><!-- End .cart-dropdown -->
+            </div><!-- End .header-right -->
+        </div><!-- End .container -->
+    </div><!-- End .header-middle -->
+  </header><!-- End .header -->
+
 
 
 <style>
     /* Form container styles */
     .forgot {
-        max-width: 400px;
-        height: 400px;
+        width: 400px;
+        height: 300px;
         margin: 0 auto;
+        margin-top: 50px;
         padding: 20px;
         background-color: #f2f2f2;
         border-radius: 8px;
@@ -69,19 +127,17 @@ footer {
 }
 </style>
 
+
 <div
 class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
-style="
-          background-image: url('user/assets/images/new/bg-img4.png');
+style="background-image: url('/user/assets/images/backgrounds/login-bg.jpg')">
 
-"
->
 <div class="forgot">
 
 <h4>Forgot Password</h5>
 <form action="/resetpass" method="post">
-    <!-- <label for="email">Enter your email address:</label><br>
-    <input type="email" id="email" name="email" required><br> -->
+    <label for="email">Enter your email address:</label><br>
+    <input type="email" id="email" name="email" required><br>
     <input type="submit" value="Submit">
 </form>
 

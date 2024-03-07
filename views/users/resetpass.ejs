@@ -1,95 +1,145 @@
-
 <%- include("../layouts/header") %>
-<%- include("../layouts/navbar") %>
-<%- include("../layouts/mobileNav") %>
 
 
+<header class="header header-11">
+    <div class="header-middle sticky-header">
+        <div class="container">
+            <div class="header-left">
+  
+                
+                <nav class="main-nav">
+                    <ul class="menu sf-arrows">
+                      <li><a href="/">home</a></li>
+                      
+                        <li class="megamenu-container active">
+                            <a href="login" class="sf-with-ul">Back to Login</a>
+                        </li>
+                       
+                    </ul><!-- End .menu -->
+                </nav><!-- End .main-nav -->
+  
+                <button class="mobile-menu-toggler">
+                    <span class="sr-only">Toggle mobile menu</span>
+                    <i class="icon-bars"></i>
+                </button>
+            </div><!-- End .header-left -->
+  
+            <div class="header-center">
+                <a  class="logo">
+                    <img class="victor-logo" src="/user/assets/images/new/Victor-Logo.png"  alt="Molla Logo" width="82" height="25">
+                </a>
+            </div><!-- End .header-center -->
+  
+            <div class="header-right">
+                <div class="header-search header-search-extended header-search-visible">
+                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                    <!-- <form action="#" method="get">
+                        <div class="header-search-wrapper">
+                            <label for="q" class="sr-only">Search</label>
+                            <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
+                            <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                        </div>
+                    </form> -->
+                </div><!-- End .header-search -->
+                
+                <!-- <a href="wishlist.html" class="wishlist-link">
+                    <i class="icon-heart-o"></i>
+                    <span class="wishlist-count">3</span>
+                </a> -->
+  
+                <div class="dropdown cart-dropdown">
+                    
+  
+  
+  
+                </div><!-- End .cart-dropdown -->
+            </div><!-- End .header-right -->
+        </div><!-- End .container -->
+    </div><!-- End .header-middle -->
+  </header><!-- End .header -->
+ 
 
 <title>Reset Password</title>
 <style>
-    /* Form container styles */
-    .reset {
-        max-width: 400px;
-        height: 400px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f2f2f2;
-        border-radius: 8px;
-    }
+  /* Form container styles */
+  .reset {
+    width: 400px;
+    height: 350px;
+    margin: 0 auto;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+  }
 
-    /* Form title styles */
-    .reset h4 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-    }
+  /* Form title styles */
+  .reset h4 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
 
-    /* Form input styles */
-    .reset label {
-        font-weight: bold;
-    }
+  /* Form input styles */
+  .reset label {
+    font-weight: bold;
+  }
 
-    .reset input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
+  .reset input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
 
-    .reset input[type="submit"] {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+  .reset input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-    .reset input[type="submit"]:hover {
-        background-color: #0056b3;
-    }
-   
-body, html {
+  .reset input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  body,
+  html {
     height: 100%;
-}
+  }
 
-.login-page {
+  .login-page {
     min-height: 100vh; /* Ensure that the login page takes at least the height of the viewport */
     display: flex;
     flex-direction: column;
-}
+  }
 
-.bg-image {
-    background-image: url('user/assets/images/new/bg-img4.png');
+  .bg-image {
+    background-image: url("user/assets/images/new/bg-img4.png");
     background-size: cover;
-}
+  }
 
-footer {
+  footer {
     margin-top: auto; /* Push the footer to the bottom */
-}
-
+  }
 </style>
 
 <div
-class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
-style="
-   background-image: url('user/assets/images/new/bg-img4.png');
-
-"
+  class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17"
+  style="background-image: url('/user/assets/images/backgrounds/login-bg.jpg')"
 >
-
-<div class="reset">
+  <div class="reset">
     <h4>Reset Password</h4>
     <form action="/login" method="post">
-        <!-- <label for="password">Enter your new password:</label><br>
+      <label for="password">Enter your new password:</label><br>
         <input type="password" id="password" name="password" required><br>
         <label for="confirm-password">Confirm your new password:</label><br>
-        <input type="password" id="confirm-password" name="confirm-password" required><br> -->
-        <input type="submit" value="Reset Password">
+        <input type="password" id="confirm-password" name="confirm-password" required><br>
+      <input type="submit" value="Reset Password" />
     </form>
+  </div>
 </div>
-</div>
-

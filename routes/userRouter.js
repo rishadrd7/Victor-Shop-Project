@@ -11,6 +11,7 @@ const passport = require("passport");
 require('../passport');
 
 
+
 router.use(
   session({
     secret: config.sessionSecret,
@@ -21,18 +22,18 @@ router.use(
 )
 
 
-
+//================================userController====================================================
 
 //homepage
-router.get("/",userController.loadHome);
+router.get("/",userAuth.loginTrue,userController.loadHome);
 
 //loginpage
-router.get("/login",userController.loginPage);
+router.get("/login",userAuth.loginTrue,userController.loginPage);
 
 router.post("/login",userController.verifyLogin);
 
 //registration page
-router.get("/registration",userController.signUp);
+router.get("/registration",userAuth.loginTrue,userController.signUp);
 
 //verify user
 router.post("/registration",userController.insertUser);
@@ -41,10 +42,11 @@ router.post("/registration",userController.insertUser);
 router.get('/home',userController.home);
 
 //logout home
-router.get('/login',userController.logoutHome);
+router.post('/logout',userController.logoutHome);
+
 
 //homepage from login and signup
-router.get("/homepage",userController.logintoHome);
+// router.get("/homepage",userController.logintoHome);
 
 //forgotpassword
 router.get("/forgotpass",userController.forgotPass);
@@ -53,7 +55,7 @@ router.get("/forgotpass",userController.forgotPass);
 router.post("/resetpass",userController.resetPass);
 
 //otp page
-router.get("/otppage",userController.otpPage);
+router.get("/otppage",userAuth.loginTrue,userController.otpPage);
 
 //verify OTP
 router.post("/otpVerify",userController.verifyOTP);
@@ -69,7 +71,7 @@ router.get('/cart',userController.cartPage);
 
 
 
-//googlelogin
+//============================googlelogin==============================================
 
 //middleware
 router.use(passport.initialize());
@@ -107,7 +109,7 @@ router.get('/failure', userController.failureLogin);
 
 
 
-//facebook
+//====================================facebook==============================================================
 router.get('users/login', isLoggedIn, function (req, res) {
     res.render('users/home', {
       
@@ -138,5 +140,5 @@ router.get('users/login', isLoggedIn, function (req, res) {
   }
 
 
-
+//===================================================================================
 module.exports=router;

@@ -1,6 +1,7 @@
 <%- include("../layouts/header")  %>
 
     <!-- <div class="page-wrapper"> -->
+
         <header class="header header-11">
             <div class="header-middle sticky-header">
                 <div class="container">
@@ -10,12 +11,12 @@
                         <nav class="main-nav">
                             <ul class="menu sf-arrows">
                                 <li class="megamenu-container active">
-                                    <a href="homepage" class="sf-with-ul">Home</a>
+                                    <a href="" class="sf-with-ul">Home</a>
     
                                    
                                 </li>
                                 <li>
-                                    <a href="/shop" class="sf-with-ul">Shop</a>
+                                    <a href="shop" class="sf-with-ul">Shop</a>
     
                                     <div class="megamenu megamenu-md">
                                         <div class="row no-gutters">
@@ -53,26 +54,15 @@
                                 </li>
                                 <li>
                                     <a href="" class="sf-with-ul">Contact us</a>
-    
-                                    <!-- <ul>
-                                        <li><a href="elements-products.html">Products</a></li>
-                                        <li><a href="elements-typography.html">Typography</a></li>
-                                        <li><a href="elements-titles.html">Titles</a></li>
-                                        <li><a href="elements-banners.html">Banners</a></li>
-                                        <li><a href="elements-product-category.html">Product Category</a></li>
-                                        <li><a href="elements-video-banners.html">Video Banners</a></li>
-                                        <li><a href="elements-buttons.html">Buttons</a></li>
-                                        <li><a href="elements-accordions.html">Accordions</a></li>
-                                        <li><a href="elements-tabs.html">Tabs</a></li>
-                                        <li><a href="elements-testimonials.html">Testimonials</a></li>
-                                        <li><a href="elements-blog-posts.html">Blog Posts</a></li>
-                                        <li><a href="elements-portfolio.html">Portfolio</a></li>
-                                        <li><a href="elements-cta.html">Call to Action</a></li>
-                                        <li><a href="elements-icon-boxes.html">Icon Boxes</a></li>
-                                    </ul> -->
+
+                                </li>
+                                <li>
+                                    <a href="" >About</a>
                                 </li>
     
-                                <li><a href="/login">Logout</a></li>
+                               <form action="/logout" method="post">
+                                <button>Logout</button>
+                               </form>
                             </ul><!-- End .menu -->
                         </nav><!-- End .main-nav -->
     
@@ -100,17 +90,18 @@
                             </form>
                         </div><!-- End .header-search -->
                         
-                        <a href="wishlist.html" class="wishlist-link">
+                        <a href="" class="wishlist-link">
                             <i class="icon-heart-o"></i>
                             <span class="wishlist-count">3</span>
                         </a>
-    
+                      
                         <div class="dropdown cart-dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <i class="icon-shopping-cart"></i>
                                 <span class="cart-count">2</span>
                             </a>
     
+
                             <div class="dropdown-menu dropdown-menu-right">
                                 <div class="dropdown-cart-products">
                                     <div class="product">
@@ -166,6 +157,16 @@
                                 </div><!-- End .dropdown-cart-total -->
                             </div><!-- End .dropdown-menu -->
                         </div><!-- End .cart-dropdown -->
+
+                        <a href="" class="wishlist-link">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                            </svg>
+                      </a>
+                       
+    
+
                     </div><!-- End .header-right -->
                 </div><!-- End .container -->
             </div><!-- End .header-middle -->
@@ -177,10 +178,10 @@
         <main class="main">
             <div class="intro-slider-container mb-3 mb-lg-5">
                 <div class="intro-slider owl-carousel owl-theme owl-nav-inside owl-light" data-toggle="owl" data-owl-options='{"dots": true, "nav": false}'>
-                    <div class="intro-slide" style="background-image: url(/user/assets/images/new/bg-image.jpg);">
+                    <div class="intro-slide" style="background-image: url(/user/assets/images/new/admin-bg.jpg);">
                         <div class="container">
                             <div class="intro-content text-center">
-                                <h3 class="intro-subtitle cross-txt text-primary">SEASONAL PICKS</h3><!-- End .h3 intro-subtitle -->
+                                <h3 class="intro-subtitle cross-txt text-primary">Mens Collections</h3><!-- End .h3 intro-subtitle -->
                                 <h1 class="intro-title text-white">Summer Sale</h1><!-- End .intro-title -->
                                 <div class="intro-text text-white">up to 70% off</div><!-- End .intro-text -->
                                 <div class="intro-action cross-txt">
@@ -192,7 +193,8 @@
                         </div><!-- End .intro-content -->
                     </div><!-- End .intro-slide -->
 
-                    <div class="intro-slide" style="background-image: url(/user/assets/images/demos/demo-18/slider/slide-2.jpg);">
+                    <div class="intro-slide" style="background-image: url(/admin/assets/images/carousel/banner_6.jpg);">
+                    <!-- <div class="intro-slide" style="background-image: url(/user/assets/images/demos/demo-18/slider/slide-2.jpg);"> -->
                         <div class="container">
                             <div class="intro-content text-center">
                                 <h3 class="intro-subtitle text-primary cross-txt">Women's Accessories</h3><!-- End .h3 intro-subtitle -->
@@ -272,6 +274,23 @@
 
 
             <div class="container">
+
+                <div class="intro-slider-container mb-3 mb-lg-5">
+                    <div class="intro-slide" style="background-image: url(/user/assets/images/new/bg-image2.png);">
+                
+                        <div class="container">
+                            <div class="intro-content text-center">
+                                <h3 class="intro-subtitle cross-txt text-primary">SEASONAL PICKS</h3><!-- End .h3 intro-subtitle -->
+                                <h1 class="intro-title text-white">Victor Outfits</h1><!-- End .intro-title -->
+                                <div class="intro-text text-white">up to 50% off</div><!-- End .intro-text -->
+                                <div class="intro-action cross-txt">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div><!-- End .intro-slider-container -->
+
                 <div class="row">
                     <div class="col-lg-9">
                         <h2 class="title" style="text-align: center;">Collections</h2><!-- End .title -->

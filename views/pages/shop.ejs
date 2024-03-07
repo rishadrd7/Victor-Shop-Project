@@ -45,7 +45,8 @@
 
                                                 <div class="col-md-6">
                                                     <!-- <div class="menu-title">Product Category</div> -->
-                                                    <!-- <ul>
+                                                    <!-- 
+                                                        <ul>
                                                         <li><a href="product-category-boxed.html">Product Category Boxed</a></li>
                                                         <li><a href="product-category-fullwidth.html"><span>Product Category Fullwidth<span class="tip tip-new">New</span></span></a></li>
                                                     </ul> -->
@@ -70,7 +71,7 @@
                             </div><!-- End .megamenu megamenu-md -->
                         </li>
                         <li>
-                            <a href="elements-list.html" class="sf-with-ul">About us</a>
+                            <a href="" class="sf-with-ul">Contact us</a>
 
                             <!-- <ul>
                                 <li><a href="elements-products.html">Products</a></li>
@@ -89,8 +90,11 @@
                                 <li><a href="elements-icon-boxes.html">Icon Boxes</a></li>
                             </ul> -->
                         </li>
+                        <li>
+                            <a href="" >About</a>
+                        </li>
 
-                        <li><a href="/">Logout</a></li>
+                        <li><a href="/login">Logout</a></li>
                     </ul><!-- End .menu -->
                 </nav><!-- End .main-nav -->
 
@@ -118,16 +122,17 @@
                     </form>
                 </div><!-- End .header-search -->
                 
-                <a href="wishlist.html" class="wishlist-link">
+                <a href="" class="wishlist-link">
                     <i class="icon-heart-o"></i>
                     <span class="wishlist-count">3</span>
                 </a>
-
+              
                 <div class="dropdown cart-dropdown">
                     <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="icon-shopping-cart"></i>
                         <span class="cart-count">2</span>
                     </a>
+
 
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="dropdown-cart-products">
@@ -184,6 +189,16 @@
                         </div><!-- End .dropdown-cart-total -->
                     </div><!-- End .dropdown-menu -->
                 </div><!-- End .cart-dropdown -->
+
+                <a href="" class="wishlist-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                      <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                    </svg>
+              </a>
+               
+
+
             </div><!-- End .header-right -->
         </div><!-- End .container -->
     </div><!-- End .header-middle -->
@@ -200,10 +215,6 @@
                 <div class="products-container mb-7">
                     <div class="row justify-content-center">
 
-
-
-
-                     
                      
                     <% locals.product.forEach(element => { %>
                         

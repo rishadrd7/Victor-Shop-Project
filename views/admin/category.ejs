@@ -5,11 +5,11 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> Basic Tables </h3>
+              <h3 class="page-title"> Catagory Tables </h3>
 
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="addCategory">+Add Catagory</a></li>
+                  <button class="adc"  ><li class="breadcrumb-item"><a href="addCategory">Add Catagory</a></li></button>
                 
                 </ol>
               </nav>
@@ -34,16 +34,18 @@
                             <th>Action</th> 
                           </tr>
                         </thead>
+
                         <tbody>
                           <% locals?.categories?.forEach((category, index) => { %>
                             <tr>
                               <td><%= index + 1 %></td>
                               <td><%= category.name %></td>
                               <td><%= category.description %></td>
+
                               <td>
                                 <a href="#" class="btn btn-primary edit-category" data-category-id="<%= category._id %>" data-category-name="<%= category.name %>" data-category-description="<%= category.description %>">Edit</a>
 
-                               
+
                                 <a href="/admin/categories/delete/<%= category._id %>" class="btn btn-danger">Delete</a>
 
 
@@ -62,6 +64,7 @@
                           <% }); %>
                         </tbody>
                       </table>
+                      
                     </div>
                   </div>
                 </div>
@@ -72,36 +75,90 @@
           </div>
 
 
-          <!-- Edit Category Modal -->
-
-
-       
-
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <script>
-            $(document).ready(function() {
-              $('button[id^="toggleButton_"]').click(function() {
-                var categoryId = $(this).attr('id').replace('toggleButton_', '');
-                $('#toggleForm_' + categoryId).submit();
-              });
-            });
-          </script>
           
-          <script>
-            $(document).ready(function() {
-              // Function to handle edit modal display
-              $('.edit-category').click(function() {
-                var categoryId = $(this).data('category-id');
-                var categoryName = $(this).data('category-name');
-                var categoryDescription = $(this).data('category-description');
-                $('#editCategoryForm').attr('action', '/admin/categories/' + categoryId + '/edit');
-                $('#editCategoryName').val(categoryName);
-                $('#editCategoryDescription').val(categoryDescription);
-                $('#editCategoryModal').modal('show');
+<!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Get all elements with class "edit-category"
+      const editButtons = document.querySelectorAll(".edit-category");
+  
+      // Add click event listener to each edit button
+      editButtons.forEach(function(button) {
+          button.addEventListener("click", function(event) {
+              event.preventDefault(); // Prevent default link behavior
+  
+              // Extract data attributes
+              const categoryId = button.getAttribute("data-category-id");
+              let categoryName = button.getAttribute("data-category-name");
+              let categoryDescription = button.getAttribute("data-category-description");
+  
+              // Open SweetAlert modal
+              Swal.fire({
+                  title: 'Edit Category',
+                  html: `
+                      <input type="text" id="categoryName" class="swal2-input" value="${categoryName}" placeholder="Category Name">
+                      <textarea id="categoryDescription" class="swal2-textarea" placeholder="Category Description">${categoryDescription}</textarea>
+                  `,
+                  showCancelButton: true,
+                  confirmButtonText: 'Save',
+                  cancelButtonText: 'Cancel',
+                  preConfirm: () => {
+                      // Retrieve edited values
+                      const editedName = Swal.getPopup().querySelector('#categoryName').value;
+                      const editedDescription = Swal.getPopup().querySelector('#categoryDescription').value;
+                      
+                      // Example: Update category data locally
+                      // You should replace this with your actual logic to save/update the data
+  
+                      // Update the local variables with the edited values
+                      categoryName = editedName;
+                      categoryDescription = editedDescription;
+  
+                      // Optionally, you can send the edited data to the server using AJAX
+                      // Example AJAX request:
+                      /*
+                      fetch('/update-category', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                              categoryId: categoryId,
+                              editedName: editedName,
+                              editedDescription: editedDescription
+                          })
+                      })
+                      .then(response => {
+                          // Handle response from server
+                      })
+                      .catch(error => {
+                          console.error('Error:', error);
+                      });
+                      */
+  
+                      // Return the edited values
+                      return {
+                          categoryName: editedName,
+                          categoryDescription: editedDescription
+                      };
+                  }
+              }).then((result) => {
+                  // Update the button's data attributes with the edited values
+                  button.setAttribute("data-category-name", result.value.categoryName);
+                  button.setAttribute("data-category-description", result.value.categoryDescription);
               });
-            });
-          </script>
-          
+          });
+      });
+  });
+  </script>
+    
        
 
 <%- include('../layouts/adminFooter')  %>

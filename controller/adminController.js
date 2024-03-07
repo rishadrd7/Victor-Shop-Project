@@ -6,19 +6,25 @@ require('dotenv').config();
 //adminDetail
 const createAdmin = async (req, res) => {
     try {
-        const name = process.env.adminName;
-        // console.log(name);
-        const email = process.env.adminEmail;
-        // console.log(email);
-       const password = process.env.adminPassword;
-        // console.log(password);
 
-        if (req.body.email === email && req.body.password === password) {
-            req.session.dd = { email, password };
-            res.render('admin/dashboard');
-        } else {
-            res.render('Invalid username and password');
+        const bodyEmail = req.body.email
+        const bodyPass = req.body.password
+
+        const adminData  = await User.findOne({email : bodyEmail , is_admin : true});
+
+        if(adminData){
+
+            const matchPas = await bcrypt.compare(bodyPass , adminData.password)
+           
+            if(matchPas){
+
+                req.session.admin_id = adminData._id
+                res.redirect('/admin/dashboard')
+    
+            }
+
         }
+      
     } catch (error) {
         console.error(error);
       
@@ -31,7 +37,8 @@ const createAdmin = async (req, res) => {
 const Login= async (req,res)=>{
     try{
 
-        res.render("admin/adminLogin");
+        const msg = req.flash('flash')
+        res.render("admin/adminLogin" , {msgg : msg});
     }catch(error){
         console.log(error);
     }
@@ -51,7 +58,7 @@ const dashboard= async( req,res)=>{
 //forgotpass
 const adminForgot= async(req,res)=>{
     try{
-        res.render("admin/adminlogin");
+        res.render("admin/forgotAdmin");
     }catch(error){
         console.log(error);
     }
@@ -61,7 +68,7 @@ const adminForgot= async(req,res)=>{
 
 const resetPass= async(req,res)=>{
     try{
-        res.render("admin/resetPass");
+        res.render("admin/resetpassAdmin");
     }catch(error){
         console.log(error);
     }
@@ -71,6 +78,7 @@ const resetPass= async(req,res)=>{
 //logout
 const logout = async (req,res)=>{
     try {
+        
         res.resnder('/admin')
     } catch (error) {
         console.log(error);
@@ -83,7 +91,7 @@ const logout = async (req,res)=>{
 // set usersPage
 const userpage =async(req,res)=>{
     try {
-        const users = await User.find();
+        const users = await User.find({is_admin : false});
         // console.log(users,'users in dashboars'); 
         res.render('admin/adminUser',{users: users, formatDate: formatDate })
     } catch (error) {

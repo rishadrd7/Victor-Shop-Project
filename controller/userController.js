@@ -12,6 +12,7 @@ const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
 const flash= require('express-flash');
 
+
 //google
 const loadAuth= (req,res)=>{
   res.render('users/login')
@@ -132,7 +133,7 @@ const verifyLogin = async (req, res) => {
        const passwordMatch = await bcrypt.compare(req.body.password, userData.password);
  
        if (passwordMatch) {
-        req.session.user_id = userData._id;
+        req.session.user = userData._id;
         
          res.redirect("/home");
        } else {
@@ -176,13 +177,15 @@ const signUp = async (req, res) => {
 
 
 //homepage from login signup
-const logintoHome = async (req, res) => {
-  try {
-    res.render("users/homepage");
-  } catch (error) {
-    console.log(error);
-  }
-}
+
+// const logintoHome = async (req, res) => {
+//   try {
+//     res.render("users/homepage");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
 
 
 //forgotpassword
@@ -281,8 +284,6 @@ const insertUser = async (req, res) => {
 };
 
 
-
-
 //setup otp page
 const otpPage= async(req,res)=>{
   try{
@@ -309,7 +310,6 @@ const generateOTP = () => {
   }
   return OTP;
 };
-
 
 
 //sent otp mail
@@ -363,8 +363,6 @@ const sendOTPmail = async(name,email,sendOtp,res) => {
 }
 
 
-
-
 //verify OTP
 
 const verifyOTP = async (req , res) => {
@@ -396,7 +394,7 @@ const verifyOTP = async (req , res) => {
                   });
 
                   userSessionData.save();
-
+              
                   req.session.otp = undefined;    //  Deleting The otp after login user
 
                   req.session.user = userSessionData; //  Save User Data in Session (Orginal)
@@ -405,7 +403,7 @@ const verifyOTP = async (req , res) => {
 
                   req.flash("flash", "Verified Successfully");    //  Sweet Alert
                   res.redirect('/home');
-                  
+
               }
               
       } else{
@@ -458,19 +456,22 @@ const loadResendOtp = async (req , res) => {
 
 }
 
+
 //setup main home
 const home = async (req, res) => {
   try {
-    // const userData = req.session.user_Id
+    // const userData = req.session.user
     res.render("users/home");
   } catch (error) {
     console.log(error);
   }
 }
 
+
 const logoutHome = async (req, res) => {
   try {
-    res.render("users/login");
+    req.session.destroy()
+    res.redirect('/')
   } catch (error) {
     console.log(error);
   }
@@ -493,7 +494,7 @@ const shopPage= async(req,res)=>{
 const cartPage= async (req,res)=>{
   try {
     const {id}=req.query;
-    console.log(id);
+    
     const pro = await Product.findOne({_id:id});
     res.render('pages/products',{pro})
   } catch (error) {
@@ -510,7 +511,7 @@ module.exports = {
   loadHome,
   loginPage,
   verifyLogin,
-  logintoHome,
+  // logintoHome,
   forgotPass,
   resetPass,
   signUp,

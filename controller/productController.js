@@ -39,7 +39,7 @@ const productAdd = async(req,res)=>{
 
 const addProduct = async (req, res) => {
     try {
-        console.log('Adding product...');
+        // console.log('Adding product...');
         const { name, category, price, quantity, date, description, offerPrice, offer } = req.body;
         const images = req.files.map(file => file.filename);
         
@@ -62,7 +62,7 @@ const addProduct = async (req, res) => {
 
         await newProduct.save();
 
-        res.send('successModal');
+        res.redirect('/addproduct');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
