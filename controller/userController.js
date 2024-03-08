@@ -148,7 +148,7 @@ const verifyLogin = async (req, res) => {
   } catch (error) {
      console.log(error);
     
-     res.status(500).send("Server error");
+     res.status(500).send("Email and Password Incorrect");
   }
  }
  
@@ -240,6 +240,7 @@ const insertUser = async (req, res) => {
               req.session.userSession = user  //  Save User Data in Session
 
               const userData = req.session.userSession;
+              
 
               if (userData) {
 
@@ -469,7 +470,6 @@ const home = async (req, res) => {
 //logout button
 const logoutHome = async (req, res) => {
   try {
-    console.log("session d")
     req.session.destroy()
     res.redirect('/')
   } catch (error) {
@@ -477,10 +477,11 @@ const logoutHome = async (req, res) => {
   }
 }
 
+
 //setup shopPage
 const shopPage= async(req,res)=>{
   try {
-    const product = await Product.find({});
+    const product = await Product.find({}).populate('category')
     res.render('pages/shop',{product})
   } catch (error) {
     console.log(error);
@@ -489,12 +490,12 @@ const shopPage= async(req,res)=>{
 }
 
 
-//set cart
-const cartPage= async (req,res)=>{
+//set up product details page
+const productDetails= async (req,res)=>{
   try {
     const {id}=req.query;
     
-    const pro = await Product.findOne({_id:id});
+    const pro = await Product.findOne({_id:id}).populate('category')
     res.render('pages/products',{pro})
   } catch (error) {
     console.log(error);
@@ -521,8 +522,7 @@ module.exports = {
   home,
   logoutHome,
   shopPage,
-  cartPage,
-
+  productDetails
 
 
 };

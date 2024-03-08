@@ -61,7 +61,7 @@ const addProduct = async (req, res) => {
 
         await newProduct.save();
 
-        res.redirect('/admin/submit_product');
+        res.redirect('/admin/products' );
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -72,44 +72,36 @@ const addProduct = async (req, res) => {
 //setup editProduct page
 const editProduct = async (req, res) => {
     try {
-        // Assume you have a way to retrieve the product ID from the request
         const productId = req.params.productId;
-        // Fetch the product from the database
         const product = await Product.findById(productId);
-        // Fetch categories from the database
         const category = await Category.find();
-        // Render the editProduct template with the product and category data
         res.render('admin/editProduct', { product: product, category: category });
     } catch (error) {
         console.log(error);
-        // Handle the error appropriately
         res.status(500).send('Error rendering editProduct page');
     }
 }
 
 
-
-const updateProduct = async (req, res) => {
-    try {
-        
-        const productId = req.params.productId;
-        const updatedProductData = req.body;
-
-        // Update the product in the database
-        const updatedProduct = await Product.findByIdAndUpdate(productId, updatedProductData, { new: true });
-
-        // Redirect or send a response
-        res.redirect(`/admin/products/${updatedProduct._id}`);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error updating product');
+//update product
+const updateProduct = async(req,res)=>{
+    try{
+        console.log('product');
+        const {productId}=req.params;
+        console.log(productId);
+        const { name,category, description,offerPrice,price,quantity, } = req.body;
+        console.log(name,category);
+        await Product.updateOne({_id: productId}, {$set: {name:name, category:category, description:description,  offerPrice:offerPrice, price:price , quantity:quantity} });
+        res.redirect('/admin/products');
+    }catch(error){
+        console.log(error.message);
     }
-};
+}
 
 
 
 
-// Toggle the status of a product
+// product list and unlist
 const toggleProductStatus = async (req, res) => {
     try {
         const productId = req.params.id;

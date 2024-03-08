@@ -29,7 +29,7 @@ router.get("/login",userAuth.loginTrue,userController.loginPage);
 router.post("/login",userController.verifyLogin);
 router.get("/registration",userAuth.loginTrue,userController.signUp);
 router.post("/registration",userController.insertUser);
-router.get('/home',userAuth.user,userController.home);
+router.get('/home',userController.home);
 router.post('/logout',userController.logoutHome);
 // router.get("/homepage",userController.logintoHome);
 router.get("/forgotpass",userController.forgotPass);
@@ -41,13 +41,13 @@ router.get('/resendOtp', userController.loadResendOtp);
 
 //==========================views/pages===================================================================
 router.get('/shop',userController.shopPage)
-router.get('/cart',userController.cartPage);
+router.get('/productDetails',userController.productDetails);
 
 
 
 //============================googlelogin==============================================
 
-//middleware
+//set middleware of passport
 router.use(passport.initialize());
 router.use(passport.session());
 
@@ -82,7 +82,6 @@ router.get('/failure', userController.failureLogin);
 
 
 
-
 //====================================facebook==============================================================
 router.get('users/login', isLoggedIn, function (req, res) {
     res.render('users/home', {
@@ -112,7 +111,6 @@ router.get('users/login', isLoggedIn, function (req, res) {
       return next();
     res.redirect('/');
   }
-
 
 //===================================================================================
 module.exports=router;

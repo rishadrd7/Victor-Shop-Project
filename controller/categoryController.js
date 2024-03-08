@@ -39,7 +39,7 @@ const addCategory = async (req, res) => {
     }
 
     const newCategory = new Category({
-      name: name,
+      name: name.toLowerCase(),
       description: description
     });
 
@@ -50,7 +50,7 @@ const addCategory = async (req, res) => {
     res.json({ success: true, message: 'Category added successfully!' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: 'Category with this name already exists' });
+    // res.status(500).json({ success: false, message: 'Category with this name already exists' });
   }
 };
 

@@ -68,6 +68,8 @@ button[type="submit"]:hover {
 
 
         <form action="/admin/products/<%= product._id %>/edit" method="POST" enctype="multipart/form-data">
+
+          
             <div class="form-group">
               <label for="name">Name:</label>
               <input type="text" id="name" name="name" value="<%= product.name %>" class="form-control" required>
@@ -90,6 +92,11 @@ button[type="submit"]:hover {
             </div>
 
             <div class="form-group">
+              <label for="offerPrice">Offer Price:</label>
+              <input type="number" id="offerPrice" name="offerPrice" value="<%= product.offerPrice %>" class="form-control" required>
+            </div>
+
+            <div class="form-group">
               <label for="quantity">Quantity:</label>
               <input type="number" id="quantity" name="quantity" value="<%= product.quantity %>" class="form-control" required>
             </div>
@@ -107,55 +114,26 @@ button[type="submit"]:hover {
               <textarea id="description" name="description" rows="4" class="form-control" required><%= product.description %></textarea>
             </div>
 
-            <div class="form-group">
-              <label for="offerPrice">Offer Price:</label>
-              <input type="number" id="offerPrice" name="offerPrice" value="<%= product.offerPrice %>" class="form-control" required>
-            </div>
-
+        
             <!-- <div class="form-group">
               <label for="offer">Offer:</label>
               <input type="number" id="offer" name="offer" value="<%= product.offer %>" class="form-control" required>
             </div> -->
-            
-           <!-- Form -->
-           <form action="/admin/products/<%= product._id %>/edit" method="POST" enctype="multipart/form-data">
-            <!-- Form fields go here -->  
+          
+
             <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+
         
 
           <!-- Bootstrap Modal for Success Message -->
-          <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h5 class="modal-title" id="successModalLabel">Edit Successful</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                          </button>
-                      </div>
-                      <div class="modal-body">
-                          Your product has been successfully edited.
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
+      
 
 
-          </form>
+      </form>
           
           
 
-          <script>
-            // Listen for form submission
-            document.getElementById('editProductForm').addEventListener('submit', function(event) {
-                // Show the success modal after the form is successfully submitted
-                $('#successModal').modal('show');
-            });
-        </script>
+
         
     
 
@@ -166,6 +144,14 @@ button[type="submit"]:hover {
 
     </div>
 </div>
+
+<script>
+  // Listen for form submission
+  document.getElementById('editProductForm').addEventListener('submit', function(event) {
+      // Show the success modal after the form is successfully submitted
+      $('#successModal').modal('show');
+  });
+</script>
 
 
 <%- include('../layouts/adminFooter')  %>

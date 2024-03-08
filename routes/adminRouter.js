@@ -50,7 +50,7 @@ adminRouter.get('/addProduct',productController.productAdd);
 adminRouter.post('/submit_product',upload.array("image"),productController.addProduct);
 adminRouter.post('/:id/toggle', productController.toggleProductStatus);
 adminRouter.get('/editProduct/:productId', productController.editProduct);
-adminRouter.post('/products/:productId/edit', productController.updateProduct);
+adminRouter.post('/products/:productId/edit',upload.array("image"), productController.updateProduct);
 
 
 

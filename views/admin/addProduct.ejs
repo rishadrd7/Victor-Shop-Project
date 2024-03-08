@@ -35,9 +35,9 @@
   <h3>Add Product</h3>
 
   
-  <form action="/admin/submit_product" method="post" enctype="multipart/form-data">
-    <div class="form-container">
-      <div class="form-side">
+   <form action="/admin/submit_product"  method="post" enctype="multipart/form-data">
+      <div class="form-container">
+       <div class="form-side">
         
             <br><br>
             
@@ -74,31 +74,87 @@
 
               <label for="image">Image:</label><br>
               <input type="file" id="image" name="image" multiple  required><br><br>
+              
+              <!-- <input type="submit" value="Submit" class="sub" style="font-size: 20px; "> -->
+            
+              <input type="submit" value="Submit" class="sub" style="font-size: 20px;" id="submitButton">
 
             
-              <input type="submit" value="Submit" class="sub" style="font-size: 20px; ">
 
-          </div>
-      </div>
-   
+
+
+                 </div>
+              </div>
+                
+                
+                      <label for="description">Description:</label><br>
+                      <textarea id="description" name="description"  required></textarea><br><br>
+                      
+                      <label for="status">Status:</label><br>
+                      <input type="hidden" name="status" value="false"> <!-- Hidden field for status -->
+                      <input type="checkbox" id="status" name="status" checked><br><br>
+                  
+                      
+                      <!-- <label for="offer">Offer:</label><br>
+                      <input type="number" id="offer" name="offer" min="0" max="100" required><br><br> -->
+                  
+            </form>
+    
+
+
+</div>
+</div>
+
+<!-- date showing add product page-->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      // Get today's date
+      const today = new Date();
   
-        <label for="description">Description:</label><br>
-        <textarea id="description" name="description"  required></textarea><br><br>
-        
-        <label for="status">Status:</label><br>
-        <input type="hidden" name="status" value="false"> <!-- Hidden field for status -->
-        <input type="checkbox" id="status" name="status" checked><br><br>
-    
-        
-        <!-- <label for="offer">Offer:</label><br>
-        <input type="number" id="offer" name="offer" min="0" max="100" required><br><br> -->
-    
-    
+      // Format the date as 'YYYY-MM-DD' for input element
+      const formattedDate = today.toISOString().split('T')[0];
+  
+      // Set the value of the date input element
+      document.getElementById('date').value = formattedDate;
+  });
+  </script>
 
 
-  </form>
-</div>
-</div>
+<!-- product add sumbit option -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const submitButton = document.getElementById("submitButton");
+
+  submitButton.addEventListener("click", async function() {
+    try {
+      const formData = new FormData(document.getElementById('submitButton')); // Use the form ID directly
+
+      // Make a fetch request to submit the form data
+      const response = await fetch('/admin/products', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        Swal.fire({
+          title: "Success!",
+          text: "Product added successfully!",
+          icon: "success"
+        });
+      } else {
+        console.error('Failed to add product');
+        // Handle error if needed
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error if needed
+    }
+  });
+});
+
+</script>
+
+
 
 <!-- image crop -->
   <script defer src="https://cdn.crop.guide/loader/l.js?c=NXCRCZ"></script>
@@ -106,7 +162,9 @@
   <!-- sweetalert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
 
 
 

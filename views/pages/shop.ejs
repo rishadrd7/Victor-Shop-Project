@@ -235,7 +235,9 @@
                         <div class="col-6 col-md-4" >
                             <div class="product product-4">
                                 <figure class="product-media">
-                                    <a href="/cart?id=<%= element._id %>">
+
+                                    <!-- passing query  -->
+                                    <a href="/productDetails?id=<%= element._id %>">
                                         <img src="/uploads/<%= element.image[0] %>" alt="Product image" class="product-image1">
                                         <img src="/uploads/<%= element.image[1] %>" alt="Product image" class="product-image-hover">
                                     </a>
@@ -253,11 +255,12 @@
                                     <!-- <div class="product-cat">
                                         <a href="#">Clothing</a>
                                     </div> -->
+                                    <%= element.category?.name   %>
                                     <h3 class="product-title"><a href="product.html"><%= element.name %></a></h3>
-                                    <div class="product-price">
-                                        ₹<%= element.price %>
-                                        <%= element.category?.name   %>
-
+                                    <div class="product-price" >
+                                        ₹<%= element.offerPrice %>
+                                        <!-- ₹<%= element.price %> -->
+                                        
                                     </div>
                                     <!-- <div class="product-nav product-nav-dots">
                                         <a href="#" class="active" style="background: #e5dcb1;"><span class="sr-only">Color name</span></a>
