@@ -11,6 +11,8 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
 const flash= require('express-flash');
+const { product } = require("./productController");
+const randomString =  require('randomstring');
 
 
 //google
@@ -175,16 +177,6 @@ const signUp = async (req, res) => {
 };
 
 
-//homepage from login signup
-
-// const logintoHome = async (req, res) => {
-//   try {
-//     res.render("users/homepage");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
 
 
 //forgotpassword
@@ -193,6 +185,83 @@ const forgotPass = async (req, res) => {
     res.render("users/forgotpass");
   } catch (error) {
     console.log(error);
+  }
+}
+
+const forgotVerify =  async (req,res) => {
+  try {
+
+    const  email = req.body.email;
+    const userData =  await User.findOne({email:email});
+    if(userData){
+      if(userData.is_verified === 0 ){
+        res.render('users/forgotpass', {message:"please Verify your mail"});
+
+      }else{
+      const randomString = randomString.generate();
+      const updateData =  await  User.updateOne({email:email},{$set:{token: randomString}});
+      sendResendPasswordMail(userData.name, userData.email, randomString);
+      res.render('users/forgotpass',{message:"Please check your mail to reset your password:"});
+
+      }
+
+    }else{
+      res.render('users/forgotpass', {message:"User email is incorrect"});
+    }
+
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+//sent otp mail
+const sendResendPasswordMail = async(name,email,token) => {
+
+  try {
+      
+      const transporter = nodemailer.createTransport({
+          service:'gmail',
+          auth:{
+              user:'rishadrasheed147@gmail.com'  ,
+              pass: 'thtp kkww irxp cmox'
+          }
+      });
+      
+
+      // compose email 
+      const mailOption = {
+          from : 'rishadrasheed147@gmail.com',
+          to:email,
+          subject:'For Reset Password',
+          html :`<h3>Hello ${name},Welcome To Victor</h3> <br> <h4>Enter : ${sendOtp} on the OTP Box to register</h4>`
+      }
+
+      //send mail
+      transporter.sendMail(mailOption,function(error,info){
+
+          if(error){
+              console.log('Erro sending mail :- ',error.message);
+          }else{
+              console.log('Email has been sended :- ',info.response);
+          }
+      });
+
+      // otp schema adding 
+      const userOTP = new otp({
+        userEmail:email,
+          otp:sendOtp,
+       
+      });
+
+      await userOTP.save()
+
+      res.redirect(`/otppage?email=${email}`)
+      
+      console.log('otp saved');
+
+  } catch (error) {
+      console.log(error.message);
   }
 }
 
@@ -478,11 +547,39 @@ const logoutHome = async (req, res) => {
 }
 
 
+// ===================================================views pages=========================================================
+
 //setup shopPage
 const shopPage= async(req,res)=>{
   try {
-    const product = await Product.find({}).populate('category')
-    res.render('pages/shop',{product})
+    const products = await Product.aggregate([
+      {
+        $match:{
+          status:false,
+          quantity:{$gt:0}
+        }
+      },
+      
+      {
+          $lookup: {
+              from: "categories", 
+              localField: "category",
+              foreignField: "_id",
+              as: "category"
+          }
+      },
+      {
+          $unwind: "$category"
+      },
+      {
+          $match: {
+              "category.listed": false
+          }
+      }
+  ]);
+  // console.log(products);
+
+    res.render('pages/shop',{product:products})
   } catch (error) {
     console.log(error);
     
@@ -503,6 +600,75 @@ const productDetails= async (req,res)=>{
 }
 
 
+
+//setup wishlist page
+const wishlistPage = async(req,res)=>{
+  try {
+    res.render('pages/wishlist')
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+// setup addtoCart
+const addtoCart =  async (req,res)=>{
+  try {
+    res.render('pages/addtoCart');
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+// setup checkout page
+const checkoutPage =  async(req,res)=>{
+  try {
+    res.render('pages/checkout')
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+// set up user Profile
+
+const userProfile  = async (req, res)=>{
+  try {
+    const userData = await User.findOne({_id: req.session.user})
+    console.log(userData);
+    res.render('pages/profile',{userData})
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+
+// setup addressPage
+const addressPage = async (req,res)=>{
+  try {
+    const userData = await User.findOne({_id: req.session.user})
+
+    res.render('pages/address',{userData});
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+
+const orderPage = async (req,res)=>{
+  try {
+    const userData = await User.findOne({_id: req.session.user})
+    res.render('pages/ordersPage',{userData});
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+
 module.exports = {
   loadAuth,
   successGoogleLogin,
@@ -511,8 +677,9 @@ module.exports = {
   loadHome,
   loginPage,
   verifyLogin,
-  // logintoHome,
   forgotPass,
+  forgotVerify,
+  sendResendPasswordMail,
   resetPass,
   signUp,
   insertUser,
@@ -521,8 +688,16 @@ module.exports = {
   loadResendOtp,
   home,
   logoutHome,
+
+
   shopPage,
-  productDetails
+  productDetails,
+  userProfile,
+  wishlistPage,
+  addtoCart,
+  checkoutPage,
+  addressPage,
+  orderPage
 
 
 };

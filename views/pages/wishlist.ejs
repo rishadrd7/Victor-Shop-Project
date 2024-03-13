@@ -1,272 +1,145 @@
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/new/flip3-img1.webp" alt="Product image" class="product-image1">
-                <img src="/user/assets/images/new/flip3-img2.webp" alt="Product image" class="product-image-hover">
-                <!-- <img src="/user/assets/images/demos/demo-18/products/product-1.jpg" alt="Product image" class="product-image">
-                <img src="/user/assets/images/demos/demo-18/products/product-1-2.jpg" alt="Product image" class="product-image-hover"> -->
-            </a>
-
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
-
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
-
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Linen-blend dress</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $60.00
-            </div><!-- End .product-price -->
-            <div class="product-nav product-nav-dots">
-                <a href="#" class="active" style="background: #e5dcb1;"><span class="sr-only">Color name</span></a>
-                <a href="#" style="background: #bacbd8;"><span class="sr-only">Color name</span></a>
-            </div><!-- End .product-nav -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
+<%- include('../layouts/header')  %>
+<%- include('../layouts/header2')  %>
 
 
 
 
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/new/flip2-img1.webp" alt="Product image" class="product-image2">
-                <img src="/user/assets/images/new/flip2-img2.webp" alt="Product image" class="product-image-hover">
-            </a>
+    <div class="page-wrapper">
+        <header class="header">
+        
+            <div class="header-middle sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
 
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
+                        <a href="index.html" class="logo">
+                            <img src="user/assets/images/logo.png" alt="Molla Logo" width="105" height="25">
+                        </a>
 
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
+                    </div><!-- End .header-left -->
 
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Vest dress</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $9.99
-            </div><!-- End .product-price -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
+                </div><!-- End .container -->
+            </div><!-- End .header-middle -->
+        </header><!-- End .header -->
 
+        <main class="main">
+            <br>
+             <ol class="breadcrumb" style="margin-left: 20px;">
+                <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                <!-- <li class="breadcrumb-item"><a href="#">Shop</a></li> -->
+                <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+            </ol>
+        	<div class="page-header text-center" style="background-image: url('user/assets/images/new/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">Wishlist<span>Shop</span></h1>
+        		</div><!-- End .container -->
+        	</div><!-- End .page-header -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <div class="container">
+                  
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
 
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/new/flip4-img1.webp" alt="Product image" class="product-image1">
-                <img src="/user/assets/images/new/flip4-img2.webp" alt="Product image" class="product-image-hover">
-                <!-- <img src="/user/assets/images/demos/demo-18/products/product-3.jpg" alt="Product image" class="product-image">
-                <img src="/user/assets/images/demos/demo-18/products/product-3-2.jpg" alt="Product image" class="product-image-hover"> -->
-            </a>
+            <div class="page-content">
+            	<div class="container">
+					<table class="table table-wishlist table-mobile">
+						<thead>
+							<tr>
+								<th>Product</th>
+								<th>Price</th>
+								<th>Stock Status</th>
+								<th></th>
+								<th></th>
+							</tr>
+						</thead>
 
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
+						<tbody>
+							<tr>
+								<td class="product-col">
+									<div class="product">
+										<figure class="product-media">
+											<a href="#">
+												<img src="user/assets/images/products/table/product-1.jpg" alt="Product image">
+											</a>
+										</figure>
 
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
+										<h3 class="product-title">
+											<a href="#">Beige knitted elastic runner shoes</a>
+										</h3><!-- End .product-title -->
+									</div><!-- End .product -->
+								</td>
+								<td class="price-col">$84.00</td>
+								<td class="stock-col"><span class="in-stock">In stock</span></td>
+								<td class="action-col">
+                                    <div class="dropdown">
+									<button class="btn btn-block btn-outline-primary-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-list-alt"></i>Select Options
+                                    </button>
 
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Paper bag trousers</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $60.00
-            </div><!-- End .product-price -->
-            <div class="product-nav product-nav-dots">
-                <a href="#" class="active" style="background: #9fac76;"><span class="sr-only">Color name</span></a>
-                <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
-            </div><!-- End .product-nav -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">First option</a>
+                                        <a class="dropdown-item" href="#">Another option</a>
+                                        <a class="dropdown-item" href="#">The best option</a>
+                                      </div>
+                                    </div>
+								</td>
+								<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+							</tr>
+							<tr>
+								<td class="product-col">
+									<div class="product">
+										<figure class="product-media">
+											<a href="#">
+												<img src="user/assets/images/products/table/product-2.jpg" alt="Product image">
+											</a>
+										</figure>
 
+										<h3 class="product-title">
+											<a href="#">Blue utility pinafore denim dress</a>
+										</h3><!-- End .product-title -->
+									</div><!-- End .product -->
+								</td>
+								<td class="price-col">$76.00</td>
+								<td class="stock-col"><span class="in-stock">In stock</span></td>
+								<td class="action-col">
+									<button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
+								</td>
+								<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+							</tr>
+							<tr>
+								<td class="product-col">
+									<div class="product">
+										<figure class="product-media">
+											<a href="#">
+												<img src="user/assets/images/products/table/product-3.jpg" alt="Product image">
+											</a>
+										</figure>
 
+										<h3 class="product-title">
+											<a href="#">Orange saddle lock front chain cross body bag</a>
+										</h3><!-- End .product-title -->
+									</div><!-- End .product -->
+								</td>
+								<td class="price-col">$52.00</td>
+								<td class="stock-col"><span class="out-of-stock">Out of stock</span></td>
+								<td class="action-col">
+									<button class="btn btn-block btn-outline-primary-2 disabled">Out of Stock</button>
+								</td>
+								<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+							</tr>
+						</tbody>
+					</table><!-- End .table table-wishlist -->
+	            	
+                    
+            	</div><!-- End .container -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
 
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/new/flip6-img1.webp" alt="Product image" class="product-image">
-                <img src="/user/assets/images/new/flip6-img2.webp" alt="Product image" class="product-image-hover">
-            </a>
+ 
+  
 
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
-
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
-
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Linen-blend jumpsuit</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $595.00
-            </div><!-- End .product-price -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
-
-
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/new/flip5-img1.webp" alt="Product image" class="product-image1">
-                <img src="/user/assets/images/new/flip5-img3.webp" alt="Product image" class="product-image-hover">
-                <!-- <img src="/user/assets/images/demos/demo-18/products/product-3.jpg" alt="Product image" class="product-image">
-                <img src="/user/assets/images/demos/demo-18/products/product-3-2.jpg" alt="Product image" class="product-image-hover"> -->
-            </a>
-
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
-
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
-
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Paper bag trousers</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $60.00
-            </div><!-- End .product-price -->
-            <div class="product-nav product-nav-dots">
-                <a href="#" class="active" style="background: #9fac76;"><span class="sr-only">Color name</span></a>
-                <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
-            </div><!-- End .product-nav -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
-
-
-
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/new/cart-img14.png" alt="Product image" class="product-image">
-                <img src="/user/assets/images/new/cart-img14.png" alt="Product image" class="product-image-hover">
-            </a>
-
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
-
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
-
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Linen-blend jumpsuit</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $595.00
-            </div><!-- End .product-price -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
-
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/demos/demo-18/products/product-5.jpg" alt="Product image" class="product-image">
-                <img src="/user/assets/images/demos/demo-18/products/product-5-2.jpg" alt="Product image" class="product-image-hover">
-            </a>
-
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
-
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
-
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Silk-blend kaftan</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $370.00
-            </div><!-- End .product-price -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
-
-
-
-
-
-
-
-<div class="col-6 col-md-4">
-    <div class="product product-4">
-        <figure class="product-media">
-            <a href="product.html">
-                <img src="/user/assets/images/demos/demo-18/products/product-9.jpg" alt="Product image" class="product-image">
-                <img src="/user/assets/images/demos/demo-18/products/product-9-2.jpg" alt="Product image" class="product-image-hover">
-            </a>
-
-            <div class="product-action-vertical">
-                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                <a href="popup/quickView.html" class="btn-product-icon btn-quickview" title="Quick view"><span>Quick view</span></a>
-            </div><!-- End .product-action -->
-
-            <div class="product-action">
-                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-            </div><!-- End .product-action -->
-        </figure><!-- End .product-media -->
-
-        <div class="product-body">
-            <div class="product-cat">
-                <a href="#">Clothing</a>
-            </div><!-- End .product-cat -->
-            <h3 class="product-title"><a href="product.html">Vest dress</a></h3><!-- End .product-title -->
-            <div class="product-price">
-                $9.99
-            </div><!-- End .product-price -->
-        </div><!-- End .product-body -->
-    </div><!-- End .product -->
-</div><!-- End .col-sm-6 col-md-4 -->
+<%- include('../layouts/footer')  %>
+<%- include('../layouts/footerNav')  %>

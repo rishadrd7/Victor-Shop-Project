@@ -1,6 +1,6 @@
 
-const Category = require('../models/categoryModel');
 const mongoose = require('mongoose');
+const Category = require('../models/categoryModel');
 
 
 //catagory page

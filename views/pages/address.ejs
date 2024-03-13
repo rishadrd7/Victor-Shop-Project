@@ -1,0 +1,87 @@
+<%- include("../layouts/profileList")  %>
+
+<style>
+    .address-form {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.form-group {
+    margin-bottom: 1rem;
+    width: 400px;
+    color: black;
+
+}
+
+.btn {
+    margin-top: 1rem;
+}
+
+/* You may add further styling as needed */
+
+</style>
+
+<!-- tablediv -->
+<div class='col-md-7 p-5 right' style=" border-radius: 0;">
+
+
+
+    <form action="/add_address" method="POST" class="address-form">
+        <div class="left">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" class="form-control" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+                <label for="pincode">Pincode:</label>
+                <input type="number" class="form-control" id="pincode" name="pincode" required>
+            </div>
+            <div class="form-group">
+                <label for="place">Place:</label>
+                <input type="text" class="form-control" id="place" name="place" required>
+            </div>
+        </div>
+        <div class="righ">
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="form-group">
+                <label for="locality">Locality:</label>
+                <input type="text" class="form-control" id="locality" name="locality" required>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="status" name="status" style="margin-top: 6px;">
+                <label class="form-check-label" style="margin-left: 5px;" for="status">Default Address</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+    
+
+
+
+
+
+
+
+  <!-- profileList end div        -->
+</div>
+</div>
+ <!-- profileList end div        -->
+
+
+<br>
+<br>
+<%- include("../layouts/mobileNav") %>
+<%- include("../layouts/footer")  %>
+<%- include("../layouts/footerNav")  %>

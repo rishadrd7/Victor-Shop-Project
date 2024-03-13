@@ -101,28 +101,23 @@ const updateProduct = async(req,res)=>{
 
 
 
-// product list and unlist
-const toggleProductStatus = async (req, res) => {
+//product list and unlist
+const listUnlistProduct = async (req, res) => {
     try {
-        const productId = req.params.id;
-        const product = await Product.findById(productId);
+        const { id } = req.params; // Retrieve id from request params
+        const { listed } = req.body;
+        
+        const isListed = listed === 'true';
 
-        if (!product) {
-            return res.status(404).send('Product not found');
-        }
+        await Product.updateOne({ _id: id }, { $set: { listed: isListed } });
 
-        // Toggle the status
-        product.status = !product.status;
-        await product.save();
-
-        res.redirect('/admin/products');
+        console.log(`Product ${id} ${isListed ? 'listed' : 'unlisted'}`);
+        res.json({ status: isListed });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error updating product status:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
-
 
 
 
@@ -130,9 +125,9 @@ module.exports = {
     product,
     productAdd,
     addProduct,
-    toggleProductStatus,
     editProduct,
-    updateProduct
+    updateProduct,
+    listUnlistProduct
 
     
 };

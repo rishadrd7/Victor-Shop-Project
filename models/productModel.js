@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema({
     offer: {
         type: Number
     }
+    
 });
 
 module.exports = mongoose.model("Product", productSchema);

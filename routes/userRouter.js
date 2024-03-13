@@ -31,8 +31,8 @@ router.get("/registration",userAuth.loginTrue,userController.signUp);
 router.post("/registration",userController.insertUser);
 router.get('/home',userController.home);
 router.post('/logout',userController.logoutHome);
-// router.get("/homepage",userController.logintoHome);
 router.get("/forgotpass",userController.forgotPass);
+router.post('/forgot',userController.forgotVerify);
 router.post("/resetpass",userController.resetPass);
 router.get("/otppage",userAuth.loginTrue,userController.otpPage);
 router.post("/otpVerify",userController.verifyOTP);
@@ -42,10 +42,15 @@ router.get('/resendOtp', userController.loadResendOtp);
 //==========================views/pages===================================================================
 router.get('/shop',userController.shopPage)
 router.get('/productDetails',userController.productDetails);
+router.get('/wishlistPage',userController.wishlistPage);
+router.get('/cartPage',userController.addtoCart);
+router.get('/checkout',userController.checkoutPage);
+router.get('/profile',userController.userProfile);
+router.get('/profile/address' ,userController.addressPage);
+router.get('/profile/myorders',userController.orderPage);
 
 
-
-//============================googlelogin==============================================
+//============================googleLogin==============================================
 
 //set middleware of passport
 router.use(passport.initialize());

@@ -1,13 +1,15 @@
 
 const express=require("express");
 const adminRouter= express.Router();
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 const adminController=require("../controller/adminController");
 const productController=require("../controller/productController");
 const categoryController=require("../controller/categoryController");
+const orderController=require('../controller/orderController');
 const adminAuth = require('../middleware/adminAuth');
-const fs=require('fs')
-const path =require('path');
-const multer = require('multer');
+
 
 
 
@@ -48,10 +50,9 @@ adminRouter.post('/adminUser',adminController.unblockUser);
 adminRouter.get('/products',productController.product);
 adminRouter.get('/addProduct',productController.productAdd);
 adminRouter.post('/submit_product',upload.array("image"),productController.addProduct);
-adminRouter.post('/:id/toggle', productController.toggleProductStatus);
 adminRouter.get('/editProduct/:productId', productController.editProduct);
 adminRouter.post('/products/:productId/edit',upload.array("image"), productController.updateProduct);
-
+adminRouter.post('/products/:productId/list-unlist', productController.listUnlistProduct);
 
 
 
@@ -63,7 +64,14 @@ adminRouter.get('/addCategory',categoryController.categoryAdd);
 adminRouter.post('/submit_category',categoryController.addCategory);
 adminRouter.post('/update-category',categoryController.editCAtegory);
 adminRouter.get('/categories/delete/:id', categoryController.postDeleteCategory);
-adminRouter.patch('/list-unlist',categoryController.listUnlistCategory);
+adminRouter.post('/list-unlist',categoryController.listUnlistCategory);
+
+
+
+//============================================orders side controller=========================================
+
+adminRouter.get('/orders', orderController.ordersPage);
+
 
 
 //============================================================================================================

@@ -33,13 +33,16 @@ const userSchema= new mongoose.Schema({
         type:Date,
         default:Date.now
     },
-    // status:{
-    //     type:String,
-    //     enum:['active','blocked'],
-    //     default:'active'
-    // },
     googleId:{
         type:String
+    },
+    // is_verified:{
+    //     type:Number,
+    //     default:0
+    // },
+    token:{
+        type:String,
+
     }
 });
 

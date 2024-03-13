@@ -63,59 +63,41 @@
 
 
 
-
                                         <!-- product delete option -->
                                         <!-- <form action="/admin/products/<%= product._id %>/delete" method="post" style="display: inline;">
                                           <button type="submit" class="btn btn-danger">Delete</button>
                                         </form> -->
-
+                                    
+                                      
                                         <!-- product lit and unlist option -->
                                         <% if (product.status) { %>
-                                          <form id="unlistForm_<%= product._id %>" action="/admin/products/<%= product._id %>/unlist" method="post" style="display: inline;">
-                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">Unlist</button>
+                                          <form id="unlistForm_<%= product._id %>" style="display: inline;">
+                                              <button type="button" class="btn btn-warning" onclick="unlistProduct('<%= product._id %>')" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">Unlist</button>
                                           </form>
-                                        <% } else { %>
-                                          <form id="listForm_<%= product._id %>" action="/admin/products/<%= product._id %>/list" method="post" style="display: inline;">
-                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">List</button>
+                                      <% } else { %>
+                                          <form id="listForm_<%= product._id %>" style="display: inline;">
+                                              <button type="button" class="btn btn-success" onclick="listProduct('<%= product._id %>')" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">List</button>
                                           </form>
-                                        <% } %>
-                                        
-                                        <!-- Bootstrap Modal for Confirmation -->
-                                        <div class="modal fade" id="confirmationModal_<%= product._id %>" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel_<%= product._id %>" aria-hidden="true">
-                                          <div class="modal-dialog" role="document">
-                                              <div class="modal-content" style="color: white;">
+                                      <% } %>
 
-                                                  <div class="modal-header">
-                                                      <h5 class="modal-title" id="confirmationModalLabel_<%= product._id %>">Confirmation</h5>
-                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                          <span aria-hidden="true">&times;</span>
-                                                      </button>
-                                                  </div>
-                                                  
+                                  
 
-                                                  <form id="confirmationForm_<%= product._id %>" style="display: inline;">
-                                                      <div class="modal-body">
-                                                          Are you sure you want to <%= product.status ? 'unlist' : 'list' %> this product?
-                                                      </div>
-                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                        <% if (product.status) { %>
-                                                            <button type="button" onclick="confirmAction('/admin/products/<%= product._id %>/unlist',` <%= JSON.stringify(product) %>`)" class="btn btn-warning">Confirm Unlist</button>
-                                                        <% } else { %>
-                                                            <button type="button" onclick="confirmAction('/admin/products/<%= product._id %>/list', `<%= JSON.stringify(product) %>`)" class="btn btn-success">Confirm List</button>
-                                                        <% } %>
-                                                    </div>                                   
-                                                  </form>
-
-                                                  
-                                              </div>
-                                          </div>
-                                      </div>
-                                        
-
+                                        <!-- <form id="toggleForm_<%= product._id %>" action="/admin/product/<%= product._id %>/toggle" method="post" style="display: inline;">
+                                          <% if(product.listed){ %>
+                                          <button id="toggleButton_<%= product._id %>"  type="button" onclick="submitForm('<%= product._id %>','<%= product.listed %>','<%= index %>')"  class="btn btn-warning" data-toggle="modal" data-target="#confirmationModal">
+                                              <%= product.listed ? 'Unlist' : 'List' %>
+                                          </button>
+                                          <%}else{%>
+                                            <button id="toggleButton_<%= product._id %>"  type="button" onclick="submitForm('<%= product._id %>','<%= product.listed %>','<%= index %>')"  class="btn btn-success" data-toggle="modal" data-target="#confirmationModal">
+                                              <%= product.listed ? 'Unlist' : 'List' %>
+                                          </button>
+                                            <% } %>
+                                          <input type="hidden" name="_method" value="PUT">
+                                          <input type="hidden" name="listed" value="<%= !product.listed %>">
+                                        </form> -->
+                                       
+                                       
                                       </td>
-
-
                                   </tr>
                                 <% }); %>
                               </tbody>
@@ -132,34 +114,58 @@
           </div>
        
 
-        <script>
 
-function confirmAction(actionUrl, product) {
-    // Get the form ID based on the action URL
-    var formId = actionUrl.includes('unlist') ? 'confirmationForm_' + product._id : 'confirmationForm_' + product._id;
 
-    // Fetch API request
-    fetch(actionUrl, {
-        method: 'POST',
-        body: new FormData(document.getElementById(formId)),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+<!-- -------------------------------sumbit button list unlist-------------------------- -->
+ 
+<script>
+    async function unlistProduct(productId) {
+
+      console.log("clicked");
+        try {
+            const response = await fetch(`/admin/products/${productId}/list-unlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to unlist product');
+            }
+
+            // Optionally, update the UI to reflect the change (e.g., change button color)
+        } catch (error) {
+            console.error(error);
+            // Handle error
         }
-        // Close the modal
-        $('#confirmationModal_' + product._id).modal('hide');
-        // Optionally, update the product list on the page without reloading
-        // You can do this using JavaScript or by fetching updated data via fetch
-    })
-    .catch(error => {
-        // Handle errors if needed
-        console.error('There was a problem with your fetch operation:', error);
-    });
-}
+    }
+
+    async function listProduct(productId) {
+      console.log("unclicked");
+        try {
+            const response = await fetch(`/admin/products/${productId}/list-unlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to list product');
+            }
+
+            // Optionally, update the UI to reflect the change (e.g., change button color)
+        } catch (error) {
+            console.error(error);
+            // Handle error
+        }
+    }
+</script>
 
 
-        </script>
+
+
 
 
 <%- include('../layouts/adminFooter')  %>
