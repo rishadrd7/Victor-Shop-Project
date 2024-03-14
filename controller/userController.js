@@ -4,57 +4,58 @@ const User = require("../models/userModel");
 const otp = require("../models/otp");
 const bcrypt = require("bcrypt");
 const Product = require('../models/productModel')
+const Category = require('../models/categoryModel')
 const nodemailer = require("nodemailer");
 const passport = require('passport');
 require('dotenv').config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
-const flash= require('express-flash');
+const flash = require('express-flash');
 const { product } = require("./productController");
-const randomString =  require('randomstring');
+const randomString = require('randomstring');
 
 
 //google
-const loadAuth= (req,res)=>{
+const loadAuth = (req, res) => {
   res.render('users/login')
 }
 
-const successGoogleLogin = async (req,res)=>{
-  try{
+const successGoogleLogin = async (req, res) => {
+  try {
     console.log(req.user);
     res.render('users/home')
-    
-  }catch(error){
+
+  } catch (error) {
     console.log(error);
   }
 }
 
-const failureLogin = async (req,res) =>{
-  try{
+const failureLogin = async (req, res) => {
+  try {
     res.render("users/login")
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
 }
 
-passport.serializeUser((user , done)=>{
-  done(null , user);
+passport.serializeUser((user, done) => {
+  done(null, user);
 })
 
-passport.deserializeUser((user ,done)=>{
+passport.deserializeUser((user, done) => {
   done(null, user);
 })
 
 passport.use(new GoogleStrategy({
-  clientID:process.env.CLIEND_ID,
-  clientSecret:process.env.CLIEND_SECRET,
-  callbackURL:'http://localhost:3000/auth/google/callback',
-  passReqToCallback:true
+  clientID: process.env.CLIEND_ID,
+  clientSecret: process.env.CLIEND_SECRET,
+  callbackURL: 'http://localhost:3000/auth/google/callback',
+  passReqToCallback: true
 },
-function(req , accessToken , refreshToken, profile, done){
-  return done(null,profile)
-}
+  function (req, accessToken, refreshToken, profile, done) {
+    return done(null, profile)
+  }
 
 ));
 
@@ -97,7 +98,7 @@ const securedPassword = async (password) => {
 // setup homepage
 const loadHome = async (req, res) => {
   try {
-    
+
     res.render("users/homepage");
 
   } catch (error) {
@@ -112,67 +113,67 @@ const loadHome = async (req, res) => {
 const loginPage = async (req, res) => {
   try {
     const message = req.flash('message');
-    res.render("users/login",{message});
+    res.render("users/login", { message });
   } catch (error) {
     console.log(error);
   }
 };
 
 
-const verifyLogin = async (req, res) => { 
+const verifyLogin = async (req, res) => {
   try {
-     const email = req.body.email;
- 
-     const userData = await User.findOne({ email: email });
-     console.log(userData);
+    const email = req.body.email;
 
-     if(userData.is_blocked){
-       req.flash('message','account is blocked');
-       return res.redirect('/login');
-     }
- 
-     if (userData) {
-       const passwordMatch = await bcrypt.compare(req.body.password, userData.password);
- 
-       if (passwordMatch) {
+    const userData = await User.findOne({ email: email });
+    console.log(userData);
+
+    if (userData.is_blocked) {
+      req.flash('message', 'account is blocked');
+      return res.redirect('/login');
+    }
+
+    if (userData) {
+      const passwordMatch = await bcrypt.compare(req.body.password, userData.password);
+
+      if (passwordMatch) {
         req.session.user = userData._id;
-        
-         res.redirect("/home");
-       } else {
-         
-         res.render("users/login", { message: "Incorrect password." });
-       }
-     } else {
-      
-       res.render("users/login", { message: "Email and Password incorrect." });
-     }
- 
+
+        res.redirect("/home");
+      } else {
+
+        res.render("users/login", { message: "Incorrect password." });
+      }
+    } else {
+
+      res.render("users/login", { message: "Email and Password incorrect." });
+    }
+
   } catch (error) {
-     console.log(error);
-    
-     res.status(500).send("Email and Password Incorrect");
+    console.log(error);
+
+    res.status(500).send("Email and Password Incorrect");
   }
- }
- 
+}
+
 
 //setup registration page
 const signUp = async (req, res) => {
-    
+
   try {
 
-      //  Flash Messgae :-
+    //  Flash Messgae :-
 
-      const emailexitss = req.flash("emailexits");
-      const confirmPassWrong = req.flash("confirmPassWrong");
+    const emailexitss = req.flash("emailexits");
+    const confirmPassWrong = req.flash("confirmPassWrong");
 
-      // const categoryData = await Category.find({ is_Listed: true });
+    // const categoryData = await Category.find({ is_Listed: true });
 
-      res.render('users/registration' , {emailAlredyExits : emailexitss , confirmPassWrongg : confirmPassWrong });
-      
+    res.render('users/registration', { emailAlredyExits: emailexitss, confirmPassWrongg: confirmPassWrong });
+
   } catch (error) {
 
-      console.log(error.message);
-      
+    console.log(error.message);
+
   }
 };
 
@@ -188,80 +189,80 @@ const forgotPass = async (req, res) => {
   }
 }
 
-const forgotVerify =  async (req,res) => {
+const forgotVerify = async (req, res) => {
   try {
 
-    const  email = req.body.email;
-    const userData =  await User.findOne({email:email});
-    if(userData){
-      if(userData.is_verified === 0 ){
-        res.render('users/forgotpass', {message:"please Verify your mail"});
+    const email = req.body.email;
+    const userData = await User.findOne({ email: email });
+    if (userData) {
+      if (userData.is_verified === 0) {
+        res.render('users/forgotpass', { message: "please Verify your mail" });
 
-      }else{
-      const randomString = randomString.generate();
-      const updateData =  await  User.updateOne({email:email},{$set:{token: randomString}});
-      sendResendPasswordMail(userData.name, userData.email, randomString);
-      res.render('users/forgotpass',{message:"Please check your mail to reset your password:"});
+      } else {
+        const randomString = randomString.generate();
+        const updateData = await User.updateOne({ email: email }, { $set: { token: randomString } });
+        sendResendPasswordMail(userData.name, userData.email, randomString);
+        res.render('users/forgotpass', { message: "Please check your mail to reset your password:" });
 
       }
 
-    }else{
-      res.render('users/forgotpass', {message:"User email is incorrect"});
+    } else {
+      res.render('users/forgotpass', { message: "User email is incorrect" });
     }
 
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 //sent otp mail
-const sendResendPasswordMail = async(name,email,token) => {
+const sendResendPasswordMail = async (name, email, token) => {
 
   try {
-      
-      const transporter = nodemailer.createTransport({
-          service:'gmail',
-          auth:{
-              user:'rishadrasheed147@gmail.com'  ,
-              pass: 'thtp kkww irxp cmox'
-          }
-      });
-      
 
-      // compose email 
-      const mailOption = {
-          from : 'rishadrasheed147@gmail.com',
-          to:email,
-          subject:'For Reset Password',
-          html :`<h3>Hello ${name},Welcome To Victor</h3> <br> <h4>Enter : ${sendOtp} on the OTP Box to register</h4>`
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rishadrasheed147@gmail.com',
+        pass: 'thtp kkww irxp cmox'
       }
+    });
 
-      //send mail
-      transporter.sendMail(mailOption,function(error,info){
 
-          if(error){
-              console.log('Erro sending mail :- ',error.message);
-          }else{
-              console.log('Email has been sended :- ',info.response);
-          }
-      });
+    // compose email 
+    const mailOption = {
+      from: 'rishadrasheed147@gmail.com',
+      to: email,
+      subject: 'For Reset Password',
+      html: `<h3>Hello ${name},Welcome To Victor</h3> <br> <h4>Enter : ${sendOtp} on the OTP Box to register</h4>`
+    }
 
-      // otp schema adding 
-      const userOTP = new otp({
-        userEmail:email,
-          otp:sendOtp,
-       
-      });
+    //send mail
+    transporter.sendMail(mailOption, function (error, info) {
 
-      await userOTP.save()
+      if (error) {
+        console.log('Erro sending mail :- ', error.message);
+      } else {
+        console.log('Email has been sended :- ', info.response);
+      }
+    });
 
-      res.redirect(`/otppage?email=${email}`)
-      
-      console.log('otp saved');
+    // otp schema adding 
+    const userOTP = new otp({
+      userEmail: email,
+      otp: sendOtp,
+
+    });
+
+    await userOTP.save()
+
+    res.redirect(`/otppage?email=${email}`)
+
+    console.log('otp saved');
 
   } catch (error) {
-      console.log(error.message);
+    console.log(error.message);
   }
 }
 
@@ -276,95 +277,95 @@ const resetPass = async (req, res) => {
 
 //verify user
 const insertUser = async (req, res) => {
-    
+
   try {
 
-      const emailExists = await User.findOne({ email: req.body.email });
+    const emailExists = await User.findOne({ email: req.body.email });
 
-      if (emailExists) {
+    if (emailExists) {
 
-          req.flash('emailexits', "Email Already Exist");
-          res.redirect('/registration');
-          
+      req.flash('emailexits', "Email Already Exist");
+      res.redirect('/registration');
+
+    } else {
+
+      const user = new User({
+
+        name: req.body.name,
+        email: req.body.email,
+        mobile: req.body.mobile,
+        password: req.body.password,
+        is_admin: false,
+        is_blocked: false
+
+      });
+
+      //  Password and Confirm Password Checkingn :-
+
+      const bodyNorPass = req.body.password;
+      const bodyConfrimPass = req.body.confirmPassword;
+
+      if (bodyNorPass == bodyConfrimPass) {
+
+        req.session.userSession = user  //  Save User Data in Session
+
+        const userData = req.session.userSession;
+
+
+        if (userData) {
+
+          const generatedOTP = generateOTP();    //  Assign OTP to Variable
+
+          req.session.otp = generatedOTP;     //  Otp Saving Session 
+
+          console.log(generatedOTP);
+
+          await sendOTPmail(req.body.name, req.body.email, generatedOTP, res);     // Sended Otp
+
+          setTimeout(async () => {   //  Deleting Otp in the Dbs
+
+            await otp.findOneAndDelete({ emailId: req.body.email });
+
+          }, 60000);
+
+          // res.redirect('/otpVerification');
+
+        } else {
+
+          res.redirect('/registraton');
+
+        };
+
       } else {
 
-          const user = new User({
+        req.flash("confirmPassWrong", "Password Not Match...");
+        res.redirect('/registration');
 
-              name: req.body.name,
-              email: req.body.email,
-              mobile: req.body.mobile,
-              password: req.body.password,
-              is_admin: false,
-              is_blocked: false
-              
-          });
-
-          //  Password and Confirm Password Checkingn :-
-
-          const bodyNorPass = req.body.password;
-          const bodyConfrimPass = req.body.confirmPassword;
-
-          if (bodyNorPass == bodyConfrimPass) {
-
-              req.session.userSession = user  //  Save User Data in Session
-
-              const userData = req.session.userSession;
-              
-
-              if (userData) {
-
-                  const generatedOTP = generateOTP();    //  Assign OTP to Variable
-
-                  req.session.otp = generatedOTP;     //  Otp Saving Session 
-
-                  console.log(generatedOTP);
-  
-                  await sendOTPmail(req.body.name, req.body.email, generatedOTP, res);     // Sended Otp
-
-                  setTimeout( async () => {   //  Deleting Otp in the Dbs
-
-                      await otp.findOneAndDelete({ emailId: req.body.email });
-                      
-                  }, 60000);
-  
-                  // res.redirect('/otpVerification');
-  
-              } else {
-  
-                  res.redirect('/registraton');
-  
-              };
-              
-          } else {
-
-              req.flash("confirmPassWrong" , "Password Not Match...");
-              res.redirect('/registration');
-
-          }
-  
       }
+
+    }
 
   } catch (error) {
 
-      console.log(error.message);
-      
+    console.log(error.message);
+
   }
 
 };
 
 
 //setup otp page
-const otpPage= async(req,res)=>{
-  try{
+const otpPage = async (req, res) => {
+  try {
 
     const queryEmail = req.query.email;
     const invalidOtp = req.flash('flash')
 
     console.log(invalidOtp);
 
-    res.render("users/otppage" , {queryEmail ,msg:invalidOtp, otpMsg : "invalidOtp"});
+    res.render("users/otppage", { queryEmail, msg: invalidOtp, otpMsg: "invalidOtp" });
 
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
 }
@@ -382,145 +383,145 @@ const generateOTP = () => {
 
 
 //sent otp mail
-const sendOTPmail = async(name,email,sendOtp,res) => {
+const sendOTPmail = async (name, email, sendOtp, res) => {
 
   try {
-      
-      const transporter = nodemailer.createTransport({
-          service:'gmail',
-          auth:{
-              user:'rishadrasheed147@gmail.com'  ,
-              pass: 'thtp kkww irxp cmox'
-          }
-      });
-      
 
-      // compose email 
-      const mailOption = {
-          from : 'rishadrasheed147@gmail.com',
-          to:email,
-          subject:'For Otp Verification',
-          html :`<h3>Hello ${name},Welcome To Victor</h3> <br> <h4>Enter : ${sendOtp} on the OTP Box to register</h4>`
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rishadrasheed147@gmail.com',
+        pass: 'thtp kkww irxp cmox'
       }
+    });
 
-      //send mail
-      transporter.sendMail(mailOption,function(error,info){
 
-          if(error){
-              console.log('Erro sending mail :- ',error.message);
-          }else{
-              console.log('Email has been sended :- ',info.response);
-          }
-      });
+    // compose email 
+    const mailOption = {
+      from: 'rishadrasheed147@gmail.com',
+      to: email,
+      subject: 'For Otp Verification',
+      html: `<h3>Hello ${name},Welcome To Victor</h3> <br> <h4>Enter : ${sendOtp} on the OTP Box to register</h4>`
+    }
 
-      // otp schema adding 
-      const userOTP = new otp({
-        userEmail:email,
-          otp:sendOtp,
-       
-      });
+    //send mail
+    transporter.sendMail(mailOption, function (error, info) {
 
-      await userOTP.save()
+      if (error) {
+        console.log('Erro sending mail :- ', error.message);
+      } else {
+        console.log('Email has been sended :- ', info.response);
+      }
+    });
 
-      res.redirect(`/otppage?email=${email}`)
-      
-      console.log('otp saved');
+    // otp schema adding 
+    const userOTP = new otp({
+      userEmail: email,
+      otp: sendOtp,
+
+    });
+
+    await userOTP.save()
+
+    res.redirect(`/otppage?email=${email}`)
+
+    console.log('otp saved');
 
   } catch (error) {
-      console.log(error.message);
+    console.log(error.message);
   }
 }
 
 
 //verify OTP
 
-const verifyOTP = async (req , res) => {
-    
+const verifyOTP = async (req, res) => {
+
   try {
 
-      const userSessionn = req.session.userSession;   //  Assign Session in Variable
-      const getQueryEMail = req.body.email;
+    const userSessionn = req.session.userSession;   //  Assign Session in Variable
+    const getQueryEMail = req.body.email;
 
-      const bodyOtp = req.body.inp1 + req.body.inp2 + req.body.inp3 + req.body.inp4;
-          
-          const verifiedOtp = await otp.findOne({ otp: bodyOtp, userEmail: getQueryEMail });
+    const bodyOtp = req.body.inp1 + req.body.inp2 + req.body.inp3 + req.body.inp4;
 
-          if (verifiedOtp) {
+    const verifiedOtp = await otp.findOne({ otp: bodyOtp, userEmail: getQueryEMail });
 
-              if (userSessionn.email == getQueryEMail) {
+    if (verifiedOtp) {
 
-                  const hashPassword = await securedPassword(req.session.userSession.password);
-                  
-                  const userSessionData = new User({
+      if (userSessionn.email == getQueryEMail) {
 
-                      name: req.session.userSession.name,
-                      email: req.session.userSession.email,
-                      mobile: req.session.userSession.mobile,
-                      password: hashPassword,
-                      is_admin: false,
-                      is_blocked: false,
-                      
-                  });
+        const hashPassword = await securedPassword(req.session.userSession.password);
 
-                  userSessionData.save();
-              
-                  req.session.otp = undefined;    //  Deleting The otp after login user
+        const userSessionData = new User({
 
-                  req.session.user = userSessionData; //  Save User Data in Session (Orginal)
+          name: req.session.userSession.name,
+          email: req.session.userSession.email,
+          mobile: req.session.userSession.mobile,
+          password: hashPassword,
+          is_admin: false,
+          is_blocked: false,
 
-                  await User.findByIdAndUpdate({ _id: userSessionData._id }, { $set: { is_verified: true } });
+        });
 
-                  req.flash("flash", "Verified Successfully");    //  Sweet Alert
-                  res.redirect('/home');
+        userSessionData.save();
 
-              }
-              
-      } else{
-        req.flash("flash", "Invalid OTP"); 
-        res.redirect(`/otppage?email=${getQueryEMail}`)
+        req.session.otp = undefined;    //  Deleting The otp after login user
 
+        req.session.user = userSessionData; //  Save User Data in Session (Orginal)
+
+        await User.findByIdAndUpdate({ _id: userSessionData._id }, { $set: { is_verified: true } });
+
+        req.flash("flash", "Verified Successfully");    //  Sweet Alert
+        res.redirect('/home');
 
       }
 
+    } else {
+      req.flash("flash", "Invalid OTP");
+      res.redirect(`/otppage?email=${getQueryEMail}`)
+
+
+    }
+
   } catch (error) {
 
-      console.log(error);
-      
+    console.log(error);
+
   }
 
 };
 
 //resend otp
-const loadResendOtp = async (req , res) => {
-    
+const loadResendOtp = async (req, res) => {
+
   try {
 
-      const userdata = req.query.email;   //  Query Email
+    const userdata = req.query.email;   //  Query Email
 
-      // console.log(userdata + "hahha");
+    // console.log(userdata + "hahha");
 
-      const userSessionnn = req.session.userSession;  //  Session User Data
+    const userSessionnn = req.session.userSession;  //  Session User Data
 
-      if (userSessionnn.email == userdata) {
-          
-          const generatedotp = generateOTP();
-          
-          console.log(generatedotp + " Re-send Otp");
+    if (userSessionnn.email == userdata) {
 
-          await sendOTPmail(userSessionnn.name, userSessionnn.email, generatedotp, res);
-          
-          setTimeout(async () => {    //  This also Deleting the Otp in Dbs 
-              
-              await otp.findOneAndDelete({ userEmail: userdata });
-              
-          }, 60000);
+      const generatedotp = generateOTP();
 
-      }
+      console.log(generatedotp + " Re-send Otp");
+
+      await sendOTPmail(userSessionnn.name, userSessionnn.email, generatedotp, res);
+
+      setTimeout(async () => {    //  This also Deleting the Otp in Dbs 
+
+        await otp.findOneAndDelete({ userEmail: userdata });
+
+      }, 60000);
+
+    }
 
   } catch (error) {
 
-      console.log(error);
-      
+    console.log(error);
+
   }
 
 }
@@ -539,7 +540,7 @@ const home = async (req, res) => {
 //logout button
 const logoutHome = async (req, res) => {
   try {
-    req.session.destroy()
+    req.session.user = null
     res.redirect('/')
   } catch (error) {
     console.log(error);
@@ -550,50 +551,83 @@ const logoutHome = async (req, res) => {
 // ===================================================views pages=========================================================
 
 //setup shopPage
-const shopPage= async(req,res)=>{
+const shopPage = async (req, res) => {
   try {
+    const categories = await Category.find({})
+    // const products = await Product.find().populate('category')
+    let productss;
+
+
+    const selectedCategory = req.query.category || 'allCategory'
+ 
+
+    const sortBy = req.query.sortby || 'popularity'
+    console.log("sortBy",sortBy);
+    switch (sortBy) {
+      case 'lowToHigh':
+        productss = await Product.find().sort({ price: 1 }).populate('category')
+        break;
+      case 'highToLow':
+        productss = await Product.find().sort({ price: -1 }).populate('category')
+        break;
+      case 'alphabetical':
+        productss = await Product.find().sort({ name: 1 }).populate('category')
+        break;
+      case 'analphabetic':
+        productss = await Product.find().sort({ name: -1 }).populate('category')
+        break;
+      case 'latest':
+        productss = await Product.find().sort({ _id: -1 }).populate('category')
+        break;
+     
+      default:
+        productss = await Product.find().populate('category')
+        break;
+    }
+
+
     const products = await Product.aggregate([
       {
-        $match:{
-          status:false,
-          quantity:{$gt:0}
+        $match: {
+          status: false,
+          quantity: { $gt: 0 }
         }
       },
-      
-      {
-          $lookup: {
-              from: "categories", 
-              localField: "category",
-              foreignField: "_id",
-              as: "category"
-          }
-      },
-      {
-          $unwind: "$category"
-      },
-      {
-          $match: {
-              "category.listed": false
-          }
-      }
-  ]);
-  // console.log(products);
 
-    res.render('pages/shop',{product:products})
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+      {
+        $unwind: "$category"
+      },
+      {
+        $match: {
+          "category.listed": false
+        }
+      }
+    ]);
+    console.log("products", productss);
+
+    res.render('pages/shop', { product: products, categories: categories, productss: productss, selectedCategory })
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 
 //set up product details page
-const productDetails= async (req,res)=>{
+const productDetails = async (req, res) => {
   try {
-    const {id}=req.query;
-    
-    const pro = await Product.findOne({_id:id}).populate('category')
-    res.render('pages/products',{pro})
+    const { id } = req.query;
+
+    const pro = await Product.findOne({ _id: id }).populate('category')
+    res.render('pages/products', { pro })
   } catch (error) {
     console.log(error);
   }
@@ -602,69 +636,69 @@ const productDetails= async (req,res)=>{
 
 
 //setup wishlist page
-const wishlistPage = async(req,res)=>{
+const wishlistPage = async (req, res) => {
   try {
     res.render('pages/wishlist')
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 // setup addtoCart
-const addtoCart =  async (req,res)=>{
+const addtoCart = async (req, res) => {
   try {
     res.render('pages/addtoCart');
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 // setup checkout page
-const checkoutPage =  async(req,res)=>{
+const checkoutPage = async (req, res) => {
   try {
     res.render('pages/checkout')
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 // set up user Profile
 
-const userProfile  = async (req, res)=>{
+const userProfile = async (req, res) => {
   try {
-    const userData = await User.findOne({_id: req.session.user})
+    const userData = await User.findOne({ _id: req.session.user })
     console.log(userData);
-    res.render('pages/profile',{userData})
+    res.render('pages/profile', { userData })
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 
 // setup addressPage
-const addressPage = async (req,res)=>{
+const addressPage = async (req, res) => {
   try {
-    const userData = await User.findOne({_id: req.session.user})
+    const userData = await User.findOne({ _id: req.session.user })
 
-    res.render('pages/address',{userData});
+    res.render('pages/address', { userData });
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
 
-const orderPage = async (req,res)=>{
+const orderPage = async (req, res) => {
   try {
-    const userData = await User.findOne({_id: req.session.user})
-    res.render('pages/ordersPage',{userData});
+    const userData = await User.findOne({ _id: req.session.user })
+    res.render('pages/ordersPage', { userData });
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 

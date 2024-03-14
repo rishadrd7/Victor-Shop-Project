@@ -1,6 +1,16 @@
 <%- include('../layouts/header')  %>
 
+ <!-- Bootstrap CSS -->
+ <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
 
+<style>
+
+.alert-modal-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
 
 <body>
     <div class="page-wrapper">
@@ -100,6 +110,7 @@
                                         </div>
                                     </div>
 
+
                                     <div class="details-filter-row details-row-size">
                                         <label for="size">Size:</label>
                                         <div class="select-custom">
@@ -115,22 +126,38 @@
                                         <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
                                     </div><!-- End .details-filter-row -->
 
+
+
                                     <div class="details-filter-row details-row-size">
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
-                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity  %>" step="1" data-decimals="0" required>
                                         </div><!-- End .product-details-quantity -->
                                     </div><!-- End .details-filter-row -->
 
-                                    
-                                    <div class="product-details-action">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
 
-                                        <div class="details-action-wrapper">
-                                            <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
+
+                                    <div class="details-action-wrapper">
+                                    
+                                          <!-- Add to Cart Button -->
+                                        <a href="#" class="btn-product btn-cart" onclick="addToCart()">
+                                            <span>Add to Cart</span>
+                                        </a>
+
+                                        <!-- Add to Wishlist Button -->
+                                        <a href="#" class="btn-product btn-wishlist" onclick="addToWishlist()">
+                                            <span>Add to Wishlist</span>
+                                        </a>
+
+                                           
+
+
                                             <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a>
                                         </div><!-- End .details-action-wrapper -->
                                     </div><!-- End .product-details-action -->
+
+                                    
+
 
                                     <div class="product-details-footer">
                                         <div class="product-cat">
@@ -138,6 +165,10 @@
                                             </span>
                                             <!-- <a href="#">Yellow</a> -->
                                         </div><!-- End .product-cat -->
+
+
+
+
 
                                         <div class="social-icons social-icons-sm">
                                             <span class="social-label">Share:</span>
@@ -507,6 +538,57 @@
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
+
+
+
+
+    <!-- sweetalert message -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        function addToCart() {
+            // Perform additional actions here, such as routing or making AJAX requests
+            // For example:
+            // window.location.href = "/cart"; // Redirect to cart page
+            // $.post("/add-to-cart", { productId: productId }, function(data) { // Make AJAX request
+            //    console.log(data);
+            // });
+    
+            // Show success message
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Item added to cart successfully",
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: {
+                    popup: 'alert-modal-container'
+                }
+            });
+        }
+    
+        function addToWishlist() {
+            // Perform additional actions here, such as routing or making AJAX requests
+            // For example:
+            // window.location.href = "/wishlist"; // Redirect to wishlist page
+            // $.post("/add-to-wishlist", { productId: productId }, function(data) { // Make AJAX request
+            //    console.log(data);
+            // });
+    
+            // Show success message
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Item added to wishlist successfully",
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: {
+                    popup: 'alert-modal-container'
+                }
+            });
+        }
+    </script>
+    
 
 
 

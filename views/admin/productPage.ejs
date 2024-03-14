@@ -70,14 +70,10 @@
                                     
                                       
                                         <!-- product lit and unlist option -->
-                                        <% if (product.status) { %>
-                                          <form id="unlistForm_<%= product._id %>" style="display: inline;">
-                                              <button type="button" class="btn btn-warning" onclick="unlistProduct('<%= product._id %>')" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">Unlist</button>
-                                          </form>
+                                        <% if (product.status === false) { %>
+                                          <button class="btn btn-success" onclick="toggleProductStatus('<%= product._id %>')">List</button>
                                       <% } else { %>
-                                          <form id="listForm_<%= product._id %>" style="display: inline;">
-                                              <button type="button" class="btn btn-success" onclick="listProduct('<%= product._id %>')" data-toggle="modal" data-target="#confirmationModal_<%= product._id %>">List</button>
-                                          </form>
+                                          <button class="btn btn-danger" onclick="toggleProductStatus('<%= product._id %>')">Unlist</button>
                                       <% } %>
 
                                   
@@ -119,11 +115,9 @@
 <!-- -------------------------------sumbit button list unlist-------------------------- -->
  
 <script>
-    async function unlistProduct(productId) {
-
-      console.log("clicked");
+    async function toggleProductStatus(productId) {
         try {
-            const response = await fetch(`/admin/products/${productId}/list-unlist`, {
+            const response = await fetch(`/admin/products/${productId}/toggle-status`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -131,31 +125,11 @@
             });
 
             if (!response.ok) {
-                throw new Error('Failed to unlist product');
+                throw new Error('Failed to toggle product status');
             }
 
-            // Optionally, update the UI to reflect the change (e.g., change button color)
-        } catch (error) {
-            console.error(error);
-            // Handle error
-        }
-    }
-
-    async function listProduct(productId) {
-      console.log("unclicked");
-        try {
-            const response = await fetch(`/admin/products/${productId}/list-unlist`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to list product');
-            }
-
-            // Optionally, update the UI to reflect the change (e.g., change button color)
+            // Refresh the page or update UI as needed
+            location.reload();
         } catch (error) {
             console.error(error);
             // Handle error

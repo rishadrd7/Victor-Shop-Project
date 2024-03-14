@@ -1,5 +1,6 @@
 <%- include('../layouts/header')  %>
 <%- include('../layouts/header2')  %>
+<%- include('../layouts/mobileNav')  %>
 
 
 <style>
@@ -79,33 +80,37 @@
         <div class="row">
             <div class="col-lg-12">
 
-            <div class="drop">
-                <br>
-                <button class="dropbtn">Category</button>
-                <div class="drop-content">
-                  <a href="#">Mens</a>
-                  <a href="#">Womens</a>
-                  <a href="#">Kids</a>
+                <div class="drop">
+                    <br>
+                    <button class="dropbtn">Category</button>
+                    <div class="drop-content">
+                        <a href="/shop?sortby=allCategory">All Categories</a>
+                        <% categories.forEach(category => { %>
+                            <a href="/shop?sortby=<%= category._id %>"><%= category.name %></a>
+                        <% }); %>
+                    </div>
                 </div>
-              </div>
+                
+                <div class="drop">
+                    <br>
+                    <button class="dropbtn">Sort</button>
+                    <div class="drop-content">
+                        <a href="/shop?sortby=allCategory">All Products</a>
+                        <a href="/shop?sortby=latest">Latest</a>
+                        <a href="/shop?sortby=alphabetical">Aa-Zz</a>
+                        <a href="/shop?sortby=analphabetic">Zz-Aa</a>
+                    </div>
+                </div>
 
-            <div class="drop">
-                <br>
-                <button class="dropbtn">Sort</button>
-                <div class="drop-content">
-                  <a href="#">A-Z</a>
-                  <a href="#">Z-A</a>
+                <div class="drop">
+                    <br>
+                    <button class="dropbtn">Price</button>
+                    <div class="drop-content">
+                        <a href="/shop?sortby=lowToHigh">Price: Low to High</a>
+                        <a href="/shop?sortby=highToLow">Price: High to Low</a>
+                    </div>
                 </div>
-              </div>
-
-            <div class="drop">
-                <br>
-                <button class="dropbtn">Price</button>
-                <div class="drop-content">
-                  <a href="#">Low to High</a>
-                  <a href="#">High to Low</a>
-                </div>
-              </div>
+                
               
               
               
@@ -116,7 +121,7 @@
                     <div class="row justify-content-center">
 
                      
-                    <% locals.product.forEach(element => { %>
+                    <% locals.productss.forEach(element => { %>
                         
                 
                         <div class="col-6 col-md-4" >
@@ -129,12 +134,16 @@
                                         <img src="/uploads/<%= element.image[1] %>" alt="Product image" class="product-image-hover">
                                     </a>
 
+                                        <!-- Add to Wishlist Button -->
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable" onclick="addToWishlist()"><span>add to wishlist</span></a>
                                     </div>
 
+                                    <!-- Add to Cart Button -->
                                     <div class="product-action" style="z-index: 0;">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                        <a href="#" class="btn-product btn-cart" onclick="addToCart()">
+                                            <span>Add to Cart</span>
+                                        </a>
                                     </div>
                                 </figure>
 
@@ -176,6 +185,36 @@
 
 
 
+        <!-- sweetalert message -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            function addToCart() {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Item added to cart successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                    popup: 'alert-modal-container'
+                }
+                });
+            }
+        
+            function addToWishlist() {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Item added to wishlist successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                    popup: 'alert-modal-container'
+                }
+                });
+            }
+        </script>
+    
 
 
     <script>

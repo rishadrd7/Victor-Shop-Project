@@ -102,24 +102,25 @@ const updateProduct = async(req,res)=>{
 
 
 //product list and unlist
-const listUnlistProduct = async (req, res) => {
+const listUnlistProduct=async(req,res)=>{
     try {
-        const { id } = req.params; // Retrieve id from request params
-        const { listed } = req.body;
-        
-        const isListed = listed === 'true';
+        const productId = req.params.productId;
+        console.log(productId,'Changed');
+        const product = await Product.findById(productId);
 
-        await Product.updateOne({ _id: id }, { $set: { listed: isListed } });
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
 
-        console.log(`Product ${id} ${isListed ? 'listed' : 'unlisted'}`);
-        res.json({ status: isListed });
+        // Toggle the product status
+        product.status = !product.status;
+        await product.save();
+
+        res.status(200).json({ message: 'Product status toggled successfully' });
     } catch (error) {
-        console.error('Error updating product status:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.log(error.message);
     }
-};
-
-
+}
 
 module.exports = {
     product,

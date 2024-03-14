@@ -106,8 +106,20 @@ button[type="submit"]:hover {
               <input type="file" id="image" name="image" multiple class="form-control-file">
               <% product.image.forEach(image => { %>
                 <img src="/uploads/<%= image %>" alt="Product Image" style="width: 50px; height: 50px;">
-              <% }); %>
+                <% }); %>
+              </div>
+              
+              <div class="form-group">
+                <label for="editImage">Edit Image:</label>
+                <input type="file" id="editImage" name="editImage" multiple class="form-control-file">
             </div>
+            
+            <!-- <div class="form-group">
+                <label for="editImage">Edited Images:</label><br>
+                <% product.image.forEach(image => { %>
+                    <img src="/uploads/<%= image %>" alt="Product Image" style="width: 50px; height: 50px;">
+                <% }); %>
+            </div> -->
 
             <div class="form-group">
               <label for="description">Description:</label>

@@ -29,25 +29,25 @@ router.get("/login",userAuth.loginTrue,userController.loginPage);
 router.post("/login",userController.verifyLogin);
 router.get("/registration",userAuth.loginTrue,userController.signUp);
 router.post("/registration",userController.insertUser);
-router.get('/home',userController.home);
+router.get('/home',userAuth.user,userController.home);
 router.post('/logout',userController.logoutHome);
 router.get("/forgotpass",userController.forgotPass);
 router.post('/forgot',userController.forgotVerify);
 router.post("/resetpass",userController.resetPass);
-router.get("/otppage",userAuth.loginTrue,userController.otpPage);
+router.get("/otppage",userAuth.loginTrue,userController.otpPage); 
 router.post("/otpVerify",userController.verifyOTP);
 router.get('/resendOtp', userController.loadResendOtp);
 
 
 //==========================views/pages===================================================================
-router.get('/shop',userController.shopPage)
-router.get('/productDetails',userController.productDetails);
-router.get('/wishlistPage',userController.wishlistPage);
-router.get('/cartPage',userController.addtoCart);
-router.get('/checkout',userController.checkoutPage);
-router.get('/profile',userController.userProfile);
-router.get('/profile/address' ,userController.addressPage);
-router.get('/profile/myorders',userController.orderPage);
+router.get('/shop',userAuth.user,userAuth.isBlocked,userController.shopPage);
+router.get('/productDetails',userAuth.user,userAuth.isBlocked,userController.productDetails);
+router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
+router.get('/cartPage',userAuth.user,userAuth.isBlocked,userController.addtoCart);
+router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutPage);
+router.get('/profile',userAuth.user,userAuth.isBlocked,userController.userProfile);
+router.get('/profile/address' ,userAuth.user,userAuth.isBlocked,userController.addressPage);
+router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
 
 
 //============================googleLogin==============================================

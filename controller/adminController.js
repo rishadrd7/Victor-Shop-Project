@@ -78,7 +78,7 @@ const resetPass= async(req,res)=>{
 //logout
 const logout = async (req,res)=>{
     try {
-        
+        req.session.admin_id=null
         res.resnder('/admin')
     } catch (error) {
         console.log(error);

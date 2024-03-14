@@ -52,7 +52,7 @@ adminRouter.get('/addProduct',productController.productAdd);
 adminRouter.post('/submit_product',upload.array("image"),productController.addProduct);
 adminRouter.get('/editProduct/:productId', productController.editProduct);
 adminRouter.post('/products/:productId/edit',upload.array("image"), productController.updateProduct);
-adminRouter.post('/products/:productId/list-unlist', productController.listUnlistProduct);
+adminRouter.post('/products/:productId/toggle-status',productController.listUnlistProduct)
 
 
 
@@ -64,7 +64,7 @@ adminRouter.get('/addCategory',categoryController.categoryAdd);
 adminRouter.post('/submit_category',categoryController.addCategory);
 adminRouter.post('/update-category',categoryController.editCAtegory);
 adminRouter.get('/categories/delete/:id', categoryController.postDeleteCategory);
-adminRouter.post('/list-unlist',categoryController.listUnlistCategory);
+adminRouter.patch('/list-unlist',categoryController.listUnlistCategory);
 
 
 

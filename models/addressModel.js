@@ -5,7 +5,7 @@ const address=mongoose.Schema({
     UserId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
-        ref:"victorData"
+        ref:"User"
     },
 
     address:[{

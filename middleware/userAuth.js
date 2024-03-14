@@ -6,7 +6,7 @@ const user = async (req, res, next) => {
 
         if (!req.session.user) {
 
-            return res.redirect('/login');
+            return res.redirect('/');
 
         } else {
 
@@ -48,8 +48,8 @@ const isBlocked = async (req, res, next) => {
     try {
 
         if (req.session.user) {
-            
-            const userData = await User.findOne({ _id: req.session.user._id });
+            console.log('req.session',req.session.user);
+            const userData = await User.findOne({ _id: req.session.user });
 
             if (userData.is_blocked == true) {
                 

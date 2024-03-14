@@ -27,7 +27,7 @@ const userSchema= new mongoose.Schema({
     },
     is_blocked:{
         type:Boolean,
-        default:true
+        default:false
     },
     dateJoined:{
         type:Date,

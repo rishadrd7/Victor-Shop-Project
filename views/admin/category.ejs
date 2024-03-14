@@ -103,7 +103,7 @@
 <!-- -------------------------------sumbit button list unlist-------------------------- -->
 <script>
  async function submitForm(id,listed,i) {
-
+  
   console.log(listed)
      const toggleButton = document.getElementById(`toggleButton_${id}`)
       const response = await axios.patch('/admin/list-unlist',{id,listed});
