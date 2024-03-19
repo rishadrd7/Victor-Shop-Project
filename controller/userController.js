@@ -754,24 +754,7 @@ const productDetails = async (req, res) => {
 
 
 
-
-
-// setup addtoCart
-const addtoCart = async (req, res) => {
-  try {
-    const carts = await Cart.find().populate('products.productId');
-
-    res.render('pages/addtoCart', { carts });
-  } catch (error) {
-    console.error('Error fetching carts:', error);
-  }
-};
-
-
-
-
-
-// set up user Profile
+// ==============================set up user Profile=========================
 
 const userProfile = async (req, res) => {
   try {
@@ -787,12 +770,12 @@ const userProfile = async (req, res) => {
 //edit profile
 const editProfile = async (req, res) => {
   try {
-      const { name, mobile } = req.body;
+      const { name,username, mobile } = req.body;
 
       // Perform any necessary validation or processing here
 
       // Update the user details in the database
-      const user = await User.findOneAndUpdate({ _id: req.session.user }, { name, mobile }, { new: true });
+      const user = await User.findOneAndUpdate({ _id: req.session.user }, { name,username, mobile }, { new: true });
 
       // Assuming you want to redirect to a profile page after submission
       res.redirect('/profile'); // Change this to your desired route
@@ -837,7 +820,7 @@ const changePassword = async (req, res) => {
 };
 
 
-// setup addressPage
+//================================== setup addressPage=================================
 const addressPage = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -853,7 +836,7 @@ const addressPage = async (req, res) => {
   }
 };
 
-
+//add address 
 const addAddress = async (req, res) => {
   try {
       const userId = req.session.user; // Assuming userId is stored in session
@@ -900,6 +883,7 @@ const addAddress = async (req, res) => {
 };
 
 
+//edit address
 const editAddress = async (req, res) => {
   try {
     const { addressId, name, phone, streetaddress, place, locality, landmark, country, state, pincode, alternatePhone } = req.body;
@@ -938,29 +922,190 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+//================================= addtoCart============================
 
-
-//set up orderpage
-const orderPage = async (req, res) => {
+//setup addtoCart
+const addtoCart = async (req, res) => {
   try {
-    const userData = await User.findOne({ _id: req.session.user })
-    res.render('pages/ordersPage', { userData });
-  } catch (error) {
-    console.log(error);
+    const carts = await Cart.find().populate('products.productId');
 
+    res.render('pages/addtoCart', { carts });
+  } catch (error) {
+    console.error('Error fetching carts:', error);
   }
-}
+};
+
+
+//======================================set up checkout============================================
+
 
 // setup checkout page
 const checkoutPage = async (req, res) => {
   try {
-    res.render('pages/checkout')
+    const userId = req.session.user;
+    const userData = await User.findById(userId);
+    const addressData = await Address.find({userId:userId})
+    const carts = await Cart.find().populate('products.productId');
+    if (!userData) {
+      return res.status(404).send('User not found');
+    }
+    
+    
+    res.render('pages/checkout',{ userData, addressData , carts})
   } catch (error) {
     console.log(error);
-
+    
   }
 }
 
+//edit checkoutAddress
+const editCheckoutAddress = async (req, res) => {
+  try {
+
+    const { addressId, name, phone, streetaddress, place, locality, landmark, country, state, pincode, alternatePhone } = req.body;
+
+    // Update address in the database
+    await Address.findByIdAndUpdate(addressId, {
+        name,
+        phone,
+        streetaddress,
+        place,
+        locality,
+        landmark,
+        country,
+        state,
+        pincode,
+        alternatePhone
+    });
+
+    // Redirect to the checkout page or the appropriate page after address is edited
+    res.redirect('/checkout');
+
+    console.log(addressId + " Address changed");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error'); // Handle errors appropriately
+  }
+};
+
+
+//add address to checkout page
+const addCheckoutAddress = async (req, res) => {
+  try {
+    console.log("aaaaa");
+      const userId = req.session.user; // Assuming userId is stored in session
+      console.log(userId);
+      const {
+          name,
+          phone,
+          pincode,
+          locality,
+          streetaddress,
+          place,
+          country,
+          state,
+          landmark,
+          alternatePhone
+      } = req.body;
+
+      console.log(name , " address added in checkout page");
+
+      // Create a new address object
+      const newAddress = new Address({
+          userId: userId,
+          name: name,
+          phone: phone,
+          pincode: pincode,
+          locality: locality,
+          streetaddress: streetaddress,
+          place: place,
+          country: country,
+          state: state,
+          landmark:landmark,
+          alternatePhone:alternatePhone
+      });
+
+      // Save the new address to the database
+      await newAddress.save();
+
+      
+      res.redirect('/checkout')
+
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+//======================================set up orderpage============================================
+
+const orderPage = async (req, res) => {
+  try {
+    // Find the user data
+    const userData = await User.findOne({ _id: req.session.user });
+
+    // Find orders associated with the user
+    const orders = await Order.find({ userId: req.session.user }).populate('items.productId');
+
+    // Render the ordersPage template with user data and orders
+    res.render('pages/ordersPage', { userData, orders });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// Function to calculate the total amount of the order based on products
+function calculateTotalAmount(products) {
+  let total = 0;
+
+  // Check if products is iterable (i.e., an array)
+  if (Array.isArray(products)) {
+      for (const product of products) {
+          total += product.productId.offerPrice * product.quantity; // Assuming offerPrice is the price of the product
+      }
+  } else {
+      // Handle case where products is not iterable or empty
+      console.error('Error: Products is not iterable or empty.');
+  }
+
+  return total;
+}
+
+
+const placeOrder = async (req, res) => {
+  try {
+      // Extract order details from request body
+      const { addressId, paymentMethod } = req.body;
+
+      // Create new order instance
+      const order = new Order({
+          userId: req.session.user, // Assuming user is authenticated
+          products: req.session.cart, // Assuming you're using session for cart data
+          orderUserDetails: addressId,
+          totalAmount: calculateTotalAmount(req.session.cart), // Implement this function
+          paymentMethod: paymentMethod
+          // Add other relevant order details here
+      });
+
+      // Save order to database
+      await order.save();
+
+      // Clear cart session after successful order placement
+      req.session.cart = [];
+
+      // Respond with success message
+      res.status(200).json({ message: 'Order placed successfully.' });
+  } catch (error) {
+      console.error(error);
+      // Handle error case
+      res.status(500).json({ error: 'An error occurred while placing the order.' });
+  }
+};
+
+
+
+
+//==================================================setup wishlist page=====================================
 //setup wishlist page
 const wishlistPage = async (req, res) => {
   try {
@@ -1007,10 +1152,13 @@ module.exports = {
   addAddress,
   deleteAddress,
   editAddress,
-  wishlistPage,
   addtoCart,
   checkoutPage,
-  orderPage
-
+  editCheckoutAddress,
+  addCheckoutAddress,
+  orderPage,
+  placeOrder,
+  wishlistPage
+  
 
 };

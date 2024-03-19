@@ -44,9 +44,6 @@ router.get('/resendOtp', userController.loadResendOtp);
 //==========================views/pages===================================================================
 router.get('/shop',userAuth.user,userAuth.isBlocked,userController.shopPage);
 router.get('/productDetails',userAuth.user,userAuth.isBlocked,userController.productDetails);
-router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
-router.get('/cartPage',userAuth.user,userAuth.isBlocked,userController.addtoCart);
-router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutPage);
 router.get('/profile',userAuth.user,userAuth.isBlocked,userController.userProfile);
 router.post('/submit-form', userController.editProfile);
 router.post('/change-password', userController.changePassword);
@@ -54,8 +51,14 @@ router.get('/profile/address' ,userAuth.user,userAuth.isBlocked,userController.a
 router.post('/profile/add-address', userController.addAddress);
 router.post('/delete-address',userController.deleteAddress);
 router.post('/profile/edit-address', userController.editAddress);
+router.get('/cartPage',userAuth.user,userAuth.isBlocked,userController.addtoCart);
+router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutPage);
+router.post('/checkout/edit-address', userController.editCheckoutAddress);
+router.post('/checkout/add-address',userController.addCheckoutAddress);
+
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
-  
+router.post('/place-order', userController.placeOrder);
+router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
 
 //============================================cart side controller=========================================
 router.post('/add-to-cart', cartController.addToCart);
