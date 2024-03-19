@@ -8,6 +8,7 @@ const adminController=require("../controller/adminController");
 const productController=require("../controller/productController");
 const categoryController=require("../controller/categoryController");
 const orderController=require('../controller/orderController');
+const cartController=require('../controller/cartController');
 const adminAuth = require('../middleware/adminAuth');
 
 
@@ -71,7 +72,6 @@ adminRouter.patch('/list-unlist',categoryController.listUnlistCategory);
 //============================================orders side controller=========================================
 
 adminRouter.get('/orders', orderController.ordersPage);
-
 
 
 //============================================================================================================

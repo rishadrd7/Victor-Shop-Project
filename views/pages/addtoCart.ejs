@@ -16,7 +16,7 @@
                         </button>
 
                         <a href="index.html" class="logo">
-                            <img src="user/assets/images/logo.png" alt="Molla Logo" width="105" height="25">
+                            <!-- <img src="user/assets/images/logo.png" alt="Molla Logo" width="105" height="25"> -->
                         </a>
 
                     </div><!-- End .header-left -->
@@ -51,65 +51,65 @@
 	                	<div class="row">
 	                		<div class="col-lg-9">
 	                			<table class="table table-cart table-mobile">
+
 									<thead>
 										<tr>
 											<th>Product</th>
 											<th>Price</th>
 											<th>Quantity</th>
 											<th>Total</th>
-											<th></th>
 										</tr>
 									</thead>
 
+										
 									<tbody>
-										<tr>
-											<td class="product-col">
-												<div class="product">
-													<figure class="product-media">
-														<a href="#">
-															<img src="user/assets/images/products/table/product-1.jpg" alt="Product image">
-														</a>
-													</figure>
+										<% carts.forEach((cart, cartIndex) => { %>
+											<% cart.products.forEach((product, productIndex) => { %>
+												<tr>
+													<td class="product-col">
+														<div class="product">
+															<figure class="product-media">
+																<a href="/productDetails?id=<%= product.productId._id %>">
+																	<!-- Use product image here -->
+																	<img src="/uploads/<%= product.productId.image[0] %>" alt="Product image">
+																</a>
+															</figure>
+									
+															<h3 class="product-title">
+																<!-- Access product name -->
+																<a href="/productDetails?id=<%= product.productId._id %>"><%= product.productId.name %></a>
+															</h3><!-- End .product-title -->
+														</div><!-- End .product -->
+													</td>
+													<td class="price-col">₹<%= product.productId.offerPrice %></td>
+													<td class="quantity-col">
+														<div class="cart-product-quantity">
+															<!-- Input for quantity -->
+															<input type="number" class="form-control" value="<%= product.quantity %>" min="1" max="10" step="1" data-decimals="0" required>
+															
+														</div><!-- End .cart-product-quantity -->
+													</td>
+													<td class="total-col">₹<%= product.productId.offerPrice * product.quantity %></td>
+													<!-- <td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td> -->
+													
 
-													<h3 class="product-title">
-														<a href="#">Beige knitted elastic runner shoes</a>
-													</h3><!-- End .product-title -->
-												</div><!-- End .product -->
-											</td>
-											<td class="price-col">$84.00</td>
-											<td class="quantity-col">
-                                                <div class="cart-product-quantity">
-                                                    <input type="number" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
-                                                </div><!-- End .cart-product-quantity -->
-                                            </td>
-											<td class="total-col">$84.00</td>
-											<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
-										</tr>
-										<tr>
-											<td class="product-col">
-												<div class="product">
-													<figure class="product-media">
-														<a href="#">
-															<img src="user/assets/images/products/table/product-2.jpg" alt="Product image">
-														</a>
-													</figure>
-
-													<h3 class="product-title">
-														<a href="#">Blue utility pinafore denim dress</a>
-													</h3><!-- End .product-title -->
-												</div><!-- End .product -->
-											</td>
-											<td class="price-col">$76.00</td>
-											<td class="quantity-col">
-                                                <div class="cart-product-quantity">
-                                                    <input type="number" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
-                                                </div><!-- End .cart-product-quantity -->                                 
-                                            </td>
-											<td class="total-col">$76.00</td>
-											<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
-										</tr>
+													<!-- Button to remove the product from the cart -->
+													<td class="remove-col">
+														<button class="btn-remove" onclick="removeFromCart('<%= cart._id %>', '<%= product.productId._id %>')"><i class="icon-close"></i></button>
+													</td>
+													
+												</tr>
+											<% }) %>
+										<% }) %>
 									</tbody>
-								</table><!-- End .table table-wishlist -->
+									
+									
+
+								</table>
+
+
+
+
 
 	                			<div class="cart-bottom">
 			            			<div class="cart-discount">
@@ -117,13 +117,15 @@
 			            					<div class="input-group">
 				        						<input type="text" class="form-control" required placeholder="coupon code">
 				        						<div class="input-group-append">
-													<button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
+													<!-- <button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button> -->
 												</div><!-- .End .input-group-append -->
 			        						</div><!-- End .input-group -->
 			            				</form>
 			            			</div><!-- End .cart-discount -->
 
-			            			<a href="#" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
+
+
+			            			<a href="" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
 		            			</div><!-- End .cart-bottom -->
 	                		</div><!-- End .col-lg-9 -->
 	                		<aside class="col-lg-3">
@@ -132,10 +134,7 @@
 
 	                				<table class="table table-summary">
 	                					<tbody>
-	                						<tr class="summary-subtotal">
-	                							<td>Subtotal:</td>
-	                							<td>$160.00</td>
-	                						</tr><!-- End .summary-subtotal -->
+	                						
 	                						<tr class="summary-shipping">
 	                							<td>Shipping:</td>
 	                							<td>&nbsp;</td>
@@ -148,7 +147,7 @@
 														<label class="custom-control-label" for="free-shipping">Free Shipping</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$0.00</td>
+	                							<td>₹0.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
 	                						<tr class="summary-shipping-row">
@@ -158,7 +157,7 @@
 														<label class="custom-control-label" for="standart-shipping">Standart:</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$10.00</td>
+	                							<td>₹0.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
 	                						<tr class="summary-shipping-row">
@@ -168,25 +167,42 @@
 														<label class="custom-control-label" for="express-shipping">Express:</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$20.00</td>
+	                							<td>0.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
-	                						<tr class="summary-shipping-estimate">
+	                						<!-- <tr class="summary-shipping-estimate">
 	                							<td>Estimate for Your Country<br> <a href="dashboard.html">Change address</a></td>
 	                							<td>&nbsp;</td>
-	                						</tr><!-- End .summary-shipping-estimate -->
+	                						</tr> -->
+											
+											<tbody>
+												<% let cartTotal = 0; %>
+												<% carts.forEach(cart => { %>
+													<% cart.products.forEach(product => { %>
+														<% let totalProductPrice = product.productId.offerPrice * product.quantity; %>
+														<tr>
+															<!-- Display individual product details -->
+															<!-- Add other product details here as needed -->
+															<!-- <td class="total-col">₹<%= totalProductPrice.toFixed(2) %></td> -->
+														</tr>
+														<% cartTotal += totalProductPrice; %>
+													<% }) %>
+												<% }) %>
+												<!-- Row for total cart price -->
+												<tr id="totalRow" class="summary-total">
+													<td>Total:</td>
+													<td id="totalPrice">₹<%= cartTotal.toFixed(2) %></td>
+												</tr>
+											</tbody>
+											
+	                				</table>
 
-	                						<tr class="summary-total">
-	                							<td>Total:</td>
-	                							<td>$160.00</td>
-	                						</tr><!-- End .summary-total -->
-	                					</tbody>
-	                				</table><!-- End .table table-summary -->
 
-	                				<a href="checkout.html" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+
+	                				<a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
 	                			</div><!-- End .summary -->
 
-		            			<a href="category.html" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
+		            			<a href="/shop" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
 	                		</aside><!-- End .col-lg-3 -->
 	                	</div><!-- End .row -->
 	                </div><!-- End .container -->
@@ -198,6 +214,106 @@
     </div><!-- End .page-wrapper -->
 
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+
+	
+<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!-- price totaling -->
+<script>
+    // Function to update total price when quantity changes
+    function updateTotalPrice(input, price) {
+        var quantity = parseInt(input.value);
+        var totalPrice = quantity * price;
+        input.closest('tr').querySelector('.total-col').textContent = '₹' + totalPrice.toFixed(2);
+
+        // Update total cart price
+        updateCartTotal();
+    }
+
+    // Function to update total cart price
+    function updateCartTotal() {
+        var cartTotal = 0;
+        var totalRows = document.querySelectorAll('.total-col');
+        totalRows.forEach(function(row) {
+            cartTotal += parseFloat(row.textContent.slice(1));
+        });
+
+        // Update total price displayed
+        document.getElementById('totalPrice').textContent = '₹' + cartTotal.toFixed(2);
+    }
+
+    // Add event listener to all quantity input fields
+    var quantityInputs = document.querySelectorAll('.form-control');
+    quantityInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            var price = parseFloat(input.closest('tr').querySelector('.price-col').textContent.slice(1));
+            updateTotalPrice(input, price);
+        });
+    });
+
+    // Call updateCartTotal initially to calculate total price on page load
+    updateCartTotal();
+</script>
+
+
+
+<!-- remove product from cart -->
+<script>
+	function removeFromCart(cartId, productId) {
+    // Display confirmation dialog using SweetAlert
+    swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to remove this product from your cart?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If user confirms deletion, make an AJAX request to remove the product from the cart
+            fetch(`/removeProductFromCart/${cartId}/${productId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // If the removal was successful, show success message using SweetAlert
+                    swal.fire(
+                        'Deleted!',
+                        'The product has been removed from your cart.',
+                        'success'
+                    );
+                    // Reload the page or update the cart content dynamically
+                    location.reload(); // Reload the page
+                    // Alternatively, update the cart content dynamically without reloading the page
+                } else {
+                    // Handle error response
+                    swal.fire(
+                        'Error!',
+                        'Failed to remove the product from your cart.',
+                        'error'
+                    );
+                    console.error('Error removing product from cart');
+                }
+            })
+            .catch(error => {
+                // Handle error response
+                swal.fire(
+                    'Error!',
+                    'Failed to remove the product from your cart.',
+                    'error'
+                );
+                console.error('Error removing product from cart:', error);
+            });
+        }
+    });
+}
+
+</script>
+
 
 
   

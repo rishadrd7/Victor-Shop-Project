@@ -2,52 +2,89 @@
 
 <style>
     .form-control{
-        width: 700px;
+        width: 400px;
     }
-    .btn-primary{
+    /* .btn-primary{
         margin-left: 40%;
-    }
+    } */
     .txt{
         color: black;
         font-weight: normal;
         font-size: medium;
     }
+    .btn-edit{
+  color: white;
+  background-color: rgb(56, 66, 202);
+}
+.btn-edit:hover{
+  color: white;
+  background-color: rgb(9, 9, 124);
+}
 </style>
 
 
         <div class='col-md-7 p-5 right' style=" border-radius: 0;">
             
         
-
             <form class='col-md-10' action="/submit-form" method="post">
-                
-
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="inputEmail4" class="txt">Full Name</label>
-                        <input type="text" class="form-control" id="firstName" name="name" placeholder="Full Name" value="<%= locals.userData.name %>" />       
+                        <input type="text" class="form-control" id="fullName" name="name" placeholder="Full Name" value="<%= locals.userData.name %>" disabled />       
                     </div>       
                 </div>
                 
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="inputPassword4" class="txt">Email Address</label>
-                        <input type="text" class="form-control" id="lastName" name="email" placeholder="Email" value="<%= locals.userData.email %>" readonly />        
+                        <input type="text" class="form-control" id="email" name="email" placeholder="Email" value="<%= locals.userData.email %>" readonly />        
                     </div>
                 </div>
-                
-
                 <div class="row">
                     <div class="form-group col-md-6">
-                        <label for="phone" class="txt" style="color: black; ">Mobile Number</label>
-                        <input type="text" class="form-control" id="phone" name="mobile" value="<%= locals.userData.mobile %>" />              
+                        <label for="phone" class="txt">Mobile Number</label>
+                        <input type="text" class="form-control" id="phone" name="mobile" value="<%= locals.userData.mobile %>" disabled />              
                     </div>
                 </div>
+                <button type="button" class="btn btn-edit" id="editBtn">Edit</button>
+                <button type="submit" class="btn btn-edit" id="saveBtn" style="display: none;">Save</button>
 
 
-                <button type="submit" class="btn btn-primary">Save</button>
             </form>
-
+            
+            <div class="pass" style="margin-top: 20px;">  
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-pencil-square" style="margin-top: 20px; " viewBox="0 0 16 16">
+                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+              </svg>
+                <button class="btn btn-icon-prepend" style=" margin-top: 20px; margin-left: -10px; " type="button" data-toggle="collapse" data-target="#passwordCollapse" aria-expanded="false" aria-controls="passwordCollapse">
+                    Change Password
+                </button>
+            </div> 
+                
+            
+            <form class='col-md-10' id="passwordForm" action="/change-password" method="post">
+                <div class="collapse" id="passwordCollapse">
+                    <div class="card card-body">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Current Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+                        </div>
+                        <button type="submit" style="width: 50px;" class="btn btn-edit">Save changes</button>
+                    </div>
+                </div>
+            </form>
+            
+            
+            
             
             
             
@@ -55,6 +92,72 @@
         </div>
 </div>
  <!-- profileList end div        -->
+
+<!-- 
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>  -->
+
+ <!-- edit profile function -->
+ <script>
+    document.getElementById('editBtn').addEventListener('click', function() {
+        document.getElementById('fullName').removeAttribute('disabled');
+        // document.getElementById('userName').removeAttribute('disabled');
+        document.getElementById('phone').removeAttribute('disabled');
+        document.getElementById('saveBtn').style.display = 'block';
+        this.style.display = 'none';
+      });
+    </script>
+ 
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+ 
+ 
+ <!-- change password -->
+<script>
+  // Function to display sweet alert
+  function showSuccessAlert(message) {
+    swal({
+      title: "Success!",
+      text: message,
+      icon: "success",
+      button: "OK",
+    });
+  }
+
+  // Assuming you have the form submission logic using Fetch API or AJAX
+  document.getElementById('passwordForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (newPassword !== confirmPassword) {
+      alert('New password and confirm password do not match');
+      return;
+    }
+
+    try {
+      const response = await fetch('/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to change password');
+      }
+
+      const data = await response.json();
+      showSuccessAlert(data.message); // Display success message using sweet alert
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while changing password');
+    }
+  });
+</script>
 
  
  <br>

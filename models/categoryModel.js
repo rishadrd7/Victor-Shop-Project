@@ -19,4 +19,4 @@ const  mongoose= require("mongoose");
     }
  })
 
- module.exports=mongoose.model('Category',category)
+ module.exports=mongoose.model('Category',category);

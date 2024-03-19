@@ -48,7 +48,7 @@ const isBlocked = async (req, res, next) => {
     try {
 
         if (req.session.user) {
-            console.log('req.session',req.session.user);
+            // console.log('req.session',req.session.user);
             const userData = await User.findOne({ _id: req.session.user });
 
             if (userData.is_blocked == true) {

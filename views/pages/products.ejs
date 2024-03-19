@@ -1,7 +1,7 @@
 <%- include('../layouts/header')  %>
+<%- include('../layouts/header2')  %>
+<br><br><br><br>
 
- <!-- Bootstrap CSS -->
- <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
 
 <style>
 
@@ -111,38 +111,45 @@
                                     </div>
 
 
-                                    <div class="details-filter-row details-row-size">
-                                        <label for="size">Size:</label>
-                                        <div class="select-custom">
-                                            <select name="size" id="size" class="form-control">
-                                                <option value="#" selected="selected">Select a size</option>
-                                                <option value="s">Small</option>
-                                                <option value="m">Medium</option>
-                                                <option value="l">Large</option>
-                                                <option value="xl">Extra Large</option>
-                                            </select>
-                                        </div><!-- End .select-custom -->
+                                        <!-- <div class="details-filter-row details-row-size">
+                                            <label for="size">Size:</label>
+                                            <div class="select-custom">
+                                                <select name="size" id="size" class="form-control">
+                                                    <option value="#" selected="selected">Select a size</option>
+                                                    <option value="s">Small</option>
+                                                    <option value="m">Medium</option>
+                                                    <option value="l">Large</option>
+                                                    <option value="xl">Extra Large</option>
+                                                </select>
+                                            </div>
 
-                                        <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
-                                    </div><!-- End .details-filter-row -->
+                                            <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
+                                        </div> -->
 
 
-
+                                    <!-- quantity and show out of stock -->
                                     <div class="details-filter-row details-row-size">
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
-                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity  %>" step="1" data-decimals="0" required>
-                                        </div><!-- End .product-details-quantity -->
-                                    </div><!-- End .details-filter-row -->
+                                            <% if (pro.quantity > 0) { %>
+                                                <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity  %>" step="1" data-decimals="0" required>
+                                                <% } else { %>
+                                                    <span class="out-of-stock-message" style="font-size: 30px; color: rgb(0, 0, 0); font-weight: 400">Sold Out</span>
+                                                <span>This item currently out of stock</span> 
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    
 
 
 
                                     <div class="details-action-wrapper">
                                     
                                           <!-- Add to Cart Button -->
-                                        <a href="#" class="btn-product btn-cart" onclick="addToCart()">
+                                          <a href="#" class="btn-product btn-cart" <% if (pro.quantity < 0) { %>disabled<% } %> onclick="addToCart('<%= pro._id %>')">
                                             <span>Add to Cart</span>
                                         </a>
+                                        
 
                                         <!-- Add to Wishlist Button -->
                                         <a href="#" class="btn-product btn-wishlist" onclick="addToWishlist()">
@@ -299,7 +306,7 @@
                                 </div><!-- End .reviews -->
                             </div><!-- .End .tab-pane -->
                         </div><!-- End .tab-content -->
-                    </div>End .product-details-tab
+                    </div>
 
 
 
@@ -544,30 +551,43 @@
 
     <!-- sweetalert message -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     
-    <script>
-        function addToCart() {
-            // Perform additional actions here, such as routing or making AJAX requests
-            // For example:
-            // window.location.href = "/cart"; // Redirect to cart page
-            // $.post("/add-to-cart", { productId: productId }, function(data) { // Make AJAX request
-            //    console.log(data);
-            // });
-    
-            // Show success message
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Item added to cart successfully",
-                showConfirmButton: false,
-                timer: 1500,
-                customClass: {
-                    popup: 'alert-modal-container'
-                }
+
+ <script>
+
+    function addToCart(productId) {
+        let data = { productId: productId }; 
+        console.log('data is:', data);
+
+        axios.post('/add-to-cart', data) // Adjust the route path as needed
+            .then(response => {
+                console.log('Product added to cart:', response.data);
+
+                // Show success message using SweetAlert
+                swal.fire({
+                    icon: 'success',
+                    title: 'Product added to cart!',
+                    text: 'The product has been added to your cart.',
+                    timer: 1500, // Time in milliseconds (adjust as needed)
+                    showConfirmButton: false
+                });
+            })
+            .catch(error => {
+                console.error('Error adding product to cart:', error);
+                // Show error message using SweetAlert if needed
+                swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to add the product to cart. Please try again.'
+                });
             });
-        }
+    }
+
+</script>
     
-        function addToWishlist() {
+<script>
+    function addToWishlist() {
             // Perform additional actions here, such as routing or making AJAX requests
             // For example:
             // window.location.href = "/wishlist"; // Redirect to wishlist page
@@ -577,19 +597,14 @@
     
             // Show success message
             Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "Item added to wishlist successfully",
-                showConfirmButton: false,
-                timer: 1500,
-                customClass: {
-                    popup: 'alert-modal-container'
-                }
+            icon: 'success',
+            title: 'Added to Wishlist!',
+            text: 'Item added to wishlist successfully.',
+            showConfirmButton: false,
+            timer: 1500
             });
         }
-    </script>
-    
-
+</script>
 
 
     <!-- image zoom function -->

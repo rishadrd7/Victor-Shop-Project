@@ -5,6 +5,7 @@ const cookieSession = require('cookie-session');
 const config = require("../config/config");
 const router = express.Router();
 const userController=require("../controller/userController");
+const cartController=require('../controller/cartController');
 const userAuth = require("../middleware/userAuth");
 require('dotenv').config();
 const passport = require("passport");
@@ -32,8 +33,9 @@ router.post("/registration",userController.insertUser);
 router.get('/home',userAuth.user,userController.home);
 router.post('/logout',userController.logoutHome);
 router.get("/forgotpass",userController.forgotPass);
-router.post('/forgot',userController.forgotVerify);
-router.post("/resetpass",userController.resetPass);
+router.post('/forgotpassword',userController.forgotVerify);
+router.get("/resetpass",userController.loadConfirmPassword);
+router.post('/resetpassword',userController.verifyConfirmPassword);
 router.get("/otppage",userAuth.loginTrue,userController.otpPage); 
 router.post("/otpVerify",userController.verifyOTP);
 router.get('/resendOtp', userController.loadResendOtp);
@@ -46,11 +48,25 @@ router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishl
 router.get('/cartPage',userAuth.user,userAuth.isBlocked,userController.addtoCart);
 router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutPage);
 router.get('/profile',userAuth.user,userAuth.isBlocked,userController.userProfile);
+router.post('/submit-form', userController.editProfile);
+router.post('/change-password', userController.changePassword);
 router.get('/profile/address' ,userAuth.user,userAuth.isBlocked,userController.addressPage);
+router.post('/profile/add-address', userController.addAddress);
+router.post('/delete-address',userController.deleteAddress);
+router.post('/profile/edit-address', userController.editAddress);
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
+  
+
+//============================================cart side controller=========================================
+router.post('/add-to-cart', cartController.addToCart);
+router.delete('/removeProductFromCart/:cartId/:productId', cartController.removeProductFromCart);
 
 
-//============================googleLogin==============================================
+
+
+
+
+//================================================googleLogin==============================================
 
 //set middleware of passport
 router.use(passport.initialize());

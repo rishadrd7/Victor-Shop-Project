@@ -134,12 +134,18 @@
 >
   <div class="reset">
     <h4>Reset Password</h4>
-    <form action="/login" method="post">
+    <form action="/resetpassword" method="post">
       <label for="password">Enter your new password:</label><br>
-        <input type="password" id="password" name="password" required><br>
-        <label for="confirm-password">Confirm your new password:</label><br>
-        <input type="password" id="confirm-password" name="confirm-password" required><br>
+      <input type="password" id="password" name="password" required><br>
+      <label for="confirm-password">Confirm your new password:</label><br>
+      <input type="password" id="confirm-password" name="confirmPassword" required><br>
       <input type="submit" value="Reset Password" />
+      <input type="email" hidden value="<%= forgotEmail %>" name="email">
     </form>
   </div>
 </div>
+
+
+
+
+

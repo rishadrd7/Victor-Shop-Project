@@ -11,14 +11,43 @@
     margin-bottom: 1rem;
     width: 400px;
     color: black;
-
+    
+}.form-control{
+  color: #000;
+  font-weight: 400;
 }
-
 .btn {
     margin-top: 1rem;
 }
+.btn-edit{
+  color: white;
+  background-color: rgb(56, 66, 202);
+}
+.btn-edit:hover{
+  color: white;
+  background-color: rgb(9, 9, 124);
+}
 
-/* You may add further styling as needed */
+/* address */
+.address-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.address-details {
+  margin-bottom: 10px;
+}
+
+.address-details p {
+  margin: 5px 0;
+}
+
+.address-buttons form {
+  display: inline;
+  margin-right: 5px;
+}
+
 
 </style>
 
@@ -27,59 +56,271 @@
 
 
 
-    <form action="/add_address" method="POST" class="address-form">
-        <div class="left">
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+    
+    <button class="btn btn-edit" type="button" data-toggle="collapse" data-target="#addAddressFormCollapse" aria-expanded="false" aria-controls="addAddressFormCollapse">
+        Add New Address
+    </button>
+    
+    <form action="/profile/add-address"  method="POST"  onsubmit="submitForm(event)">
+      <div class="collapse" id="addAddressFormCollapse">
+            <div class="left">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control"  id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" class="form-control" id="phone" name="phone">
+                </div>
+                <!-- <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div> -->
+                <div class="form-group">
+                    <label for="pincode">Pincode:</label>
+                    <input type="text" class="form-control" id="pincode" name="pincode" required>
+                </div>
+                <div class="form-group">
+                  <label for="Number">Locality:</label>
+                  <input type="text" class="form-control" id="locality" name="locality" required>
+              </div>
+              <div class="form-group">
+                <label for="streetaddress">Street Address:</label>
+                <input type="text" class="form-control" id="streetaddress" name="streetaddress" required>
             </div>
-            <div class="form-group">
-                <label for="phone">Phone:</label>
-                <input type="text" class="form-control" id="phone" name="phone">
+                <div class="form-group">
+                    <label for="place">City/Distric/Town</label>
+                    <input type="text" class="form-control" id="place" name="place" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country:</label>
+                    <input type="text" class="form-control" id="country" name="country" required>
+                </div>
+                
             </div>
-            <div class="form-group">
-                <label for="pincode">Pincode:</label>
-                <input type="number" class="form-control" id="pincode" name="pincode" required>
-            </div>
-            <div class="form-group">
-                <label for="place">Place:</label>
-                <input type="text" class="form-control" id="place" name="place" required>
-            </div>
-        </div>
-        <div class="righ">
-            <div class="form-group">
-                <label for="city">City:</label>
-                <input type="text" class="form-control" id="city" name="city" required>
-            </div>
-            <div class="form-group">
+            <div class="righ">    
+              <div class="form-group">
                 <label for="state">State:</label>
-                <input type="text" class="form-control" id="state" name="state" required>
+                <select class="form-select" id="state" name="state" required>
+                  <option value="">Select State</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Ladakh">Ladakh</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Puducherry">Puducherry</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="landmark">Landmark (Optional)</label>
+                  <input type="text" class="form-control" name="landmark" >
+              </div>
+                <div class="form-group">
+                  <label for="number">Alternate Phone (Optional)</label>
+                  <input type="text" class="form-control"  name="number" >
+              </div>
+              <button type="submit" class="btn btn-edit">Submit</button>
             </div>
-            <div class="form-group">
-                <label for="locality">Locality:</label>
-                <input type="text" class="form-control" id="locality" name="locality" required>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="status" name="status" style="margin-top: 6px;">
-                <label class="form-check-label" style="margin-left: 5px;" for="status">Default Address</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
     
 
+    <br><br>
+
+ <!-- pages/address.ejs -->
+ <div class="address-list">
+  <% if (addressData && addressData.length > 0) { %>
+    <% addressData.forEach(address => { %>
+      <div class="address-item" style="background-color: #ffffff;">
+        <div class="address-details" >
+          <p class="name" style="color: black; font-size: larger; font-weight: 400;"><%= address.name %>  -  <%= address.phone %></p>
+          <p class="streetaddress" style="color: #000; font-weight: 400;"><%= address.streetaddress %></p>
+          <p class="address" style="color: #000; background-color: #ffffff;">
+            <%= address.place %> , <%= address.locality %> , <%= address.landmark %> <br>
+            <%= address.country %> - <%= address.state %> - <%= address.pincode %> <br>
+            <%= address.alternatePhone  %>
+          </p>
+        </div>
+
+        <!-- Edit and delete buttons -->
+         <!-- Edit and delete buttons -->
+         <div class="address-buttons">
+          <button type="button" class="btn btn-edit edit-address" id="editButton_<%= address._id %>" data-id="<%= address._id %>" data-toggle="collapse" data-target="#collapse_<%= address._id %>">Edit</button>
+
+
+          <button type="button" class="btn btn-danger delete-address" id="deleteButton_<%= address._id %>" data-id="<%= address._id %>">Delete</button>
+        </div>
+
+       <!-- Edit form (hidden by default) -->
+       <div class="collapse" id="collapse_<%= address._id %>">
+        <div class="card card-body">
+          <form id="editAddressForm" action="/profile/edit-address" method="POST">
+                <input type="hidden" name="addressId" value="<%= address._id %>">
+    
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" value="<%= address.name %>" placeholder="Enter name" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="<%= address.phone %>" placeholder="Enter phone" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="pincode">Pincode:</label>
+                  <input type="text" class="form-control" id="pincode" name="pincode" value="<%= address.pincode %>" placeholder="Enter pincode" required>
+                </div>
+    
+                <div class="form-group">
+                  <label for="streetaddress">Street Address:</label>
+                  <input type="text" class="form-control" id="streetaddress" name="streetaddress" value="<%= address.streetaddress %>" placeholder="Enter street address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="locality">Locality:</label>
+                    <input type="text" class="form-control" id="locality" name="locality" value="<%= address.locality %>" placeholder="Enter locality" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="place">City/Distric/Town</label>
+                    <input type="text" class="form-control" id="place" name="place" value="<%= address.place %>" placeholder="Enter place" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="country">Country:</label>
+                    <input type="text" class="form-control" id="country" name="country" value="<%= address.country %>" placeholder="Enter country" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" class="form-control" id="state" name="state" value="<%= address.state %>" placeholder="Enter state" required>
+                </div>
+
+                  <div class="form-group">
+                    <label for="landmark">Landmark:</label>
+                    <input type="text" class="form-control" id="landmark" name="landmark" value="<%= address.landmark %>" placeholder="Enter landmark" >
+                 </div>
+                
+                <div class="form-group">
+                    <label for="alternatePhone">Alternate Phone:</label>
+                    <input type="text" class="form-control" id="alternatePhone" name="alternatePhone" value="<%= address.alternatePhone %>" placeholder="Enter alternate phone" >
+                </div>
+    
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+    </div>
+    
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p>No addresses found.</p>
+  <% } %>
+</div>
 
 
 
 
+  
+  
 
 
   <!-- profileList end div        -->
 </div>
 </div>
  <!-- profileList end div        -->
+ 
+ 
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+
+
+
+
+
+<!-- address delete function -->
+<script>
+  // Add an event listener to the delete buttons
+  document.querySelectorAll('.delete-address').forEach(button => {
+    button.addEventListener('click', function() {
+      // Get the ID of the address
+      const addressId = this.getAttribute('data-id');
+      
+      // Show confirmation dialog
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        // If user confirms deletion
+        if (result.isConfirmed) {
+          // Send a POST request to delete endpoint
+          deleteAddress(addressId);
+        }
+      });
+    });
+  });
+
+  function deleteAddress(addressId) {
+    fetch('/delete-address', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: addressId })
+    })
+    .then(response => {
+      if (response.ok) {
+        // If deletion is successful, reload the page or update the UI as needed
+        window.location.reload(); // Reload the page
+      } else {
+        // If deletion fails, show error message
+        console.error('Failed to delete address');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+
+
+  
 <br>
 <br>
 <%- include("../layouts/mobileNav") %>
