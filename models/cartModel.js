@@ -19,9 +19,6 @@ const cartScehma = mongoose.Schema({
             default: 1
         }
     }],
-    // offerPrice:{
-    //     type:Number
-    // },
     totalPrice: {
         type: Number,
         required: true,

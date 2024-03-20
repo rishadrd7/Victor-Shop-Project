@@ -114,6 +114,12 @@ footer {
 												</p>
 											</div>
 
+											<% if (locals.tokkken != null) { %>
+
+												<input type="text" hidden value="<%= tokkken %>" id="y" name="token">
+
+											<%	} %>
+
 							    		</div><!-- End .form-group -->
 
 							    		<div class="form-footer justify-content-center ">

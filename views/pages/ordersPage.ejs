@@ -1,38 +1,59 @@
 <%- include("../layouts/profileList")  %>
 
 
-<div class='col-md-8 p-5 right' style=" border-radius:0;">
 
+
+<div class='col-md-8 p-5 right' style=" border-radius:0;">
   <% if (orders.length > 0) { %>
     <% orders.forEach(order => { %>
-      <div class="card mb-3">
-        <div class="card-header">
-          Order ID: <%= order._id %>
+      <div class="order-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Products</th>
+              <th scope="col">Order Date</th>
+              <th scope="col">Payment Method</th>
+              <th></th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            <tr>
+              <td>
+                <% order.products.forEach(item => { %>
+                  <div class="product-container">
+                    
+                    <div class="media">
+                      <img style="width: 60px; height: 60px;" src="/uploads/<%= item.productId.image[0] %>" class="mr-3 order-image" alt="<%= item.productName %>" >
+                      <div class="media-body">
+                        <h5 class="mt-0"><%= item.productId.name %></h5>
+                        <p>OrderId:<%= order._id %></p>
+                        <p>Price: ₹<%= item.productId.offerPrice %></p>
+                        <p>Quantity: <%= item.quantity %></p>
+                        <td><%= order.orderDate.toString().split(' ').slice(0,4) %></td>
+                        <td><%= order.paymentMethod %></td>
+                        <td></td>
+                        <td><p>Delivery Status: <%= order.status %></p>
+                          <br>
+                        <button onclick="cancelProduct('<%= order._id %>', '<%= item._id %>')">Cancel Product</button></td>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="card-body">
-          <h5 class="card-title">Order Date: <%= order.createdAt.toDateString() %></h5>
-          <% order.items.forEach(item => { %>
-            <div class="media">
-              <img src="<%= item.productId.image %>" class="mr-3" alt="<%= item.productName %>">
-              <div class="media-body">
-                <h5 class="mt-0"><%= item.productName %></h5>
-                <p>Price: $<%= item.totalPrice %></p>
-                <p>Quantity: <%= item.quantity %></p>
-                <p>Delivery Status: <%= order.status %></p> <!-- Assuming you have a status field in your Order model -->
-              </div>
-            </div>
-            <hr>
-          <% }) %>
-        </div>
-      </div>
-    <% }) %>
-  <% } else { %>
-    <p>No orders found.</p>
-  <% } %>
-
-
-
-  
+        <% }) %>
+        <% }) %>
+        <% } else { %>
+          <p>No orders found.</p>
+          <% } %>
+          
+          
+          
 
 
   <!-- profileList end div        -->

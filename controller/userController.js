@@ -15,9 +15,6 @@ require('dotenv').config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
-const flash = require('express-flash');
-const { product } = require("./productController");
-const randomString = require('randomstring');
 
 
 //google
@@ -132,7 +129,9 @@ const loadHome = async (req, res) => {
 const loginPage = async (req, res) => {
   try {
     const message = req.flash('message');
-    res.render("users/login", { message });
+    const msg = req.flash('passwordChanged');
+
+    res.render("users/login", { message , msg});
   } catch (error) {
     console.log(error);
   }
@@ -203,13 +202,14 @@ const signUp = async (req, res) => {
 //forgotpassword
 const forgotPass = async (req, res) => {
   try {
-    res.render("users/forgotpass");
+    const msg = req.flash('message')
+    res.render("users/forgotpass" ,{msg});
   } catch (error) {
     console.log(error);
   }
 }
 
-
+//forgot verify
 const forgotVerify = async (req, res) => {
   try {
 
@@ -222,7 +222,7 @@ const forgotVerify = async (req, res) => {
      const name = userData.name;
 
      const OTPP = generateOTP();
-     const token = generateTokenForgottPassword;
+     const token = generateTokenForgottPassword();
      console.log("Forgot Password :-" +OTPP);
 
      req.session.otp = OTPP;
@@ -231,7 +231,7 @@ const forgotVerify = async (req, res) => {
 
     } else {
       
-      res.flash('flash' , "Invalid Email");
+      req.flash('message' , "Invalid Email");
       res.redirect("/forgotpass");
     }
 
@@ -241,7 +241,7 @@ const forgotVerify = async (req, res) => {
   }
 }
 
-//sent otp mail
+//sent otp mail forgot
 const sendMailForgotPassword = async (name , email, otpp, res , token) => {
     
   try {
@@ -322,7 +322,7 @@ const generateTokenForgottPassword = () => {
 }
 
 
-
+//forgot load confirm password page
 const loadConfirmPassword = async (req, res) => {
     
   try {
@@ -341,7 +341,7 @@ const loadConfirmPassword = async (req, res) => {
 };
 
 
-//  verifyConfirmPassword (Post Method)
+// forgot verifyConfirmPassword (Post Method)
 
 const verifyConfirmPassword = async (req , res) => {
     
@@ -350,6 +350,7 @@ const verifyConfirmPassword = async (req , res) => {
       const bodyEmail = req.body.email;
       const passwordd = req.body.password;
       const confirmPassword = req.body.confirmPasword;
+      console.log(bodyEmail);
 
       const hashPasswordd = await securedPassword(passwordd);
 
@@ -361,11 +362,12 @@ const verifyConfirmPassword = async (req , res) => {
               
               await User.findOneAndUpdate({ email: bodyEmail }, { $set: { password: hashPasswordd } });
               req.flash('passwordChanged', "Password Changed Successfully");
-              res.redirect('/confirmPass');
+              res.redirect('/login');
 
           } 
              
       } 
+      console.log("password changed successfully");
 
   } catch (error) {
 
@@ -375,7 +377,9 @@ const verifyConfirmPassword = async (req , res) => {
 
 };
 
-//verify user
+
+
+//signup verify user 
 const insertUser = async (req, res) => {
 
   try {
@@ -417,7 +421,7 @@ const insertUser = async (req, res) => {
           const generatedOTP = generateOTP();    //  Assign OTP to Variable
 
           req.session.otp = generatedOTP;     //  Otp Saving Session 
-
+          
           console.log(generatedOTP);
 
           await sendOTPmail(req.body.name, req.body.email, generatedOTP, res);     // Sended Otp
@@ -483,7 +487,7 @@ const generateOTP = () => {
 };
 
 
-//sent otp mail
+//sent otp mail signup
 const sendOTPmail = async (name, email, sendOtp, res) => {
 
   try {
@@ -534,15 +538,16 @@ const sendOTPmail = async (name, email, sendOtp, res) => {
 }
 
 
-//verify OTP
+//verify OTP signup
 
 const verifyOTP = async (req, res) => {
 
   try {
-    console.log(req.session.userSession);
     const userSessionn = req.session.userSession;   //  Assign Session in Variable
     const getQueryEMail = req.body.email;
     const getToken = req.body.token;
+    
+    console.log(getToken);
    
 
     const bodyOtp = req.body.inp1 + req.body.inp2 + req.body.inp3 + req.body.inp4;
@@ -611,7 +616,7 @@ const verifyOTP = async (req, res) => {
 };
 
 
-//resend otp
+//resend otp signup
 const loadResendOtp = async (req, res) => {
 
   try {
@@ -883,7 +888,7 @@ const addAddress = async (req, res) => {
 };
 
 
-//edit address
+//edit profile address
 const editAddress = async (req, res) => {
   try {
     const { addressId, name, phone, streetaddress, place, locality, landmark, country, state, pincode, alternatePhone } = req.body;
@@ -950,7 +955,6 @@ const checkoutPage = async (req, res) => {
       return res.status(404).send('User not found');
     }
     
-    
     res.render('pages/checkout',{ userData, addressData , carts})
   } catch (error) {
     console.log(error);
@@ -992,7 +996,7 @@ const editCheckoutAddress = async (req, res) => {
 //add address to checkout page
 const addCheckoutAddress = async (req, res) => {
   try {
-    console.log("aaaaa");
+    console.log("add new address");
       const userId = req.session.user; // Assuming userId is stored in session
       console.log(userId);
       const {
@@ -1038,67 +1042,57 @@ const addCheckoutAddress = async (req, res) => {
 
 //======================================set up orderpage============================================
 
+
+// Render the orders page
 const orderPage = async (req, res) => {
   try {
-    // Find the user data
-    const userData = await User.findOne({ _id: req.session.user });
-
-    // Find orders associated with the user
-    const orders = await Order.find({ userId: req.session.user }).populate('items.productId');
-
-    // Render the ordersPage template with user data and orders
-    res.render('pages/ordersPage', { userData, orders });
+      const userData = await User.findOne({ _id: req.session.user }); 
+      const orders = await Order.find({ userId: req.session.user }).populate('products.productId');
+      console.log('dfhljkdsflhdsfjldsf'+orders)
+      res.render('pages/ordersPage', { userData, orders }); 
   } catch (error) {
-    console.log(error);
-    res.status(500).send('Internal Server Error');
+      console.error(error);
   }
 };
 
-// Function to calculate the total amount of the order based on products
-function calculateTotalAmount(products) {
-  let total = 0;
 
-  // Check if products is iterable (i.e., an array)
-  if (Array.isArray(products)) {
-      for (const product of products) {
-          total += product.productId.offerPrice * product.quantity; // Assuming offerPrice is the price of the product
-      }
-  } else {
-      // Handle case where products is not iterable or empty
-      console.error('Error: Products is not iterable or empty.');
-  }
-
-  return total;
-}
-
-
+// Place order from checkout
 const placeOrder = async (req, res) => {
   try {
-      // Extract order details from request body
-      const { addressId, paymentMethod } = req.body;
 
-      // Create new order instance
-      const order = new Order({
-          userId: req.session.user, // Assuming user is authenticated
-          products: req.session.cart, // Assuming you're using session for cart data
-          orderUserDetails: addressId,
-          totalAmount: calculateTotalAmount(req.session.cart), // Implement this function
-          paymentMethod: paymentMethod
-          // Add other relevant order details here
-      });
+    const { userId, address, paymentMethod } = req.body;
+    console.log( userId, address, paymentMethod )
 
-      // Save order to database
-      await order.save();
+    const ad = await Address.findOne({userId:req.session.user,_id:address});
+    const cart =await Cart.findOne({userId:req.session.user});
+    console.log('this : '+ ad)
 
-      // Clear cart session after successful order placement
-      req.session.cart = [];
+    const data = {
+      name:ad.name,
+      phone:ad.phone,
+      pincode:ad.pincode,
+      locality:ad.locality,
+      streetaddress:ad.streetaddress,
+      place:ad.place,
+      country:ad.country,
+      state:ad.state,
+      landmark:ad.landmark
+    }
 
-      // Respond with success message
-      res.status(200).json({ message: 'Order placed successfully.' });
+    const newOrder = new Order({
+      userId,
+      orderUserDetails:data,
+      products:cart.products,
+      paymentMethod : paymentMethod === 'cod' ? 'Cash on Delivery' : ''
+    });
+
+    await Cart.deleteOne({userId:req.session.user});
+
+    await newOrder.save();
+
+    res.json({status:true});
   } catch (error) {
-      console.error(error);
-      // Handle error case
-      res.status(500).json({ error: 'An error occurred while placing the order.' });
+    console.error(error);
   }
 };
 

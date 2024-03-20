@@ -35,7 +35,7 @@ const addToCart = async (req, res) => {
         }
 
         // Calculate total price based on the added product
-        cart.totalPrice += product.price;
+        cart.totalPrice += product.offerPrice;
 
         await cart.save();
 

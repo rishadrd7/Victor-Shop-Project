@@ -134,13 +134,20 @@
 >
   <div class="reset">
     <h4>Reset Password</h4>
-    <form action="/resetpassword" method="post">
+    <form action="/resetpassword" method="post" id="passwordForm">
+     
+      <span class="message" id="msg" hidden ><%= msg %></span>
+
       <label for="password">Enter your new password:</label><br>
+      <p class="error-message text-danger" id="pass-error"></p>
+
       <input type="password" id="password" name="password" required><br>
       <label for="confirm-password">Confirm your new password:</label><br>
-      <input type="password" id="confirm-password" name="confirmPassword" required><br>
-      <input type="submit" value="Reset Password" />
+      <input type="password" id="confirmpassword" name="confirmPasword" required><br>
+      <div class="error-message text-danger " id="confirm-password-error"></div>
       <input type="email" hidden value="<%= forgotEmail %>" name="email">
+
+      <input type="submit" value="Reset Password" />
     </form>
   </div>
 </div>
@@ -149,3 +156,59 @@
 
 
 
+<script>
+
+  document.getElementById("passwordForm").addEventListener("submit", function(event) {
+
+      var password = document.getElementById("password").value;
+      var confirmPassword = document.getElementById("confirmpassword").value;
+      var passwordError = document.getElementById("pass-error");
+      var rePasswordError = document.getElementById("confirm-password-error");
+      var valid = true;
+
+      
+      passwordError.textContent = "";
+      rePasswordError.textContent = "";
+
+      if (password !== confirmPassword) {
+
+          rePasswordError.textContent = "Passwords do not match";
+          valid = false;
+      }
+
+      //  password length
+      if (password.length < 5) {
+
+          passwordError.textContent = "Password must be at least 5 characters long";
+          valid = false;
+      }
+
+      
+      if (!valid) {
+
+          event.preventDefault();
+      }
+
+  });
+
+
+  const msg = document.getElementById('msg');
+
+  if(msg.textContent == 'Password Changed Successfully'){
+
+      Swal.fire({
+
+    title:'Password Change',
+    text:'Changed Successfully',
+    icon:'success',
+    confirmButtonText: 'OK'
+
+  }).then(() => {
+
+    window.location.href = '/login'
+
+  });
+
+  } 
+
+</script>

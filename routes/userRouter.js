@@ -55,9 +55,9 @@ router.get('/cartPage',userAuth.user,userAuth.isBlocked,userController.addtoCart
 router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutPage);
 router.post('/checkout/edit-address', userController.editCheckoutAddress);
 router.post('/checkout/add-address',userController.addCheckoutAddress);
+router.post('/place-order', userController.placeOrder);
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
-router.post('/place-order', userController.placeOrder);
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
 
 //============================================cart side controller=========================================

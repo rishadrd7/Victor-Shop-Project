@@ -272,6 +272,7 @@ label{
 		                					<thead>
 		                						<tr>
 		                							<th>Product</th>
+													<th></th>
 		                							<th>Total</th>
 		                						</tr>
 		                					</thead>
@@ -324,6 +325,7 @@ label{
 												<!-- Row for total cart price -->
 												<tr id="totalRow" class="summary-total">
 													<td>Total:</td>
+													<td></td>
 													<td id="totalPrice">₹<%= cartTotal.toFixed(2) %></td>
 												</tr>
 											</tbody>
@@ -334,6 +336,8 @@ label{
 										
 										
 										<!-- payment options -->
+									<form id="orderForm">
+
 		                				<div class="accordion-summary" id="accordion-payment">
 
 
@@ -351,11 +355,11 @@ label{
 										        </div>
 										    </div>
 
-
+											<!-- cod div -->
 										    <div class="card">
 										        <div class="card-header" id="heading-3">
 										            <h2 class="card-title">
-														<input type="radio" id="cod" class="peyment" name="payment">
+														<input type="radio" id="cod" value="cod" class="peyment" name="payment">
 										                <label for="cod" class="collapsed" role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
 										                    Cash on delivery
 										               </label>
@@ -403,13 +407,11 @@ label{
 
 
 
-										<form id="orderForm">
-											<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
-												<span class="btn-text">Place Order</span>
-												<span class="btn-hover-text">Proceed to Checkout</span>
-											</button>
-										</form>
-
+										<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
+											<span class="btn-text">Place Order</span>
+											<span class="btn-hover-text">Proceed to Checkout</span>
+										</button>
+									</form>
 		                			</div>	
 		                		</aside><!-- End .col-lg-3 -->
 		                	</div><!-- End .row -->
@@ -424,92 +426,72 @@ label{
 
 
 	<!-- <script></script> -->
-
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	
-	<!-- order plced function -->
+
+	<!-- order place function -->
 	<script>
-		// Get the form and attach a submit event listener
-		const orderForm = document.getElementById('orderForm');
-		orderForm.addEventListener('submit', function(event) {
+		document.addEventListener("DOMContentLoaded", function () {
+		  const orderForm = document.getElementById("orderForm");
+	  
+		  orderForm.addEventListener("submit", function (event) {
 			event.preventDefault(); // Prevent default form submission
-			
-			// Check if any payment method is selected
-			const radioInputs = document.querySelectorAll('.peyment');
-			let selectedPaymentMethod=null
-			
-		    radioInputs.forEach(function(input) {
-			if (input.checked) {
-				selectedPaymentMethod=input
-			}})
-			console.log(selectedPaymentMethod);
-			if (selectedPaymentMethod) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Order Placed!',
-					text: 'Your order has been successfully placed.',
-					confirmButtonText: 'OK'
-				});
-			} else {
-				Swal.fire({
-					icon: 'error',
-					title: 'Choose Payment Method',
-					text: 'Please select a payment method to place your order.',
-					confirmButtonText: 'OK'
-				});
+	  
+			const selectedPaymentMethod = document.querySelector(
+			  'input[name="payment"]:checked'
+			);
+			const address = document.querySelector(
+			  'input[name="selectedAddress"]:checked'
+			);
+	  
+			if (!selectedPaymentMethod) {
+			  Swal.fire("Error", "Please select a payment method.", "error");
+			  return;
 			}
+	  
+			const formData = {
+			  userId: "<%= userData._id %>",
+			  address: address.value,
+			  paymentMethod: selectedPaymentMethod.value,
+			};
+	  
+			// Example: Send formData to server using fetch or XMLHttpRequest
+			fetch("/place-order", {
+			  method: "POST",
+			  headers: {
+				"Content-Type": "application/json",
+			  },
+			  body: JSON.stringify(formData),
+			})
+			  .then((response) => {
+				if (!response.ok) {
+				  throw new Error("Failed to place order");
+				}
+				return response.json();
+			  })
+			  .then((data) => {
+				Swal.fire({
+				  icon: "success",
+				  title: "Order Placed Successfully!",
+				  text: "Thank you for your order.",
+				  showConfirmButton: false,
+				  timer: 1000,
+				}).then(() => {
+				  window.location.reload();
+			  
+				});
+			  })
+			  .catch((error) => {
+				console.error(error.message);
+				Swal.fire(
+				  "Error",
+				  "An error occurred while placing your order. Please try again later.",
+				  "error"
+				);
+			  });
+		  });
 		});
-	</script>
-	
-	<script>
-		$(document).ready(function() {
-    // Handle form submission
-    $('#orderForm').submit(function(e) {
-        e.preventDefault();
-
-        // Get selected address ID
-        var selectedAddress = $('input[name="selectedAddress"]:checked').val();
-        if (!selectedAddress) {
-            // Handle case where no address is selected
-            alert('Please select an address.');
-            return;
-        }
-
-        // Get selected payment method
-        var selectedPaymentMethod = $('input[name="payment"]:checked').val();
-        if (!selectedPaymentMethod) {
-            // Handle case where no payment method is selected
-            alert('Please select a payment method.');
-            return;
-        }
-
-        // Prepare order data
-        var orderData = {
-            addressId: selectedAddress,
-            paymentMethod: selectedPaymentMethod
-            // Add other relevant order details here
-        };
-
-        // Send AJAX request to server
-        $.ajax({
-            type: 'POST',
-            url: '/place-order',
-            data: orderData,
-            success: function(response) {
-                // Display Sweet Alert upon successful order placement
-                swal("Success!", "Your order has been placed successfully!", "success");
-            },
-            error: function(xhr, status, error) {
-                // Handle error case
-                console.error(error);
-                swal("Error!", "An error occurred while placing your order. Please try again later.", "error");
-            }
-        });
-    });
-});
-
-	</script>
+	  </script>
 
 <%- include('../layouts/footer')  %>
 <%- include('../layouts/footerNav')  %>

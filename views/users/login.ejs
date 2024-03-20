@@ -116,6 +116,10 @@
                       <h6 style="color: black; " class="text-center"><%= message %></h6>
                       <% } %>
             
+                      <% if(msg.length>0){ %>
+                        <p style="color: green; text-align: center; font-weight: 400;"><%= msg %></p>
+                    <%  } %>
+
                       <form method="post" id="form" action="/login" id="login-form">
                         <div class="form-group">
                           <label for="register-email-2">Your email address *</label>
