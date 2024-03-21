@@ -5,7 +5,7 @@ const otp = require("../models/otp");
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const Cart = require("../models/cartModel")
-const Address = require("../models/addressModel") 
+const Address = require("../models/addressModel")
 const Order = require("../models/ordersModel")
 
 const nodemailer = require("nodemailer");
@@ -15,7 +15,8 @@ require('dotenv').config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
-
+const { orderDetails } = require("./orderController");
+const {ObjectId} = require('mongodb')
 
 //google
 const loadAuth = (req, res) => {
@@ -97,16 +98,16 @@ const securedPassword = async (password) => {
 
 //forgot bycrypt
 const secureToken = async (token) => {
-    
+
   try {
 
-      const tokenHash = await bcrypt.hash(token, 5);
-      return tokenHash;
-      
+    const tokenHash = await bcrypt.hash(token, 5);
+    return tokenHash;
+
   } catch (error) {
 
-      console.log(error.message);
-      
+    console.log(error.message);
+
   }
 
 };
@@ -131,7 +132,7 @@ const loginPage = async (req, res) => {
     const message = req.flash('message');
     const msg = req.flash('passwordChanged');
 
-    res.render("users/login", { message , msg});
+    res.render("users/login", { message, msg });
   } catch (error) {
     console.log(error);
   }
@@ -159,11 +160,11 @@ const verifyLogin = async (req, res) => {
         res.redirect("/home");
       } else {
 
-        res.render("users/login", { message: "Incorrect password." });
+        res.render("users/login", { msg, message: "Incorrect password." });
       }
     } else {
 
-      res.render("users/login", { message: "Email and Password incorrect." });
+      res.render("users/login", { msg, message: "Email and Password incorrect." });
     }
 
   } catch (error) {
@@ -203,7 +204,7 @@ const signUp = async (req, res) => {
 const forgotPass = async (req, res) => {
   try {
     const msg = req.flash('message')
-    res.render("users/forgotpass" ,{msg});
+    res.render("users/forgotpass", { msg });
   } catch (error) {
     console.log(error);
   }
@@ -219,19 +220,19 @@ const forgotVerify = async (req, res) => {
     req.session.forgotData = userData;
 
     if (userData) {
-     const name = userData.name;
+      const name = userData.name;
 
-     const OTPP = generateOTP();
-     const token = generateTokenForgottPassword();
-     console.log("Forgot Password :-" +OTPP);
+      const OTPP = generateOTP();
+      const token = generateTokenForgottPassword();
+      console.log("Forgot Password :-" + OTPP);
 
-     req.session.otp = OTPP;
+      req.session.otp = OTPP;
 
-     sendMailForgotPassword(name , email , OTPP , res , token);
+      sendMailForgotPassword(name, email, OTPP, res, token);
 
     } else {
-      
-      req.flash('message' , "Invalid Email");
+
+      req.flash('message', "Invalid Email");
       res.redirect("/forgotpass");
     }
 
@@ -242,79 +243,79 @@ const forgotVerify = async (req, res) => {
 }
 
 //sent otp mail forgot
-const sendMailForgotPassword = async (name , email, otpp, res , token) => {
-    
+const sendMailForgotPassword = async (name, email, otpp, res, token) => {
+
   try {
-      
-      //  Send Email Method :-
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'rishadrasheed147@gmail.com',
-          pass: 'thtp kkww irxp cmox'
-        }
-      });
 
-      //  Compose Email :-
-  
-      const mailOption = {
+    //  Send Email Method :-
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'rishadrasheed147@gmail.com',
+        pass: 'thtp kkww irxp cmox'
+      }
+    });
 
-          from: 'rishadrasheed147@gmail.com',
-          to: email,
-          subject: 'For Forgot Password Verification',
-          html: `<h3> Hello ${name} Welcome to Victor</h3>
+    //  Compose Email :-
+
+    const mailOption = {
+
+      from: 'rishadrasheed147@gmail.com',
+      to: email,
+      subject: 'For Forgot Password Verification',
+      html: `<h3> Hello ${name} Welcome to Victor</h3>
           <br><p>Enter ${otpp} on the OTP Box to Change Your Forgotten Password</p>`
-      };
+    };
 
-      //  Send Email :-
-  
-      transporter.sendMail(mailOption, function (error, info) {
+    //  Send Email :-
 
-          if (error) {
+    transporter.sendMail(mailOption, function (error, info) {
 
-              console.log('Error Sending Email:-', error.message);
+      if (error) {
 
-          } else {
+        console.log('Error Sending Email:-', error.message);
 
-              console.log("Email Has Been Sended:-", info.response);
-          }
+      } else {
 
-      });
+        console.log("Email Has Been Sended:-", info.response);
+      }
 
-      const tokenHashed = await secureToken(token)
+    });
 
-      const forgotpassdData = new otp({
+    const tokenHashed = await secureToken(token)
 
-          otp: otpp,
-          token : tokenHashed,
-          userEmail: email,
-          
-      });
+    const forgotpassdData = new otp({
 
-      forgotpassdData.save();
-      res.redirect(`/otppage?email=${email}&&token=${token}`);
-      
+      otp: otpp,
+      token: tokenHashed,
+      userEmail: email,
+
+    });
+
+    forgotpassdData.save();
+    res.redirect(`/otppage?email=${email}&&token=${token}`);
+
   } catch (error) {
-      
-      console.log(error.message);
+
+    console.log(error.message);
 
   }
-  
+
 };
 
 
 //  Genrate OTP For Forgot Password :-
 
 const generateTokenForgottPassword = () => {
-    
-    
+
+
   const digits = '0123456789';
 
   let token = '';
 
   for (let i = 0; i < 4; i++) {
 
-      token += digits[Math.floor(Math.random() * 10)];
+    token += digits[Math.floor(Math.random() * 10)];
   };
 
   return token;
@@ -324,18 +325,18 @@ const generateTokenForgottPassword = () => {
 
 //forgot load confirm password page
 const loadConfirmPassword = async (req, res) => {
-    
+
   try {
 
-      const forgotEmail = req.query.email
-      const forgotpassMsg = req.flash("passwordChanged");
+    const forgotEmail = req.query.email
+    const forgotpassMsg = req.flash("passwordChanged");
 
-      res.render("users/resetpass", { forgotEmail , msg : forgotpassMsg });
-      
+    res.render("users/resetpass", { forgotEmail, msg: forgotpassMsg });
+
   } catch (error) {
 
-      console.log(error.message);
-      
+    console.log(error.message);
+
   }
 
 };
@@ -343,36 +344,36 @@ const loadConfirmPassword = async (req, res) => {
 
 // forgot verifyConfirmPassword (Post Method)
 
-const verifyConfirmPassword = async (req , res) => {
-    
+const verifyConfirmPassword = async (req, res) => {
+
   try {
 
-      const bodyEmail = req.body.email;
-      const passwordd = req.body.password;
-      const confirmPassword = req.body.confirmPasword;
-      console.log(bodyEmail);
+    const bodyEmail = req.body.email;
+    const passwordd = req.body.password;
+    const confirmPassword = req.body.confirmPasword;
+    console.log(bodyEmail);
 
-      const hashPasswordd = await securedPassword(passwordd);
+    const hashPasswordd = await securedPassword(passwordd);
 
-      if (passwordd == confirmPassword) {
+    if (passwordd == confirmPassword) {
 
-          const emailData = await User.findOne({ email: bodyEmail });
+      const emailData = await User.findOne({ email: bodyEmail });
 
-          if (emailData) {
-              
-              await User.findOneAndUpdate({ email: bodyEmail }, { $set: { password: hashPasswordd } });
-              req.flash('passwordChanged', "Password Changed Successfully");
-              res.redirect('/login');
+      if (emailData) {
 
-          } 
-             
-      } 
-      console.log("password changed successfully");
+        await User.findOneAndUpdate({ email: bodyEmail }, { $set: { password: hashPasswordd } });
+        req.flash('passwordChanged', "Password Changed Successfully");
+        res.redirect('/login');
+
+      }
+
+    }
+    console.log("password changed successfully");
 
   } catch (error) {
 
-      console.log(error.message);
-      
+    console.log(error.message);
+
   }
 
 };
@@ -421,7 +422,7 @@ const insertUser = async (req, res) => {
           const generatedOTP = generateOTP();    //  Assign OTP to Variable
 
           req.session.otp = generatedOTP;     //  Otp Saving Session 
-          
+
           console.log(generatedOTP);
 
           await sendOTPmail(req.body.name, req.body.email, generatedOTP, res);     // Sended Otp
@@ -546,65 +547,65 @@ const verifyOTP = async (req, res) => {
     const userSessionn = req.session.userSession;   //  Assign Session in Variable
     const getQueryEMail = req.body.email;
     const getToken = req.body.token;
-    
+
     console.log(getToken);
-   
+
 
     const bodyOtp = req.body.inp1 + req.body.inp2 + req.body.inp3 + req.body.inp4;
     if (getToken && getQueryEMail) {
-            
+
       const verifyForgotEmail = await otp.findOne({ otp: bodyOtp, userEmail: getQueryEMail });
 
       if (verifyForgotEmail) {
-          
-          res.redirect(`/resetpass?email=${getQueryEMail}`);
+
+        res.redirect(`/resetpass?email=${getQueryEMail}`);
 
       } else {
 
-          req.flash('flash', "Invalid OTP!!!");
-          res.redirect(`/otppage?email=${getQueryEMail}&&token=${getToken}`);
-
-      }
-
-  }else{
-
-    const verifiedOtp = await otp.findOne({ otp: bodyOtp, userEmail: getQueryEMail });
-
-    if (verifiedOtp) {
-
-      if (userSessionn.email == getQueryEMail) {
-
-        const hashPassword = await securedPassword(req.session.userSession.password);
-
-        const userSessionData = new User({
-
-          name: req.session.userSession.name,
-          email: req.session.userSession.email,
-          mobile: req.session.userSession.mobile,
-          password: hashPassword,
-          is_admin: false,
-          is_blocked: false,
-
-        });
-
-        userSessionData.save();
-
-        req.session.otp = undefined;    //  Deleting The otp after login user
-
-        req.session.user = userSessionData; //  Save User Data in Session (Orginal)
-
-        await User.findByIdAndUpdate({ _id: userSessionData._id }, { $set: { is_verified: true } });
-
-        req.flash("flash", "Verified Successfully");    //  Sweet Alert
-        res.redirect('/home');
+        req.flash('flash', "Invalid OTP!!!");
+        res.redirect(`/otppage?email=${getQueryEMail}&&token=${getToken}`);
 
       }
 
     } else {
-      req.flash("flash", "Invalid OTP");
-      res.redirect(`/otppage?email=${getQueryEMail}`)
 
-    }
+      const verifiedOtp = await otp.findOne({ otp: bodyOtp, userEmail: getQueryEMail });
+
+      if (verifiedOtp) {
+
+        if (userSessionn.email == getQueryEMail) {
+
+          const hashPassword = await securedPassword(req.session.userSession.password);
+
+          const userSessionData = new User({
+
+            name: req.session.userSession.name,
+            email: req.session.userSession.email,
+            mobile: req.session.userSession.mobile,
+            password: hashPassword,
+            is_admin: false,
+            is_blocked: false,
+
+          });
+
+          userSessionData.save();
+
+          req.session.otp = undefined;    //  Deleting The otp after login user
+
+          req.session.user = userSessionData; //  Save User Data in Session (Orginal)
+
+          await User.findByIdAndUpdate({ _id: userSessionData._id }, { $set: { is_verified: true } });
+
+          req.flash("flash", "Verified Successfully");    //  Sweet Alert
+          res.redirect('/home');
+
+        }
+
+      } else {
+        req.flash("flash", "Invalid OTP");
+        res.redirect(`/otppage?email=${getQueryEMail}`)
+
+      }
     }
 
   } catch (error) {
@@ -684,28 +685,28 @@ const shopPage = async (req, res) => {
 
 
     const selectedCategory = req.query.category || 'allCategory'
- 
+
 
     const sortBy = req.query.sortby || 'popularity'
     switch (sortBy) {
       case 'lowToHigh':
-        productss = await Product.find({status:false}).sort({ price: 1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ price: 1 }).populate('category')
         break;
       case 'highToLow':
-        productss = await Product.find({status:false}).sort({ price: -1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ price: -1 }).populate('category')
         break;
       case 'alphabetical':
-        productss = await Product.find({status:false}).sort({ name: 1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ name: 1 }).populate('category')
         break;
       case 'analphabetic':
-        productss = await Product.find({status:false}).sort({ name: -1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ name: -1 }).populate('category')
         break;
       case 'latest':
-        productss = await Product.find({status:false}).sort({ _id: -1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ _id: -1 }).populate('category')
         break;
-     
+
       default:
-        productss = await Product.find({status:false}).populate('category')
+        productss = await Product.find({ status: false }).populate('category')
         break;
     }
 
@@ -775,18 +776,18 @@ const userProfile = async (req, res) => {
 //edit profile
 const editProfile = async (req, res) => {
   try {
-      const { name,username, mobile } = req.body;
+    const { name, username, mobile } = req.body;
 
-      // Perform any necessary validation or processing here
+    // Perform any necessary validation or processing here
 
-      // Update the user details in the database
-      const user = await User.findOneAndUpdate({ _id: req.session.user }, { name,username, mobile }, { new: true });
+    // Update the user details in the database
+    const user = await User.findOneAndUpdate({ _id: req.session.user }, { name, username, mobile }, { new: true });
 
-      // Assuming you want to redirect to a profile page after submission
-      res.redirect('/profile'); // Change this to your desired route
+    // Assuming you want to redirect to a profile page after submission
+    res.redirect('/profile'); // Change this to your desired route
   } catch (error) {
-      // Handle errors
-      console.error(error);
+    // Handle errors
+    console.error(error);
   }
 };
 
@@ -830,12 +831,12 @@ const addressPage = async (req, res) => {
   try {
     const userId = req.session.user;
     const userData = await User.findById(userId);
-    const addressData = await Address.find({userId:userId})
+    const addressData = await Address.find({ userId: userId })
     if (!userData) {
       return res.status(404).send('User not found');
     }
 
-    res.render('pages/address', { userData ,addressData});
+    res.render('pages/address', { userData, addressData });
   } catch (error) {
     console.error(error);
   }
@@ -844,46 +845,46 @@ const addressPage = async (req, res) => {
 //add address 
 const addAddress = async (req, res) => {
   try {
-      const userId = req.session.user; // Assuming userId is stored in session
-      console.log(userId);
-      const {
-          name,
-          phone,
-          pincode,
-          locality,
-          streetaddress,
-          place,
-          country,
-          state,
-          landmark,
-          alternatePhone
-      } = req.body;
+    const userId = req.session.user; // Assuming userId is stored in session
+    console.log(userId);
+    const {
+      name,
+      phone,
+      pincode,
+      locality,
+      streetaddress,
+      place,
+      country,
+      state,
+      landmark,
+      alternatePhone
+    } = req.body;
 
-      console.log(name);
+    console.log(name);
 
-      // Create a new address object
-      const newAddress = new Address({
-          userId: userId,
-          name: name,
-          phone: phone,
-          pincode: pincode,
-          locality: locality,
-          streetaddress: streetaddress,
-          place: place,
-          country: country,
-          state: state,
-          landmark:landmark,
-          alternatePhone:alternatePhone
-      });
+    // Create a new address object
+    const newAddress = new Address({
+      userId: userId,
+      name: name,
+      phone: phone,
+      pincode: pincode,
+      locality: locality,
+      streetaddress: streetaddress,
+      place: place,
+      country: country,
+      state: state,
+      landmark: landmark,
+      alternatePhone: alternatePhone
+    });
 
-      // Save the new address to the database
-      await newAddress.save();
+    // Save the new address to the database
+    await newAddress.save();
 
-      
-      res.redirect('/profile/address')
+
+    res.redirect('/profile/address')
 
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 };
 
@@ -895,24 +896,24 @@ const editAddress = async (req, res) => {
 
     // Update address in the database
     await Address.findByIdAndUpdate(addressId, {
-        name,
-        phone,
-        streetaddress,
-        place,
-        locality,
-        landmark,
-        country,
-        state,
-        pincode,
-        alternatePhone
+      name,
+      phone,
+      streetaddress,
+      place,
+      locality,
+      landmark,
+      country,
+      state,
+      pincode,
+      alternatePhone
     });
 
     res.redirect('/profile/address')
-    
+
     console.log(addressId + "  Address changed");
-} catch (error) {
+  } catch (error) {
     console.error(error);
-}
+  }
 };
 
 
@@ -949,16 +950,16 @@ const checkoutPage = async (req, res) => {
   try {
     const userId = req.session.user;
     const userData = await User.findById(userId);
-    const addressData = await Address.find({userId:userId})
+    const addressData = await Address.find({ userId: userId })
     const carts = await Cart.find().populate('products.productId');
     if (!userData) {
       return res.status(404).send('User not found');
     }
-    
-    res.render('pages/checkout',{ userData, addressData , carts})
+
+    res.render('pages/checkout', { userData, addressData, carts })
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
@@ -970,16 +971,16 @@ const editCheckoutAddress = async (req, res) => {
 
     // Update address in the database
     await Address.findByIdAndUpdate(addressId, {
-        name,
-        phone,
-        streetaddress,
-        place,
-        locality,
-        landmark,
-        country,
-        state,
-        pincode,
-        alternatePhone
+      name,
+      phone,
+      streetaddress,
+      place,
+      locality,
+      landmark,
+      country,
+      state,
+      pincode,
+      alternatePhone
     });
 
     // Redirect to the checkout page or the appropriate page after address is edited
@@ -997,61 +998,46 @@ const editCheckoutAddress = async (req, res) => {
 const addCheckoutAddress = async (req, res) => {
   try {
     console.log("add new address");
-      const userId = req.session.user; // Assuming userId is stored in session
-      console.log(userId);
-      const {
-          name,
-          phone,
-          pincode,
-          locality,
-          streetaddress,
-          place,
-          country,
-          state,
-          landmark,
-          alternatePhone
-      } = req.body;
+    const userId = req.session.user; // Assuming userId is stored in session
+    console.log(userId);
+    const {
+      name,
+      phone,
+      pincode,
+      locality,
+      streetaddress,
+      place,
+      country,
+      state,
+      landmark,
+      alternatePhone
+    } = req.body;
 
-      console.log(name , " address added in checkout page");
+    console.log(name, " address added in checkout page");
 
-      // Create a new address object
-      const newAddress = new Address({
-          userId: userId,
-          name: name,
-          phone: phone,
-          pincode: pincode,
-          locality: locality,
-          streetaddress: streetaddress,
-          place: place,
-          country: country,
-          state: state,
-          landmark:landmark,
-          alternatePhone:alternatePhone
-      });
+    // Create a new address object
+    const newAddress = new Address({
+      userId: userId,
+      name: name,
+      phone: phone,
+      pincode: pincode,
+      locality: locality,
+      streetaddress: streetaddress,
+      place: place,
+      country: country,
+      state: state,
+      landmark: landmark,
+      alternatePhone: alternatePhone
+    });
 
-      // Save the new address to the database
-      await newAddress.save();
+    // Save the new address to the database
+    await newAddress.save();
 
-      
-      res.redirect('/checkout')
+
+    res.redirect('/checkout')
 
   } catch (error) {
-      console.error(error);
-  }
-};
-
-//======================================set up orderpage============================================
-
-
-// Render the orders page
-const orderPage = async (req, res) => {
-  try {
-      const userData = await User.findOne({ _id: req.session.user }); 
-      const orders = await Order.find({ userId: req.session.user }).populate('products.productId');
-      console.log('dfhljkdsflhdsfjldsf'+orders)
-      res.render('pages/ordersPage', { userData, orders }); 
-  } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 };
 
@@ -1061,40 +1047,106 @@ const placeOrder = async (req, res) => {
   try {
 
     const { userId, address, paymentMethod } = req.body;
-    console.log( userId, address, paymentMethod )
+    console.log(userId, address, paymentMethod)
 
-    const ad = await Address.findOne({userId:req.session.user,_id:address});
-    const cart =await Cart.findOne({userId:req.session.user});
-    console.log('this : '+ ad)
+    const ad = await Address.findOne({ userId: req.session.user, _id: address });
+    const cart = await Cart.findOne({ userId: req.session.user });
+    console.log('this : ' + ad)
 
     const data = {
-      name:ad.name,
-      phone:ad.phone,
-      pincode:ad.pincode,
-      locality:ad.locality,
-      streetaddress:ad.streetaddress,
-      place:ad.place,
-      country:ad.country,
-      state:ad.state,
-      landmark:ad.landmark
+      name: ad.name,
+      phone: ad.phone,
+      pincode: ad.pincode,
+      locality: ad.locality,
+      streetaddress: ad.streetaddress,
+      place: ad.place,
+      country: ad.country,
+      state: ad.state,
+      landmark: ad.landmark
     }
 
     const newOrder = new Order({
       userId,
-      orderUserDetails:data,
-      products:cart.products,
-      paymentMethod : paymentMethod === 'cod' ? 'Cash on Delivery' : ''
+      orderUserDetails: data,
+      products: cart.products,
+      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : ''
     });
 
-    await Cart.deleteOne({userId:req.session.user});
+    await Cart.deleteOne({ userId: req.session.user });
 
     await newOrder.save();
 
-    res.json({status:true});
+    res.json({ status: true });
   } catch (error) {
     console.error(error);
   }
 };
+
+
+//======================================set up orderpage============================================
+
+
+// Render the orders page in Profile
+const orderPage = async (req, res) => {
+  try {
+    const userData = await User.findOne({ _id: req.session.user });
+    // const orders = await Order.find({ userId: req.session.user }).populate('products.productId').sort({ orderDate: 1 });
+    const orderlist = await Order.aggregate([
+      {
+        $match: {
+          userId:new ObjectId( req.session.user)
+        }
+      },
+      {
+        $unwind: "$products"
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetail"
+        }
+      },{
+        $sort:{
+          orderDate:1
+        }
+      },
+      {$unwind:'$productDetail'}
+    ]
+    )
+    console.log(orderlist);
+
+    res.render('pages/ordersPage', { userData, orderlist });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
+const cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const updatedOrder = await Order.findOneAndUpdate(
+      { 'products._id': orderId, userId: req.session.user },
+      { 'products.status': 'cancelled' },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found or you don't have permission to cancel this order." });
+    }
+
+    res.json({ message: 'Order cancelled successfully', order: updatedOrder });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
 
 
 
@@ -1150,9 +1202,10 @@ module.exports = {
   checkoutPage,
   editCheckoutAddress,
   addCheckoutAddress,
-  orderPage,
   placeOrder,
+  orderPage,
+  cancelOrder,
   wishlistPage
-  
+
 
 };

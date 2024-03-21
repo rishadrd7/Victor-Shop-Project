@@ -32,9 +32,9 @@ router.get("/registration",userAuth.loginTrue,userController.signUp);
 router.post("/registration",userController.insertUser);
 router.get('/home',userAuth.user,userController.home);
 router.post('/logout',userController.logoutHome);
-router.get("/forgotpass",userController.forgotPass);
+router.get("/forgotpass",userAuth.loginTrue,userController.forgotPass);
 router.post('/forgotpassword',userController.forgotVerify);
-router.get("/resetpass",userController.loadConfirmPassword);
+router.get("/resetpass",userAuth.loginTrue,userController.loadConfirmPassword);
 router.post('/resetpassword',userController.verifyConfirmPassword);
 router.get("/otppage",userAuth.loginTrue,userController.otpPage); 
 router.post("/otpVerify",userController.verifyOTP);
@@ -58,6 +58,8 @@ router.post('/checkout/add-address',userController.addCheckoutAddress);
 router.post('/place-order', userController.placeOrder);
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
+router.delete('/profile/myorders/:orderId/cancel', userController.cancelOrder);
+
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
 
 //============================================cart side controller=========================================

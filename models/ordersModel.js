@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'userdatas',
         
     },
     products: [{
@@ -19,6 +19,13 @@ const orderSchema = new mongoose.Schema({
         quantity: {
             type: Number,
             
+            
+        },
+        status: {
+            type: String,
+            enum: ['Delivered', 'Shipping', 'Pending', 'Cancelled', 'Returned'],
+            default: 'Pending'
+
         }
     }],
     orderUserDetails: {
@@ -38,11 +45,7 @@ const orderSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    status: {
-        type: String,
-        enum: ['Delivered', 'Shipping', 'Pending', 'Cancelled', 'Returned'],
-        default: 'Pending'
-    },
+
     cancelReason: {
         type: String
     },
