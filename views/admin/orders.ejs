@@ -45,7 +45,7 @@
                                         <td><%= product.status %></td>
                                     <% }); %>
                                   
-                                    <td><a href="/admin/orderdetails"><button class="btn btn-primary">Show</button></a></td>
+                                    <td><a href="/admin/orders/orderdetails/<%= order._id %>"><button class="btn btn-primary">Show</button></a></td>
                                 </tr>
                             <% }); %>
                         <% } else { %>
