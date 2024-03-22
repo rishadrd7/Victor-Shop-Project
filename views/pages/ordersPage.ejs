@@ -11,28 +11,33 @@
 <div class='col-md-8 p-5 right' style=" border-radius:0;">
 
   <div class="order-container">
-    <% if (orderlist.length > 0) { %>
-      <% orderlist.forEach(order => { %>
-        <div class="order-list">
-          <ul class="product-list">
-
+    <div class="order-list">
+      
+  <% if (orderlist.length > 0) { %>
+    <% orderlist.forEach(order => { %>
+      
+      <ul class="product-list">
               <li class="product-item">
                 <div class="product-container">
+
                   <div class="media" style="display: flex; justify-content: space-between;">
                     <img style="width: 100px; height: 100px;" src="/uploads/<%= order.productDetail.image[0] %>" class="mr-3 order-image" alt="<%= order.productDetail.name %>">
                     <div class="media-body" style="width: 33%; flex: none;">
                       <h5 class="mt-0"><%= order.productDetail.name %></h5>
                       <p style="font-weight: 500;">₹<%= order.productDetail.offerPrice %></p>
-                      <p>Quantity: <%= order.quantity %></p>
+                      <p>Quantity: <%= order.products.quantity %></p>
                     </div>
+
                     <div>
                       <p><%= order.orderDate.toString().split(' ').slice(0, 4).join(' ') %></p>
-                      <p style="font-size: larger;"><%= order.paymentMethod %></p>
-                      <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(255, 157, 0);" id="deliveryStatus_<%= order._id %>"><%= order.status %></span></p>
+                      <p style="font-size: larger; font-weight: 400;"><%= order.paymentMethod %></p>
+                      <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(255, 157, 0);" id="deliveryStatus_<%= order.products._id %>"><%= order.products.status %></span></p>
                     </div>
+
                     <div>
-                      <button class="btn btn-primary" id="deleteButton_<%= order.products._id %>" onclick="cancelOrder('<%= order.products._id %>')">Cancel Order</button>
+                      <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
                     </div>
+
                   </div>
                   <br><br>
                 </div>
@@ -62,61 +67,65 @@
 <%- include("../layouts/footer")  %>
 <%- include("../layouts/footerNav")  %>
 
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+<!-- order cancel in user side -->
 <script>
-  function cancelOrder(orderId) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Once cancelled, you will not be able to recover this order!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`/profile/myorders/${orderId}/cancel`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
+  document.addEventListener('DOMContentLoaded', () => {
+    // Add event listener to cancel order buttons
+    document.querySelectorAll('.cancel-order-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const orderId = button.dataset.orderId;
+        const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
+        
+        // Check if the order is already cancelled
+        if (statusElement && statusElement.textContent.trim() === 'Cancelled') {
+          Swal.fire('Already Cancelled!', 'This order has already been cancelled.', 'info');
+          return; // Exit the function if order is already cancelled
+        }
+        
+        // Display confirmation dialog with SweetAlert
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'Cancel the Order!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, cancel it!',
+          cancelButtonText: 'No, keep it'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If user confirms, send request to cancel order
+            fetch(`/orders/${orderId}/cancel`, {
+              method: 'POST'
+            })
+            .then(response => {
+              if (response.ok) {
+                // If cancellation is successful, show success message
+                Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success')
+                .then(() => {
+                  // Update status display to show "Cancelled"
+                  if (statusElement) {
+                    statusElement.textContent = 'Cancelled';
+                    statusElement.style.color = 'red'; // Optionally change color
+                  }
+                  // Hide the cancel button
+                  button.style.display = 'none';
+                });
+              } else {
+                // If cancellation fails, show error message
+                Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              // Show error message if fetch fails
+              Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+            });
           }
-        })
-        .then(response => {
-          if (response.ok) {
-            
-            const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
-            if (statusElement) {
-              statusElement.textContent = 'cancelled';
-            }
-            console.log(orderId);
-
-            const deleteButton = document.getElementById(`deleteButton_${orderId}`)
-            console.log(deleteButton);
-
-            Swal.fire(
-              'Cancelled!',
-              'Your order has been cancelled.',
-              'success'
-            );
-          } else {
-            console.error('Failed to cancel order');
-            Swal.fire(
-              'Error!',
-              'Failed to cancel order. Please try again later.',
-              'error'
-            );
-          }
-        })
-        .catch(error => {
-          console.error('Error cancelling order:', error);
-          Swal.fire(
-            'Error!',
-            'Failed to cancel order. Please try again later.',
-            'error'
-          );
         });
-      }
+      });
     });
-  }
-  </script>
+  });
+</script>

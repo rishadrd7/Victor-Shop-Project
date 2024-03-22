@@ -72,7 +72,7 @@ adminRouter.patch('/list-unlist',categoryController.listUnlistCategory);
 //============================================orders side controller=========================================
 
 adminRouter.get('/orders', orderController.ordersPage);
-adminRouter.get('/details' ,orderController.orderDetails);
+adminRouter.get('/orderdetails' ,orderController.orderDetails);
 
 
 //============================================================================================================

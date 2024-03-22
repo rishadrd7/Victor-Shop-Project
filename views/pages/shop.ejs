@@ -112,7 +112,21 @@
                     </div>
                 </div>
                 
-              
+                <div class="drop">
+                    <div class="header-right">
+                        <div class="header-search header-search-extended header-search-visible">
+                            <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                            <form id="searchForm" action="/search" method="get">
+                                <div class="header-search-wrapper">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <input type="search" class="form-control" name="q" id="searchQuery" placeholder="Search product ..." required>
+                                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+    
               
               
               <h2 class="title">All Catagory</h2>
@@ -220,19 +234,27 @@
     
 
 
+    <!-- search product in shop -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchForm = document.getElementById('searchForm');
-            searchForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const query = document.getElementById('q').value.trim();
-                if (query !== '') {
-                    window.location.href = `${searchForm.getAttribute('action')}?q=${encodeURIComponent(query)}`;
-                }
-            });
+        // JavaScript to handle form submission (optional, you can use plain HTML)
+        document.getElementById('searchForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+    
+            const searchQuery = document.getElementById('searchQuery');
+    
+            // Send GET request to backend with search query
+            try {
+                const response = await fetch(`/search?q=${searchQuery}`);
+                const data = await response.json();
+                
+                // Handle response data (e.g., display search results on the page)
+                console.log(data);
+            } catch (error) {
+                console.error(error);
+            }
         });
     </script>
-
+    
 
 <%- include('../layouts/footerNav')  %>
 <%- include('../layouts/footer')  %>

@@ -43,6 +43,7 @@ router.get('/resendOtp', userController.loadResendOtp);
 
 //==========================views/pages===================================================================
 router.get('/shop',userAuth.user,userAuth.isBlocked,userController.shopPage);
+router.get('/search', userController.searchProducts);
 router.get('/productDetails',userAuth.user,userAuth.isBlocked,userController.productDetails);
 router.get('/profile',userAuth.user,userAuth.isBlocked,userController.userProfile);
 router.post('/submit-form', userController.editProfile);
@@ -58,7 +59,7 @@ router.post('/checkout/add-address',userController.addCheckoutAddress);
 router.post('/place-order', userController.placeOrder);
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
-router.delete('/profile/myorders/:orderId/cancel', userController.cancelOrder);
+router.post('/orders/:orderId/cancel', userController.cancelOrder);
 
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
 

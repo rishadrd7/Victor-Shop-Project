@@ -41,8 +41,11 @@
                                     <td><%= order.userId.email %></td>
                                     <td><%= order.orderDate.toString().split(' ').slice(0, 4).join(' ') %></td>
                                     <td><%= order.paymentMethod %></td>
-                                    <td><%= order.status %></td>
-                                    <td><a href="/admin/details"><button class="btn btn-primary">Show</button></a></td>
+                                    <% order.products.forEach(product => { %>
+                                        <td><%= product.status %></td>
+                                    <% }); %>
+                                  
+                                    <td><a href="/admin/orderdetails"><button class="btn btn-primary">Show</button></a></td>
                                 </tr>
                             <% }); %>
                         <% } else { %>

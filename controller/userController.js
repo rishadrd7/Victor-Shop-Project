@@ -759,6 +759,25 @@ const productDetails = async (req, res) => {
 }
 
 
+//product search in shop
+const searchProducts = async (req, res) => {
+  try {
+       // Extract search query from request parameters
+       const { q } = req.query;
+ 
+       const products = await Product.find({ $or: [
+           { name: { $regex: new RegExp(q, 'i') } },
+       ]});
+ 
+       const categories = await Category.find({});
+ 
+       res.render('pages/shop', { products, categories });
+  } catch (error) {
+       console.error(error);
+       res.status(500).send('Internal Server Error');
+  }
+ };
+ 
 
 // ==============================set up user Profile=========================
 
@@ -1086,7 +1105,7 @@ const placeOrder = async (req, res) => {
 //======================================set up orderpage============================================
 
 
-// Render the orders page in Profile
+// orders list  in Profile
 const orderPage = async (req, res) => {
   try {
     const userData = await User.findOne({ _id: req.session.user });
@@ -1109,7 +1128,7 @@ const orderPage = async (req, res) => {
         }
       },{
         $sort:{
-          orderDate:1
+          "orderDate": -1 // Sort by orderDate in descending order
         }
       },
       {$unwind:'$productDetail'}
@@ -1126,24 +1145,26 @@ const orderPage = async (req, res) => {
 
 
 const cancelOrder = async (req, res) => {
-  try {
-    const orderId = req.params.orderId;
-    const updatedOrder = await Order.findOneAndUpdate(
-      { 'products._id': orderId, userId: req.session.user },
-      { 'products.status': 'cancelled' },
-      { new: true }
-    );
-
-    if (!updatedOrder) {
-      return res.status(404).json({ message: "Order not found or you don't have permission to cancel this order." });
+    try {
+      const orderId = req.params.orderId;
+      
+      // Update the order status to "Cancelled"
+      const order = await Order.findByIdAndUpdate(orderId, { 
+        $set: { 
+          'products.$[].status': 'Cancelled' 
+        } 
+      }, { new: true });
+  
+      if (!order) {
+        return res.status(404).send('Order not found');
+      }
+  
+      res.status(200).send('Order cancelled successfully');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
     }
-
-    res.json({ message: 'Order cancelled successfully', order: updatedOrder });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
+  };
 
 
 
@@ -1190,6 +1211,7 @@ module.exports = {
 
 
   shopPage,
+  searchProducts,
   productDetails,
   userProfile,
   editProfile,
