@@ -63,7 +63,7 @@ label{
         Add New Address
     </button>
     
-    <form action="/profile/add-address"  method="POST"  onsubmit="submitForm(event)">
+    <form id="addAddressForm" action="/profile/add-address" method="POST" onsubmit="submitForm(event)">
       <div class="collapse" id="addAddressFormCollapse">
             <div class="left">
                 <div class="form-group">
@@ -183,7 +183,8 @@ label{
        <!-- Edit form (hidden by default) -->
        <div class="collapse" id="collapse_<%= address._id %>">
         <div class="card card-body">
-          <form id="editAddressForm" action="/profile/edit-address" method="POST">
+
+         <form id="editAddressForm" action="/profile/edit-address" method="POST" onsubmit="editSubmit(event)">
                 <input type="hidden" name="addressId" value="<%= address._id %>">
     
                 <div class="form-group">
@@ -265,8 +266,80 @@ label{
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+ 
+<!-- add address  form validation -->
+<script>
+  function submitForm(event) {
+    event.preventDefault(); // Prevent form submission
+    
+    // Get form input values
+    var name = document.getElementById("name").value.trim();
+    var phone = document.getElementById("phone").value.trim();
+    var pincode = document.getElementById("pincode").value.trim();
+    var locality = document.getElementById("locality").value.trim();
+    var streetaddress = document.getElementById("streetaddress").value.trim();
+    var place = document.getElementById("place").value.trim();
+    var country = document.getElementById("country").value.trim();
+    var state = document.getElementById("state").value.trim();
+    
+    // Check if any field is empty or contains only spaces
+    if (name === "" || phone === "" || pincode === "" || locality === "" || streetaddress === "" || place === "" || country === "" || state === "") {
+      alert("Please fill in all fields.");
+      return;
+    }
+     // Check phone number length
+  if (phone.length !== 10 || isNaN(phone)) {
+    alert("Phone number should be 10 digits.");
+    return;
+  }
+  
+  // Check pincode length
+  if (pincode.length !== 6 || isNaN(pincode)) {
+    alert("Pincode should be 6 digits.");
+    return;
+  }
+    
+    // Submit the form if all fields are valid
+    document.getElementById("addAddressForm").submit();
+  }
+  </script>
 
 
+<script>
+  function editSubmit(event) {
+    
+    // Get form input values
+    var name = document.getElementById("name").value.trim();
+    var phone = document.getElementById("phone").value.trim();
+    var pincode = document.getElementById("pincode").value.trim();
+    var streetaddress = document.getElementById("streetaddress").value.trim();
+    var locality = document.getElementById("locality").value.trim();
+    var place = document.getElementById("place").value.trim();
+    var country = document.getElementById("country").value.trim();
+    var state = document.getElementById("state").value.trim();
+    
+    // Check if any field is empty or contains only spaces
+    if (name === "" || phone === "" || pincode === "" || streetaddress === "" || locality === "" || place === "" || country === "" || state === "") {
+      alert("Please fill in all fields.");
+      return;
+    }
+    
+    // Check phone number length
+    if (phone.length !== 10 || isNaN(phone)) {
+      alert("Phone number should be 10 digits.");
+      return;
+    }
+    
+    // Check pincode length
+    if (pincode.length !== 6 || isNaN(pincode)) {
+      alert("Pincode should be 6 digits.");
+      return;
+    }
+    
+    // Submit the form if all fields are valid
+    document.getElementById("editAddressForm").submit();
+  }
+  </script>
 
 
 

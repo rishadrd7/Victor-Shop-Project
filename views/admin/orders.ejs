@@ -23,7 +23,7 @@
                         <tr>
                             <th>No</th>
                             <th>OrderId</th>
-                            <th>Name</th>
+                            <th>UserName</th>
                             <th>Email</th>
                             <th>OrderPlacedDate</th>
                             <th>Payment Method</th>
@@ -32,7 +32,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (orders && orders.length > 0) { %>
+
+                        <% 
+                        // Sort orders by orderDate in descending order
+                        orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+                         if (orders && orders.length > 0) { %>
                             <% orders.forEach((order, index) => { %>
                                 <tr>
                                     <td><%= index + 1 %></td>

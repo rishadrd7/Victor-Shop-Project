@@ -35,7 +35,7 @@
   <h3>Add Product</h3>
 
   
-   <form action="/admin/submit_product"  method="post" enctype="multipart/form-data">
+  <form id="form" action="/admin/submit_product" method="post" enctype="multipart/form-data">
       <div class="form-container">
        <div class="form-side">
         
@@ -90,13 +90,6 @@
                       <label for="description">Description:</label><br>
                       <textarea id="description" name="description"  required></textarea><br><br>
                       
-                      <!-- <label for="status">Status:</label><br>
-                      <input type="hidden" name="status" value="false">
-                      <input type="checkbox" id="status" name="status" checked><br><br> -->
-                  
-                      
-                      <!-- <label for="offer">Offer:</label><br>
-                      <input type="number" id="offer" name="offer" min="0" max="100" required><br><br> -->
                   
             </form>
     
@@ -104,6 +97,65 @@
 
 </div>
 </div>
+
+
+<!-- form validation of add product -->
+<script>
+  // Function to validate the form
+  function validateForm() {
+      // Get form inputs
+      var productName = document.getElementById("productName").value.trim();
+      var price = document.getElementById("price").value.trim();
+      var offerPrice = document.getElementById("offerPrice").value.trim();
+      var quantity = document.getElementById("quantity").value.trim();
+      var description = document.getElementById("description").value.trim();
+
+      // Regular expression to check for spaces
+      var spaceRegex = /\s/;
+      
+      // Check if product name contains spaces
+      if (spaceRegex.test(productName)) {
+          alert("Product name cannot contain spaces.");
+          return false;
+      }
+
+      // Check if price contains spaces or is less than or equal to zero
+      if (spaceRegex.test(price) || parseFloat(price) <= 0) {
+          alert("Price must be a valid number greater than zero.");
+          return false;
+      }
+
+      // Check if offer price contains spaces or is less than or equal to zero
+      if (spaceRegex.test(offerPrice) || parseFloat(offerPrice) <= 0) {
+          alert("Offer price must be a valid number greater than zero.");
+          return false;
+      }
+
+      // Check if quantity contains spaces or is less than or equal to zero
+      if (spaceRegex.test(quantity) || parseInt(quantity) <= 0) {
+          alert("Quantity must be a valid integer greater than zero.");
+          return false;
+      }
+
+      // If all validations pass, return true to submit the form
+      return true;
+  }
+
+  // Add event listener to form submission
+  document.getElementById("submitButton").addEventListener("click", function(event) {
+      // Prevent default form submission
+      event.preventDefault();
+      // Call the validateForm function
+      if (validateForm()) {
+          // If form is valid, submit the form
+          document.getElementById("form").submit();
+      }
+  });
+</script>
+
+
+
+
 
 <!-- date showing add product page-->
 <script>

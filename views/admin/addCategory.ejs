@@ -74,26 +74,41 @@ textarea {
 
 <!-- Your custom JavaScript for handling form submission -->
 <script>
-    $(document).ready(function() {
-        $('#categoryForm').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: '/admin/submit_category',
-                method: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        $('#successModal').modal('show');
+  $(document).ready(function() {
+    $('#categoryForm').submit(function(e) {
+        e.preventDefault();
+        
+        // Extract category ID, edited name, and edited description
+        var categoryId = $(this).find('input[name="categoryId"]').val();
+        var editedName = $(this).find('input[name="editedName"]').val();
+        var editedDescription = $(this).find('input[name="editedDescription"]').val();
+
+        // Send data to server for category update
+        $.ajax({
+            url: '/admin/submit_category',
+            method: 'POST',
+            data: {
+                categoryId: categoryId,
+                editedName: editedName,
+                editedDescription: editedDescription
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#successModal').modal('show');
+                } else {
+                    if (response.message === 'Another category with this name already exists') {
+                        alert(response.message);
                     } else {
                         $('#errorModal').modal('show');
                     }
-                },
-                error: function() {
-                    $('#errorModal').modal('show');
                 }
-            });
+            },
+            error: function() {
+                $('#errorModal').modal('show');
+            }
         });
     });
+});
 
 
     // error modal

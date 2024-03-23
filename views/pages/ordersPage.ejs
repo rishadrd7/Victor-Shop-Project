@@ -31,7 +31,7 @@
                     <div>
                       <p><%= order.orderDate.toString().split(' ').slice(0, 4).join(' ') %></p>
                       <p style="font-size: larger; font-weight: 400;"><%= order.paymentMethod %></p>
-                      <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(255, 157, 0);" id="deliveryStatus_<%= order.products._id %>"><%= order.products.status %></span></p>
+                      <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(73, 213, 75);" id="deliveryStatus_<%= order.products._id %>"><%= order.products.status %></span></p>
                     </div>
 
                     <div>
@@ -129,3 +129,4 @@
     });
   });
 </script>
+

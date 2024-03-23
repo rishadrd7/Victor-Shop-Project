@@ -67,7 +67,7 @@ button[type="submit"]:hover {
         <h3>Edit Product</h3>
 
 
-        <form action="/admin/products/<%= product._id %>/edit" method="POST" enctype="multipart/form-data">
+        <form id="editForm" action="/admin/products/<%= product._id %>/edit" method="POST" enctype="multipart/form-data">
 
           
             <div class="form-group">
@@ -123,7 +123,7 @@ button[type="submit"]:hover {
 
             <div class="form-group">
               <label for="description">Description:</label>
-              <textarea id="description" name="description" rows="4" class="form-control" required><%= product.description %></textarea>
+              <textarea id="description" name="description" rows="4" class="form-control" value="<%= product.description %>" required></textarea>
             </div>
 
         
@@ -133,7 +133,7 @@ button[type="submit"]:hover {
             </div> -->
           
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
 
         
 
@@ -157,6 +157,60 @@ button[type="submit"]:hover {
     </div>
 </div>
 
+
+<!-- form validation of edit product -->
+<script>
+  // Function to validate the form
+  function validateEditForm() {
+      var name = document.getElementById("name").value.replace(/\s/g, '');
+      var price = document.getElementById("price").value.trim();
+      var offerPrice = document.getElementById("offerPrice").value.trim();
+      var quantity = document.getElementById("quantity").value.trim();
+      var description = document.getElementById("description").value.trim();
+
+      // Regular expression to check for negative numbers
+      var negativeRegex = /^-?\d*\.?\d+$/;
+      
+      // Check if name is empty after removing spaces
+      if (name === '') {
+          alert("Name cannot be empty.");
+          return false;
+      }
+      if (description === '') {
+          alert("Description cannot be empty.");
+          return false;
+      }
+
+      // Check if price is a valid number and not negative
+      if (!negativeRegex.test(price) || parseFloat(price) < 0) {
+          alert("Price must be a valid number greater than or equal to zero.");
+          return false;
+      }
+
+      // Check if offer price is a valid number and not negative
+      if (!negativeRegex.test(offerPrice) || parseFloat(offerPrice) < 0) {
+          alert("Offer price must be a valid number greater than or equal to zero.");
+          return false;
+      }
+
+      // Check if quantity is a valid integer and not negative
+      if (!negativeRegex.test(quantity) || parseInt(quantity) < 0) {
+          alert("Quantity must be a valid integer greater than or equal to zero.");
+          return false;
+      }
+
+      return true;
+  }
+
+  // Add event listener to form submission
+  document.getElementById("submitButton").addEventListener("click", function(event) {
+      event.preventDefault();
+      if (validateEditForm()) {
+          document.getElementById("editForm").submit();
+      }
+  });
+</script>
+
 <script>
   // Listen for form submission
   document.getElementById('editProductForm').addEventListener('submit', function(event) {
@@ -164,6 +218,8 @@ button[type="submit"]:hover {
       $('#successModal').modal('show');
   });
 </script>
+
+
 
 
 <%- include('../layouts/adminFooter')  %>

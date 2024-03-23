@@ -37,10 +37,10 @@ const orderDetails = async (req, res) => {
 
 
 
-
+//update order status
 const updateOrderStatus = async (req, res) => {
     const { orderId, newStatus } = req.body;
-    console.log(orderId, newStatus,'pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp')
+    console.log(orderId, newStatus)
     try {
         const updatedOrder = await Order.findOneAndUpdate(
             { 'products._id': orderId },
@@ -53,6 +53,7 @@ const updateOrderStatus = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 module.exports = {
     ordersPage,

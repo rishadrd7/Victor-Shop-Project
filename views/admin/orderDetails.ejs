@@ -4,7 +4,7 @@
   .box {
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 50px;
+  padding: 40px;
   margin-bottom: 10px;
 }
 
@@ -29,6 +29,9 @@
     color: #333;
     cursor: pointer;
 }
+p{
+  font-size: large;
+}
 
 
 
@@ -38,7 +41,7 @@
   <div class="content-wrapper">
 
     <div class="page-header">
-      <h3 class="page-title">Orders Tables</h3>
+      <h3 class="page-title">Order Details</h3>
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li  class="breadcrumb-item"><button><a href="/admin/orders">Back</a></li></button>
@@ -56,65 +59,50 @@
         
 
         <div class="detail">
-          <span class="box-title">Product Details</span>
 
           <div class="box">
-
-              <div class="box-content">
+            <div class="box-content">
 
 
                       <% deliveryAddress.products.forEach(product => { %>
 
+                        <img style="width: 100px; height: 100px;" src="/uploads/<%= product.productId.image[0] %>" class="mr-3 order-image">
                           <p>Product Name: <%= product.productId.name %></p>
-
-                          <p>Offer Price: <%= product.productId.offerPrice %></p>
-                          
+                          <p>Total Price: <%= product.productId.offerPrice %></p>
                           <p>Quantity: <%= product.quantity %></p>
 
-                          <!-- Add more product details as needed -->
 
-
-
-              </div>
+                          <br>
+                          <div class="box-content">
+                              <div class="custom-select"><p>Status:</p>
+                                <select name="productStatus" onchange="updateOrderStatus('<%= product.id %>')" id="orderStatus_<%= product._id %>">
+                                  <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                  <option value="Shipped" <%= product.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                  <option value="Delivered" <%= product.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                  <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                              </select>
+                              </div>
+                          </div>
+                </div>
           </div>
       </div>
 
-      <div class="detail">
-        <span class="box-title">Order Status</span>
-        <div class="box" style="height: 25px;">
-            <div class="box-content">
-                <div class="custom-select">
-                  <select name="productStatus" onchange="updateOrderStatus('<%= product.id %>')" id="orderStatus<%= product._id %>">
-                    <option value="Pending" <%= product.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                    <option value="Shipped" <%= product.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                    <option value="Delivery" <%= product.status === 'Delivery' ? 'selected' : '' %>>Delivery</option>
-                    <option value="Cancelled" <%= product.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                </select></td>
-                </div>
-            </div>
-        </div>
-    </div>
+     
+        
     
     <% }); %>
       
 
           <div class="detail">
-            <span class="box-title">Order Details</span>
             <div class="box">
               <div class="box-content">
-               
-                  <p><%= deliveryAddress.orderUserDetails.name %></p>
-                  <p> <%= deliveryAddress.orderUserDetails.phone %></p>
-                  <p> <%= deliveryAddress.orderUserDetails.streetAddress %></p>
-                  <p> <%= deliveryAddress.orderUserDetails.pincode %></p>
-                  <p> <%= deliveryAddress.orderUserDetails.place %></p>
+                <h4 >Delivery Address :</h4><br>
+                
+                  <p><%= deliveryAddress.orderUserDetails.name %> - <%= deliveryAddress.orderUserDetails.phone %></p>
+                  <p> <%= deliveryAddress.orderUserDetails.streetaddress %> - <%= deliveryAddress.orderUserDetails.pincode %></p>
+                  <p> <%= deliveryAddress.orderUserDetails.landmark %> -  <%= deliveryAddress.orderUserDetails.place %> , <%= deliveryAddress.orderUserDetails.country %></p>
                   <p> <%= deliveryAddress.orderUserDetails.locality %></p>
-                  <p> <%= deliveryAddress.orderUserDetails.landmark %></p>
-                  <p> <%= deliveryAddress.orderUserDetails.country %></p>
                   <p> <%= deliveryAddress.orderUserDetails.alternatePhone %></p>
-
-                  <!-- Add more product details as needed -->
-
 
               </div>
             </div>
@@ -134,37 +122,33 @@
 <%- include('../layouts/adminFooter') %>
 
 
+<!-- order status update function -->
+
 <script>
-      
+      function updateOrderStatus(orderId) {
+    var selectElement = document.getElementById('orderStatus_' + orderId);
+    var newStatus = selectElement.value;
+    console.log(newStatus);
 
-
-  function updateOrderStatus(orderId) {
-    console.log(orderId)
-var selectElement = document.getElementById('orderStatus_' + orderId);
-var newStatus = selectElement.value;
-console.log(newStatus)
-
-fetch('/orders/updateOrderStatus', {
-method: 'POST',
-headers: {
-  'Content-Type': 'application/json'
-},
-body: JSON.stringify({ orderId: orderId, newStatus: newStatus })
-
-})
-
-.then(response => {
-
-
-if (response.ok) {
-  console.log('Order status updated successfully');
-} else {
-  console.error('Error updating order status:', response.statusText);
+    fetch('/admin/orders/updateOrderStatus', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ orderId: orderId, newStatus: newStatus })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Order status updated successfully');
+        } else {
+            console.error('Error updating order status:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating order status:', error);
+    });
 }
-})
-.catch(error => {
-console.error('Error updating order status:', error);
-});
-}
+
+
 
 </script>

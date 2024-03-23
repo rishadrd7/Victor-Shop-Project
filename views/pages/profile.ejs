@@ -26,13 +26,13 @@
         <div class='col-md-7 p-5 right' style=" border-radius: 0;">
             
         
-            <form class='col-md-10' action="/submit-form" method="post">
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label for="inputEmail4" class="txt">Full Name</label>
-                        <input type="text" class="form-control" id="fullName" name="name" placeholder="Full Name" value="<%= locals.userData.name %>" disabled />       
-                    </div>       
-                </div>
+          <form class='col-md-10' action="/submit-form" method="post" onsubmit="return validateForm()">
+            <div class="row">
+              <div class="form-group col-md-6">
+                  <label for="inputEmail4" class="txt">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" name="name" placeholder="Full Name" value="<%= locals.userData.name %>" disabled />       
+              </div>       
+          </div>
                 <!-- <div class="row">
                     <div class="form-group col-md-6">
                         <label for="inputEmail4" class="txt">User Name</label>
@@ -55,8 +55,11 @@
                 <button type="button" class="btn btn-edit" id="editBtn">Edit</button>
                 <button type="submit" class="btn btn-edit" id="saveBtn" style="display: none;">Save</button>
 
+                <div id="alertMessage" style="display: none;"></div>
+              </form>
 
-            </form>
+
+              <!-- change-password -->
             
             <div class="pass" style="margin-top: 20px;">  
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-pencil-square" style="margin-top: 20px; " viewBox="0 0 16 16">
@@ -100,10 +103,39 @@
  <!-- profileList end div        -->
  
 
-<!-- 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>  -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+ 
+<!-- form validation of profile -->
+ <script>
+  function enableFields() {
+      document.getElementById("fullName").disabled = false;
+      document.getElementById("phone").disabled = false;
+      document.getElementById("editBtn").style.display = "none";
+      document.getElementById("saveBtn").style.display = "inline-block";
+  }
+
+  function validateForm() {
+      var fullName = document.getElementById("fullName").value.trim();
+      var phone = document.getElementById("phone").value.trim();
+
+      if (fullName === "" || phone === "") {
+          document.getElementById("alertMessage").innerText = "Please fill in all fields.";
+          document.getElementById("alertMessage").style.display = "block";
+          return false;
+      }
+
+      if (fullName.match(/^\s+$/) || phone.match(/^\s+$/)) {
+          document.getElementById("alertMessage").innerText = "Spaces only are not allowed.";
+          document.getElementById("alertMessage").style.display = "block";
+          return false;
+      }
+
+      return true;
+  }
+</script>
+
+
 
  <!-- edit profile function -->
  <script>
@@ -114,10 +146,9 @@
         document.getElementById('saveBtn').style.display = 'block';
         this.style.display = 'none';
       });
-    </script>
+      </script>
  
- <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
- 
+
  
  <!-- change password function-->
 <script>
@@ -165,6 +196,8 @@
     }
   });
 </script>
+
+
 
  
  <br>

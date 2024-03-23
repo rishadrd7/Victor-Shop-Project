@@ -20,6 +20,7 @@ const category = async (req, res) => {
 const categoryAdd = async (req, res) => {
   const categoryId = req.params.id;
   const category = await Category.findById(categoryId);
+
   try {
     res.render('admin/addCategory');
   } catch (error) {
@@ -33,26 +34,28 @@ const addCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
 
-    const existingCategory = await Category.findOne({ name });
+    // Convert category name to lowercase for case-insensitive comparison
+    const lowerCaseName = name.toLowerCase();
+
+    const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${lowerCaseName}$`, 'i') } });
     if (existingCategory) {
       return res.status(400).json({ success: false, message: 'Category with this name already exists' });
     }
 
     const newCategory = new Category({
-      name: name.toLowerCase(),
+      name: name,
       description: description
     });
 
-
     await newCategory.save();
-
 
     res.json({ success: true, message: 'Category added successfully!' });
   } catch (error) {
     console.error(error);
-    // res.status(500).json({ success: false, message: 'Category with this name already exists' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
 
 
 //category edit 
@@ -60,12 +63,28 @@ const editCAtegory = async (req, res) => {
   try {
     const { categoryId, editedDescription, editedName } = req.body;
     console.log(categoryId, editedDescription, editedName);
+
+    // Convert edited name to lowercase for case-insensitive comparison
+    const lowerCaseEditedName = editedName.toLowerCase();
+
+    // Check if any other category with the same name already exists (case-insensitive)
+    const existingCategory = await Category.findOne({ 
+      _id: { $ne: categoryId }, // Exclude the current category from the search
+      name: { $regex: new RegExp(`^${lowerCaseEditedName}$`, 'i') } 
+    });
+    
+    if (existingCategory) {
+      return res.status(400).json({ success: false, message: 'Another category with this name already exists' });
+    }
+
+    // Update the category
     await Category.updateOne({ _id: categoryId }, { $set: { name: editedName, description: editedDescription } });
-    res.json(true);
+    res.json({ success: true, message: 'Category updated successfully' });
   } catch (error) {
-    console.log(error.message);
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
-}
+};
 
 //category delete option
 const postDeleteCategory = async (req, res) => {

@@ -8,7 +8,6 @@ const adminController=require("../controller/adminController");
 const productController=require("../controller/productController");
 const categoryController=require("../controller/categoryController");
 const orderController=require('../controller/orderController');
-const cartController=require('../controller/cartController');
 const adminAuth = require('../middleware/adminAuth');
 
 
@@ -34,9 +33,9 @@ const upload = multer({ storage: storage });
 //================================admin side controller============================================
 
 // adminRouter.get('/dashboard', adminController.createAdmin);
-adminRouter.get("/admin",adminAuth.isLogin,adminController.Login);
+adminRouter.get("/admin",adminAuth.isLogout,adminController.Login);
 adminRouter.post("/dashboard",adminAuth.isLogout,adminController.createAdmin);
-adminRouter.get("/dashboard",adminController.dashboard);
+adminRouter.get("/dashboard",adminAuth.isLogin,adminController.dashboard);
 adminRouter.get('/admin',adminController.logout);
 adminRouter.get("/forgotAdmin",adminController.adminForgot);
 adminRouter.post("/resetpassAdmin",adminController.resetPass);
