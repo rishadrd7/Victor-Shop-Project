@@ -4,10 +4,13 @@ const Category = require("../models/categoryModel");
 const Order = require("../models/ordersModel")
 
 
+
+
+
 //product add to cart
 const addToCart = async (req, res) => {
     try {
-        console.log("Product added");
+        console.log("Product added to cart");
         const productId = req.body.productId; // Assuming productId is sent in the request body
 
         // Find the product by its ID

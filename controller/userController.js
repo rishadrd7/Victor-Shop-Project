@@ -182,12 +182,8 @@ const signUp = async (req, res) => {
 
   try {
 
-    //  Flash Messgae :-
-
     const emailexitss = req.flash("emailexits");
     const confirmPassWrong = req.flash("confirmPassWrong");
-
-    // const categoryData = await Category.find({ is_Listed: true });
 
     res.render('users/registration', { emailAlredyExits: emailexitss, confirmPassWrongg: confirmPassWrong });
 
@@ -197,6 +193,8 @@ const signUp = async (req, res) => {
 
   }
 };
+
+
 
 
 
@@ -765,18 +763,21 @@ const searchProducts = async (req, res) => {
        // Extract search query from request parameters
        const { q } = req.query;
  
-       const products = await Product.find({ $or: [
-           { name: { $regex: new RegExp(q, 'i') } },
-       ]});
- 
-       const categories = await Category.find({});
+       // Search products and categories simultaneously
+       const [products, categories] = await Promise.all([
+           Product.find({ $or: [
+               { name: { $regex: new RegExp(q, 'i') } },
+           ]}),
+           Category.find({ name: { $regex: new RegExp(q, 'i') } })
+       ]);
  
        res.render('pages/shop', { products, categories });
   } catch (error) {
        console.error(error);
        res.status(500).send('Internal Server Error');
   }
- };
+};
+
  
 
 // ==============================set up user Profile=========================
@@ -1172,16 +1173,6 @@ const cancelOrder = async (req, res) => {
 
 
 
-//==================================================setup wishlist page=====================================
-//setup wishlist page
-const wishlistPage = async (req, res) => {
-  try {
-    res.render('pages/wishlist')
-  } catch (error) {
-    console.log(error);
-
-  }
-}
 
 
 
@@ -1227,7 +1218,6 @@ module.exports = {
   placeOrder,
   orderPage,
   cancelOrder,
-  wishlistPage
 
 
 };

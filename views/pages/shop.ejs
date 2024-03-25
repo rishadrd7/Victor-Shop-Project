@@ -156,10 +156,11 @@
 
                                     <!-- Add to Cart Button -->
                                     <div class="product-action" style="z-index: 0;">
-                                        <a href="#" class="btn-product btn-cart" onclick="addToCart()">
+                                        <a href="#" class="btn-product btn-cart" <% if (element.quantity < 0) { %>disabled<% } %> onclick="addToCart('<%= element._id %>')">
                                             <span>Add to Cart</span>
                                         </a>
                                     </div>
+                                    
                                 </figure>
 
                                 <div class="product-body">
@@ -202,6 +203,41 @@
 
         <!-- sweetalert message -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+
+            function addToCart(productId) {
+                let data = { productId: productId }; 
+                console.log('data is:', data);
+        
+                axios.post('/add-to-cart', data) // Adjust the route path as needed
+                    .then(response => {
+                        console.log('Product added to cart:', response.data);
+        
+                        // Show success message using SweetAlert
+                        swal.fire({
+                            icon: 'success',
+                            title: 'Product added to cart!',
+                            text: 'The product has been added to your cart.',
+                            timer: 1500, // Time in milliseconds (adjust as needed)
+                            showConfirmButton: false
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error adding product to cart:', error);
+                        // Show error message using SweetAlert if needed
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to add the product to cart. Please try again.'
+                        });
+                    });
+            }
+        
+        </script>
+
+
+
         <script>
             function addToCart() {
                 Swal.fire({

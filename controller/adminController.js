@@ -1,9 +1,32 @@
 const User=require("../models/userModel");
 const bcrypt = require('bcrypt');
+const flash= require('express-flash');
 require('dotenv').config();
 
 
-//adminDetail
+
+//setup admin login page
+
+const Login = async (req, res) => {
+    try {
+        console.log("admin login");
+        const msg = req.flash("message");
+        
+        // If session already exists, redirect user to dashboard
+        if (req.session.admin_id) {
+            return res.redirect("/admin/dashboard");
+        }
+
+        res.render("admin/adminLogin", { msg });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+
+
+//adminDetails
 const createAdmin = async (req, res) => {
     try {
 
@@ -11,6 +34,7 @@ const createAdmin = async (req, res) => {
         const bodyPass = req.body.password
 
         const adminData  = await User.findOne({email : bodyEmail , is_admin : true});
+        console.log(adminData, "admin Logged");
 
         if(adminData){
 
@@ -21,7 +45,12 @@ const createAdmin = async (req, res) => {
 
                 res.redirect('/admin/dashboard')
     
+            }else{
+                res.render('admin/adminLogin' ,{msg: "Incorrect Password"})
             }
+            
+        }else{
+                res.render("admin/adminLogin" ,{msg:"Email and Password Incorrect"})
 
         }
       
@@ -32,17 +61,6 @@ const createAdmin = async (req, res) => {
 };
 
 
-//adminlogin
-
-const Login= async (req,res)=>{
-    try{
-
-        const msg = req.flash('flash')
-        res.render("admin/adminLogin" , {msgg : msg});
-    }catch(error){
-        console.log(error);
-    }
-}
 
 
 //dashboard
@@ -53,6 +71,25 @@ const dashboard= async( req,res)=>{
         console.log(error);
     }
 }
+
+
+//logout
+const logout = async (req, res) => {
+    try {
+        // Destroy the session
+        req.session.destroy((err) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send("Internal Server Error");
+            }
+            // Redirect the user to the admin login page
+            res.redirect('/admin/login');
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    }
+};
 
 
 //forgotpass
@@ -75,16 +112,7 @@ const resetPass= async(req,res)=>{
 }
 
 
-//logout
-const logout = async (req,res)=>{
-    try {
-        req.session.admin_id=null
-        res.resnder('/admin')
-    } catch (error) {
-        console.log(error);
-        
-    }
-}
+
 
 
 // set usersPage

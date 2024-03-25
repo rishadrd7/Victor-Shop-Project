@@ -6,21 +6,19 @@ const config = require("../config/config");
 const router = express.Router();
 const userController=require("../controller/userController");
 const cartController=require('../controller/cartController');
+const wishlistController=require("../controller/wishlistController");
 const userAuth = require("../middleware/userAuth");
 require('dotenv').config();
 const passport = require("passport");
 require('../passport');
 
 
-
-router.use(
-  session({
-    secret: config.sessionSecret,
+//session
+router.use(session({
+    secret: 'your_secret_key',
     resave: false,
     saveUninitialized: true
-    // cookie: { secure: true }
-  })
-)
+}));
 
 
 //================================userController====================================================
@@ -61,11 +59,14 @@ router.post('/place-order', userController.placeOrder);
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
 router.post('/orders/:orderId/cancel', userController.cancelOrder);
 
-router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,userController.wishlistPage);
 
 //============================================cart side controller=========================================
 router.post('/add-to-cart', cartController.addToCart);
 router.delete('/removeProductFromCart/:cartId/:productId', cartController.removeProductFromCart);
+
+
+//============================================wishlist side controller=========================================
+router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,wishlistController.wishlistPage);
 
 
 

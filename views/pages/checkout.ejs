@@ -112,7 +112,7 @@ label{
 						</button>
 
 						<!-- add address form -->
-						<form action="/checkout/add-address" method="POST">
+						<form id="addressForm" action="/checkout/add-address" method="POST">
 							<div class="collapse" id="addAddressFormCollapse">
 								<div class="form-row">
 									<!-- Left Section -->
@@ -167,13 +167,14 @@ label{
 								</div>
 							</div>
 						</form>
-						<br>
 						
+						
+						<br>
 									<!-- Display addresses -->
 									<% if (addressData && addressData.length > 0) { %>
 										<% addressData.forEach(address => { %>
+											
 											<div class="address-details">
-
 												<a href="" class="edt" style="display: flex; justify-content: end; "id="editButton_<%= address._id %>" data-id="<%= address._id %>" data-toggle="collapse" data-target="#collapse_<%= address._id %>">Edit</a>
 												
 												<input type="radio" id="address_<%= address._id %>" name="selectedAddress" value="<%= address._id %>" <% if (addressData.indexOf(address) === 0) { %> checked <% } %>>
@@ -492,6 +493,43 @@ label{
 		  });
 		});
 	  </script>
+
+
+<!-- address add vaidation -->
+<script>
+    document.getElementById("addressForm").addEventListener("submit", function(event) {
+        var inputs = this.querySelectorAll("input");
+        for (var i = 0; i < inputs.length; i++) {
+            var value = inputs[i].value.trim();
+            inputs[i].value = value; // Update value with trimmed one
+            if (!value) {
+                alert("Please fill in all fields.");
+                event.preventDefault();
+                return;
+            }
+        }
+
+        var pincodeInput = document.getElementById("pincode");
+        var pincodeValue = pincodeInput.value;
+        var pincodeRegex = /^[1-9][0-9]{5}$/;
+        if (!pincodeRegex.test(pincodeValue)) {
+            alert("Please enter a valid pincode.");
+            event.preventDefault();
+            return;
+        }
+
+        var phoneInput = document.getElementById("phone");
+        var phoneValue = phoneInput.value;
+        var phoneRegex = /^[0-9]{10,15}$/;
+        if (!phoneRegex.test(phoneValue)) {
+            alert("Please enter a valid phone number.");
+            event.preventDefault();
+            return;
+        }
+    });
+</script>
+
+
 
 <%- include('../layouts/footer')  %>
 <%- include('../layouts/footerNav')  %>
