@@ -19,7 +19,8 @@
             <div class="card-body">
               <h4 class="card-title">Coupon Add</h4>
 
-              <form id="couponForm" action="/admin/coupon-add" method="post" class="form-sample">
+              <form id="couponForm" action="/admin/coupon-add" method="post" class="form-sample" onsubmit="return validateForm()">
+
                 
                 <div class="row">
                   <div class="col-md-6">
@@ -67,7 +68,7 @@
                     <div class="form-group row">
                       <label class="col-sm-3 col-form-label">Expire Date</label>
                       <div class="col-sm-9">
-                        <input class="form-control" name="expireDate" type="date"  placeholder="dd/mm/yyyy" >
+                        <input class="form-control" name="expireDate" id="couponExpire" type="date" placeholder="dd/mm/yyyy">
                       </div>
                     </div>
                   </div>
@@ -93,57 +94,67 @@
 
 <%- include('../layouts/adminFooter') %>
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <!-- add coupon form validation -->
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-      const couponForm = document.getElementById('couponForm');
+  function validateForm() {
+   // Get form elements
+   var couponName = document.getElementsByName('couponName')[0].value;
+   var couponCode = document.getElementById('couponCodeInput').value;
+   var description = document.getElementById('exampleTextarea1').value;
+   var discount = document.getElementsByName('discount')[0].value;
+   var expireDate = document.getElementById('couponExpire').value;
+  
 
-      couponForm.addEventListener('submit', (event) => {
-          event.preventDefault(); // Prevent the default form submission
-
-          // Validate form fields
-          const couponName = couponForm.elements.couponName.value.trim();
-          const couponCode = couponForm.elements.couponCode.value.trim();
-          const description = couponForm.elements.description.value.trim();
-          const discount = couponForm.elements.discount.value.trim();
-          const expireDate = couponForm.elements.expireDate.value.trim();
-
-          // Check if discount meets the minimum requirement
-          if (!validateDiscount(discount)) {
-              return; // Stop further execution if discount is invalid
-          }
-
-          if (!couponName || !couponCode || !description || !discount || !expireDate) {
-              // Show alert if any field is not valid
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Please fill in all required fields!',
-              });
-          } else {
-              // If all fields are valid, submit the form programmatically
-              couponForm.submit();
-          }
+      // Check if offerTitle or description is empty or contains only whitespace
+      if (!couponName.trim() || !description.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Coupon Title and Description cannot be empty or contain only whitespace.',
       });
-  });
+      return false; // Prevent form submission
+   }
 
-  // Function to validate the discount value
-  function validateDiscount(discount) {
-      const minDiscount = 10; // Set your minimum discount value here
-      if (discount < minDiscount) {
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: `The discount must be at least ${minDiscount}!`,
-          });
-          return false; // Return false if the discount is invalid
-      }
-      return true; // Return true if the discount is valid
+   // Check if any field is empty
+   if (!couponName || !couponCode || !description || !discount || !expireDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'All fields are required.',
+      });
+      return false;
+   }
+  
+   // Check if discount is a positive number between 1 and 100
+   if (isNaN(discount) || discount < 1 || discount > 100) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Discount amount must be a positive number between 1 and 100.',
+      });
+      return false;
+   }
+  
+   // Check if expire date is not before current date
+   var currentDate = new Date();
+   var expireDateObj = new Date(expireDate);
+   if (expireDateObj < currentDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Expiration date cannot be before the current date.',
+      });
+      return false;
+   }
+  
+   // If all checks pass, return true to submit the form
+   return true;
   }
-</script>
+  </script>
+  >
 
 
 <!-- coupon generate code function -->

@@ -102,6 +102,8 @@ adminRouter.get('/coupons',couponController.couponPage);
 adminRouter.get('/addCoupon' ,couponController.addCouponPage);
 adminRouter.post('/coupon-add' ,couponController.addCoupon);
 adminRouter.delete('/deleteCoupon/:couponId' ,couponController.deleteCoupon);
+adminRouter.get('/couponEdit/:couponId', couponController.editCouponPage);
+adminRouter.post('/coupon-edit/:couponId', couponController.editedCoupon);
 
 //============================================================================================================
 module.exports=adminRouter;

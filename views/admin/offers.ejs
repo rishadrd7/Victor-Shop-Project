@@ -57,8 +57,9 @@
                             <td><a href="/admin/offerEdit/<%= offer._id %>" class="btn btn-primary ">Edit</a></td>
                             
                             <td>
-                              <button  class="btn btn-danger  delete-offer" onclick="deleteOffer('<%= offer._id %>','<%= index %>')" data-offer-id="<%= offer._id %>">Delete
-                               </button>
+                              <button class="btn btn-danger delete-offer" onclick="confirmDeleteOffer('<%= offer._id %>', '<%= index %>')" data-offer-id="<%= offer._id %>">Delete
+                              </button>
+
                             </td>
                           </tr>
                           <% }) %>
@@ -75,36 +76,54 @@
 </div>
 
 <%- include('../layouts/adminFooter') %>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <script>
-function deleteOffer(offerId, index) {
-  // Use SweetAlert to confirm the deletion
-  Swal.fire({
-      title: 'Are you sure?',
-      text: "Delete the Offer!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
+  async function confirmDeleteOffer(offerId, index) {
+      const result = await Swal.fire({
+          title: 'Are you sure?',
+          text: " Delete the Offer?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+      });
+  
       if (result.isConfirmed) {
-          // If confirmed, proceed with the deletion
-          // Your deletion logic here, for example:
-          fetch(`/admin/deleteOffer/${offerId}`, {
-              method: 'DELETE'  
-          })
-          .then((response) => {
+          try {
+              const response = await fetch(`/admin/deleteOffer/${offerId}`, {
+                  method: 'DELETE',
+              });
+  
               if (response.ok) {
-                  // Remove the row from the table
-                  document.getElementById(`row${index}`).remove();
-                  window.location.reload()
+                  Swal.fire(
+                      'Deleted!',
+                      'Your offer has been deleted.',
+                      'success'
+                  );
+                  // Assuming you have a way to remove the offer from the UI without reloading the page
+                  // For example, if you're using a JavaScript framework like React or Vue, you would update the state here
+                  // If not, you might need to reload the page or manually remove the offer from the DOM
+                  window.location.href = '/admin/offers';
+              } else {
+                  Swal.fire(
+                      'Error!',
+                      'There was an error deleting the offer.',
+                      'error'
+                  );
               }
-          });
+          } catch (error) {
+              Swal.fire(
+                  'Error!',
+                  'There was an error deleting the offer.',
+                  'error'
+              );
+          }
       }
-  });
-}
-</script>
+  }
+  </script>
+  
   

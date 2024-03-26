@@ -8,7 +8,7 @@
       <h3 class="page-title">Edit Offer</h3>
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <button><li class="breadcrumb-item"><a href="Offers">Back</a></li></button>
+          <button><li class="breadcrumb-item"><a href="/admin/Offers">Back</a></li></button>
         </ol>
       </nav>
     </div>
@@ -18,64 +18,66 @@
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
-              <!-- <h4 class="card-title">Offer Add</h4> -->
-              <form action="/admin/offerEditPost/<%= offer._id %>" method="post"  class="form-sample">
-                
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Offer Title</label>
-                      <div class="col-sm-9">
-                        <input type="text" value="<%= offer.title %>" class="form-control"  name="offerTitle" />
-                      </div>
-                    </div>
-                  </div>
 
-                  <div class="col-md-6">
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Offer %</label>
-                      <div class="col-sm-9">
-                        <input type="text" class="form-control" value="<%= offer.discountPercentage %>" name="offerPercentage" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <form action="/admin/offerEditPost/<%= offer._id %>" method="post" class="form-sample" onsubmit="return validateForm()">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Offer Title</label>
+                            <div class="col-sm-9">
+                              <input type="text" value="<%= offer.title %>" class="form-control"  name="offerTitle" />
+                            </div>
+                          </div>
+                        </div>
 
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group">
-                      <label for="exampleTextarea1">Description</label>
-                      <textarea class="form-control" name="description" id="exampleTextarea1" rows="4"><%= offer.description %></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Start Date</label>
-                        <div class="col-sm-9">
-                          <input type="date" id="startDate" name="startDate" class="form-control" />
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Offer %</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" value="<%= offer.discountPercentage %>" name="offerPercentage" />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-6">
-                    <div class="form-group row">
-                      <label class="col-sm-3 col-form-label">Expire Date</label>
-                      <div class="col-sm-9">
-                        <input class="form-control" name="expireDate" type="date"  placeholder="dd/mm/yyyy" >
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label for="exampleTextarea1">Description</label>
+                            <textarea class="form-control" name="description" id="exampleTextarea1" rows="4"><%= offer.description %></textarea>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-               
-               <div class="col">
-                <button type="submit" class="btn btn-info ">Submit</button>
-               </div>
+
+                      <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Start Date</label>
+                              <div class="col-sm-9">
+                                <input type="date" id="startDate" name="startDate" class="form-control" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                  
+                          <div class="col-md-6">
+                            <div class="form-group row">
+                              <label class="col-sm-3 col-form-label">Expire Date</label>
+                              <div class="col-sm-9">
+                                <input class="form-control" name="expireDate" type="date"  placeholder="dd/mm/yyyy" >
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      
+                      <div class="col">
+                        <button type="submit" class="btn btn-info ">Submit</button>
+                      </div>
                 
               </form>
+
+              <br>
             </div>
           </div>
         </div>            
@@ -88,10 +90,85 @@
 
 <%- include('../layouts/adminFooter') %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
 <script>
+  function validateForm() {
+   // Get form elements
+   var offerTitle = document.getElementsByName('offerTitle')[0].value;
+   var offerPercentage = document.getElementsByName('offerPercentage')[0].value;
+   var description = document.getElementById('exampleTextarea1').value;
+   var startDate = document.getElementById('startDate').value;
+   var expireDate = document.getElementsByName('expireDate')[0].value;
+  
+
+      // Check if offerTitle or description is empty or contains only whitespace
+      if (!offerTitle.trim() || !description.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Offer Title and Description cannot be empty or contain only whitespace.',
+      });
+      return false; // Prevent form submission
+   }
+  
+
+
+   // Check if any field is empty
+   if (!offerTitle || !offerPercentage || !description || !startDate || !expireDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'All fields are required.',
+      });
+      return false;
+   }
+  
+   // Check if offer percentage is a positive number between 1 and 100
+   if (isNaN(offerPercentage) || offerPercentage < 1 || offerPercentage > 100) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Offer percentage must be a positive number between 1 and 100.',
+      });
+      return false;
+   }
+  
+   // Check if start date is not before current date
+   var currentDate = new Date();
+   var startDateObj = new Date(startDate);
+   if (startDateObj < currentDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Start date cannot be before the current date.',
+      });
+      return false;
+   }
+  
+   // Check if expire date is not before start date
+   var expireDateObj = new Date(expireDate);
+   if (expireDateObj < startDateObj) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Expiration date cannot be before the start date.',
+      });
+      return false;
+   }
+  
+   // If all checks pass, return true to submit the form
+   return true;
+  }
+  </script>
+  
+
+<!-- <script>
     // Get current date
     var currentDate = new Date().toISOString().split('T')[0];
   
     // Set the value of the input field to the current date
     document.getElementById('startDate').value = currentDate;
-  </script>
+  </script> -->

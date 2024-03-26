@@ -16,12 +16,8 @@
         <div class="card">
           <div class="card-body">
 
-            <form
-              action="/admin/offer-add"
-              method="post"
-              class="form-sample"
-              id="offerForm"
-            >
+            <form action="/admin/offer-add" method="post" class="form-sample" id="offerForm" onsubmit="return validateForm()">
+
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group row">
@@ -32,6 +28,7 @@
                         class="form-control"
                         name="offerTitle"
                         id="offerTitle"
+                        required
                       />
                       <small
                         class="text-danger"
@@ -94,7 +91,7 @@
                         name="startDate"
                         class="form-control"
                         id="startDate"
-                        
+                        required
                       />
                     </div>
                     <small
@@ -115,7 +112,7 @@
                         name="expireDate"
                         type="date"
                         id="expireDate"
-                      
+                        required
                       /> 
                       <small class="text-danger" id="expireDateError" style="display: none">Expire Date must be after the starting date</small> 
                     </div>
@@ -186,13 +183,8 @@
               <input type="hidden" name="selectedItems" id="selectedItems" />
 
               <div class="col">
-                <button
-                  type="button"
-                  onclick="submitForm()"
-                  class="btn btn-info"
-                >
-                  Submit
-                </button>
+                <button type="submit" class="btn btn-info">Submit</button>
+
               </div>
             </form>
 
@@ -208,87 +200,74 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-      console.log("Script is running");
-      const submitButton = document.querySelector('button[type="button"]');
-      const offerForm = document.getElementById('offerForm');
-
-      submitButton.addEventListener('click', (event) => {
-          event.preventDefault(); // Prevent the default form submission
-
-          // Validate form fields
-          const offerTitle = document.getElementById('offerTitle').value.trim();
-          const offerPercentage = document.getElementById('offerPercentage').value.trim();
-          const description = document.getElementById('description').value.trim();
-          const startDate = document.getElementById('startDate').value;
-          const expireDate = document.getElementById('expireDate').value;
-
-          console.log("Validation checks:", {
-              offerTitle,
-              offerPercentage,
-              description,
-              startDate,
-              expireDate
-          });
-
-          // Check if offer title is empty
-          if (!offerTitle) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Offer Title cannot be empty!',
-              });
-              return; // Stop further execution
-          }
-
-          // Check if offer percentage is within the range of 1 to 100
-          if (offerPercentage < 1 || offerPercentage > 100) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Offer Percentage must be between 1 and 100!',
-              });
-              return; // Stop further execution
-          }
-
-          // Check if description is empty
-          if (!description) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Description cannot be empty!',
-              });
-              return; // Stop further execution
-          }
-
-          // Check if start date is not a previous day
-          const today = new Date().toISOString().split('T')[0];
-          if (startDate < today) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Start Date cannot be a previous day!',
-              });
-              return; // Stop further execution
-          }
-
-          // Check if expire date is after the start date
-          if (expireDate <= startDate) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Expire Date must be after the Start Date!',
-              });
-              return; // Stop further execution
-          }
-
-          // If all fields are valid, submit the form programmatically
-          offerForm.submit();
+  function validateForm() {
+   // Get form elements
+   var offerTitle = document.getElementById('offerTitle').value;
+   var offerPercentage = document.getElementById('offerPercentage').value;
+   var description = document.getElementById('description').value;
+   var startDate = document.getElementById('startDate').value;
+   var expireDate = document.getElementById('expireDate').value;
+  
+   // Check if offerTitle or description is empty or contains only whitespace
+   if (!offerTitle.trim() || !description.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Offer Title and Description cannot be empty or contain only whitespace.',
       });
-  });
-</script>
+      return false; // Prevent form submission
+   }
+  
+   // Check if any other field is empty
+   if (!offerPercentage || !startDate || !expireDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'All fields are required.',
+      });
+      return false; // Prevent form submission
+   }
+  
+   // Check if offer percentage is a positive number between 1 and 100
+   if (isNaN(offerPercentage) || offerPercentage < 1 || offerPercentage > 100) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Offer percentage must be a positive number between 1 and 100.',
+      });
+      return false; // Prevent form submission
+   }
+  
+   // Check if start date is not before current date
+   var currentDate = new Date();
+   var startDateObj = new Date(startDate);
+   if (startDateObj < currentDate) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Start date cannot be before the current date.',
+      });
+      return false; // Prevent form submission
+   }
+  
+   // Check if expire date is not before start date
+   var expireDateObj = new Date(expireDate);
+   if (expireDateObj < startDateObj) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Expiration date must be after the start date.',
+      });
+      return false; // Prevent form submission
+   }
+  
+   // If all checks pass, allow form submission
+   return true;
+  }
+  </script>
+  
+
 
 
 

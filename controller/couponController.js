@@ -1,9 +1,7 @@
 
 const mongoose = require('mongoose') 
-const Order = require('../models/ordersModel');
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
-const Address = require('../models/addressModel');
 const Coupon = require('../models/couponModel');
 const ObjectId = mongoose.Types.ObjectId 
 
@@ -35,9 +33,9 @@ const addCoupon = async (req,res)=>{
     try {
         console.log("coupon added");
         const {couponName,couponCode,description,discount,expireDate}=req.body
-        console.log(couponCode,'couponcode ');
-        console.log(expireDate,'expiredate');
-        console.log(description,'description in coupon add');
+            console.log(couponCode,'couponcode ');
+            console.log(expireDate,'expiredate');
+            console.log(description,'description in coupon add');
 
         const newCoupon= new Coupon({
             name:couponName,
@@ -70,10 +68,54 @@ const deleteCoupon = async (req,res)=>{
     }
 }
 
+//set up edit coupon page
+const editCouponPage = async (req,res)=>{
+    try {
+        console.log("edit coupon");
+        const {couponId}=req.params
+        console.log(couponId);
+        const coupon = await Coupon.findById(couponId)
+        res.render('admin/editCoupon' ,{coupon});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Error occurred while fetching coupon details.");
+    }
+}
+
+
+const editedCoupon = async(req,res)=>{
+    try {
+        const {couponId}=req.params
+        const {couponName, couponCode , description ,discount , expireDate}=req.body;
+
+        const editCoupon = await Coupon.findOneAndUpdate(
+            { _id: couponId }, // Use object syntax to specify the query
+            {
+                name: couponName,
+                code: couponCode,
+                description,
+                discountAmount: discount,
+                expireDate
+            },
+            { new: true }
+        );
+
+        if (!editCoupon) {
+            return res.status(404).send("Coupon not found");
+        }
+
+        res.redirect('/admin/coupons');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Error occurred while updating coupon.");
+    }
+}
 
 module.exports={
     couponPage,
     addCouponPage,
     addCoupon,
-    deleteCoupon
+    deleteCoupon,
+    editCouponPage,
+    editedCoupon
 }

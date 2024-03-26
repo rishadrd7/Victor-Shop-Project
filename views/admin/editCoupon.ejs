@@ -1,0 +1,177 @@
+<%- include('../layouts/adminHeader') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+
+
+    <div class="page-header">
+      <h3 class="page-title">Edit Coupon</h3>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <button><li class="breadcrumb-item"><a href="/admin/coupons">Back</a></li></button>
+        </ol>
+      </nav>
+    </div>
+
+
+    
+    
+    <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              
+                <form action="/admin/coupon-edit/<%= coupon._id %>" method="post" class="form-sample" onsubmit="return validateForm()">
+
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Coupon Name</label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" value="<%= coupon.name %>" name="couponName" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="input-group">
+                        <input type="text" class="form-control" style="color: green;" id="couponCodeInput" value="<%= coupon.code %>" name="couponCode" placeholder="Coupon Code"   aria-label="Coupon Code" readonly >
+                        <div class="input-group-append">
+                          <button class="btn btn-sm btn-primary" type="button" onclick="generateCouponCode()">Search</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="exampleTextarea1">Description</label>
+                      <textarea class="form-control"  name="description"  id="exampleTextarea1" rows="4"><%= coupon.description %></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Discount Amount</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="discount" value="<%= coupon.discountAmount %>" class="form-control" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Expire Date</label>
+                      <div class="col-sm-9">
+                        <input class="form-control"   id="couponExpire" name="expireDate" type="date"  placeholder="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+               
+               <div class="col">
+                <button type="submit" class="btn btn-info ">Submit</button>
+               </div>
+                
+              </form>
+            </div>
+          </div>
+        </div>            
+      </div>
+    </div>
+
+
+
+
+    
+</div>
+</div>
+
+<%- include('../layouts/adminFooter') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!-- add coupon form validation -->
+<script>
+    function validateForm() {
+     // Get form elements
+     var couponName = document.getElementsByName('couponName')[0].value;
+     var couponCode = document.getElementById('couponCodeInput').value;
+     var description = document.getElementById('exampleTextarea1').value;
+     var discount = document.getElementsByName('discount')[0].value;
+     var expireDate = document.getElementById('couponExpire').value;
+    
+   // Check if offerTitle or description is empty or contains only whitespace
+   if (!couponName.trim() || !description.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Coupon Title and Description cannot be empty or contain only whitespace.',
+      });
+      return false; // Prevent form submission
+   }
+  
+
+     // Check if any field is empty
+     if (!couponName || !couponCode || !description || !discount || !expireDate) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'All fields are required.',
+        });
+        return false;
+     }
+    
+     // Check if discount is a positive number between 1 and 100
+     if (isNaN(discount) || discount < 1 || discount > 100) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Discount amount must be a positive number between 1 and 100.',
+        });
+        return false;
+     }
+    
+     // Check if expire date is not before current date
+     var currentDate = new Date();
+     var expireDateObj = new Date(expireDate);
+     if (expireDateObj < currentDate) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Expiration date cannot be before the current date.',
+        });
+        return false;
+     }
+    
+     // If all checks pass, return true to submit the form
+     return true;
+    }
+    </script>
+    
+
+
+
+<script>
+    function generateCouponCode(){
+      const characters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let couponCode='';
+      for(let i =0;i<10;i++){
+        couponCode+=characters.charAt(Math.floor(Math.random()*characters.length))
+      }
+      const couponCodeInput=document.getElementById('couponCodeInput')
+      couponCodeInput.value=couponCode
+      console.log(couponCode,'in ejs page');
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const couponExpire = document.getElementById('couponExpire');
+    couponExpire.value = '<%= coupon.expireDate %>';
+});
+
+</script>

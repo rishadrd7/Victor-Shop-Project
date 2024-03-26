@@ -149,6 +149,7 @@ const deleteOffer = async(req,res)=>{
         console.log(offerId);
         await Offer.findByIdAndDelete(offerId);
         res.json({success:true})
+        res.redirect('/admin/offers');
     } catch (error) {
         console.log(error);
         
