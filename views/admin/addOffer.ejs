@@ -1,0 +1,392 @@
+<%- include('../layouts/adminHeader') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title">Add Offers</h3>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="offers">Back</a></li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="row">
+      <div class="col-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+
+            <form
+              action="/admin/offer-add"
+              method="post"
+              class="form-sample"
+              id="offerForm"
+            >
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Offer Title</label>
+                    <div class="col-sm-9">
+                      <input  
+                        type="text"
+                        class="form-control"
+                        name="offerTitle"
+                        id="offerTitle"
+                      />
+                      <small
+                        class="text-danger"
+                        id="titleError"
+                        style="display: none"
+                        >Title cannot be empty</small
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Offer %</label>
+                    <div class="col-sm-10">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="offerPercentage"
+                        id="offerPercentage"
+                      />
+                      <small
+                        class="text-danger"
+                        id="percentageError"
+                        style="display: none"
+                        >Number should be 1 - 100 ranges</small
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="exampleTextarea1">Description</label>
+                    <textarea
+                      class="form-control"
+                      name="description"
+                      id="description"
+                      rows="4"
+                    ></textarea>
+                    <small
+                      class="text-danger"
+                      id="descriptionError"
+                      style="display: none"
+                      >Description cannot be empty</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Start Date</label>
+                    <div class="col-sm-9">
+                      <input
+                        type="date"
+                        name="startDate"
+                        class="form-control"
+                        id="startDate"
+                        
+                      />
+                    </div>
+                    <small
+                      class="text-danger"
+                      id="startDateError"
+                      style="display: none"
+                      >Cannot accept previous day</small
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Expire Date</label>
+                    <div class="col-sm-9">
+                      <input
+                        class="form-control"
+                        name="expireDate"
+                        type="date"
+                        id="expireDate"
+                      
+                      /> 
+                      <small class="text-danger" id="expireDateError" style="display: none">Expire Date must be after the starting date</small> 
+                    </div>
+                    <small
+                      class="text-danger"
+                      id="expireDateError"
+                      style="display: none"
+                      >Expire Date must be after starting date</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">Offer Type</label>
+                    <div class="col-sm-4">
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input
+                            type="radio"
+                            class="form-check-input"
+                            name="offerType"
+                            id="productsRadio"
+                            value=""
+                          />
+                          Products
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-sm-5">
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input
+                            type="radio"
+                            class="form-check-input"
+                            name="offerType"
+                            id="categoryRadio"
+                            value="option2"
+                          />
+                          Categories
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- checked -->
+                <!-- <div class="form-group">
+                    <label>Items to be offered</label>
+                    <select class="js-example-basic-multiple w-100" multiple="multiple" id="offerItemsSelect">
+                    </select>
+                  </div> -->
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Items to be offered</label>
+                    <select
+                      class="w-100"
+                      style="background-color: beige"
+                      multiple="multiple"
+                      id="offerItemsSelect"
+                    ></select>
+                  </div>
+                </div>
+              </div>
+
+              <input type="hidden" name="selectedItems" id="selectedItems" />
+
+              <div class="col">
+                <button
+                  type="button"
+                  onclick="submitForm()"
+                  class="btn btn-info"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../layouts/adminFooter') %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      console.log("Script is running");
+      const submitButton = document.querySelector('button[type="button"]');
+      const offerForm = document.getElementById('offerForm');
+
+      submitButton.addEventListener('click', (event) => {
+          event.preventDefault(); // Prevent the default form submission
+
+          // Validate form fields
+          const offerTitle = document.getElementById('offerTitle').value.trim();
+          const offerPercentage = document.getElementById('offerPercentage').value.trim();
+          const description = document.getElementById('description').value.trim();
+          const startDate = document.getElementById('startDate').value;
+          const expireDate = document.getElementById('expireDate').value;
+
+          console.log("Validation checks:", {
+              offerTitle,
+              offerPercentage,
+              description,
+              startDate,
+              expireDate
+          });
+
+          // Check if offer title is empty
+          if (!offerTitle) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Offer Title cannot be empty!',
+              });
+              return; // Stop further execution
+          }
+
+          // Check if offer percentage is within the range of 1 to 100
+          if (offerPercentage < 1 || offerPercentage > 100) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Offer Percentage must be between 1 and 100!',
+              });
+              return; // Stop further execution
+          }
+
+          // Check if description is empty
+          if (!description) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Description cannot be empty!',
+              });
+              return; // Stop further execution
+          }
+
+          // Check if start date is not a previous day
+          const today = new Date().toISOString().split('T')[0];
+          if (startDate < today) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Start Date cannot be a previous day!',
+              });
+              return; // Stop further execution
+          }
+
+          // Check if expire date is after the start date
+          if (expireDate <= startDate) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Expire Date must be after the Start Date!',
+              });
+              return; // Stop further execution
+          }
+
+          // If all fields are valid, submit the form programmatically
+          offerForm.submit();
+      });
+  });
+</script>
+
+
+
+
+
+<!-- select item offered -->
+<script>
+  let selectedItems = [];
+
+  async function fetchProductItems() {
+    const response = await fetch("/admin/productOffer");
+    const data = await response.json();
+    console.log(data, "fetchProductItems");
+    return data;
+  }
+
+  async function fetchCategoryItems() {
+    const response = await fetch("/admin/categoryOffer");
+    const data = await response.json();
+    console.log(data, "fetchCategoryItems");
+    return data;
+  }
+
+  async function updateOfferItems() {
+    const radioProducts = document.getElementById("productsRadio");
+    const radioCategory = document.getElementById("categoryRadio");
+    const offerItemsSelect = document.getElementById("offerItemsSelect");
+
+    if (radioProducts.checked) {
+      const productData = await fetchProductItems();
+      offerItemsSelect.innerHTML = "";
+      productData.products.forEach((item) => {
+        offerItemsSelect.innerHTML += `<option value="${item._id}">${item.name}</option>`;
+      });
+    } else if (radioCategory.checked) {
+      const categoryData = await fetchCategoryItems();
+      offerItemsSelect.innerHTML = "";
+      categoryData.categories.forEach((item) => {
+        offerItemsSelect.innerHTML += `<option value="${item._id}">${item.name}</option>`;
+      });
+    }
+  }
+
+  function updateSelectedItems() {
+    selectedItems = Array.from(
+      document.querySelectorAll("#offerItemsSelect option:checked")
+    ).map((option) => option.value);
+    console.log(selectedItems, "selected items in updateselectedditems");
+  }
+
+  document.getElementById("productsRadio").addEventListener("change", () => {
+    updateSelectedItems();
+    console.log("product changing");
+    updateOfferItems();
+  });
+  document.getElementById("categoryRadio").addEventListener("change", () => {
+    updateSelectedItems();
+    console.log("category changing");
+    updateOfferItems();
+  });
+
+  document
+    .getElementById("offerItemsSelect")
+    .addEventListener("change", updateSelectedItems);
+  updateOfferItems();
+  console.log("offeritems select changing");
+  updateSelectedItems();
+</script>
+
+
+<!-- form submit -->
+<script>
+  function submitForm() {
+    const form = document.getElementById("offerForm");
+    const formData = new FormData(form);
+
+    const data = {
+      offerTitle: formData.get("offerTitle"),
+      offerPercentage: formData.get("offerPercentage"),
+      description: formData.get("description"),
+      startDate: formData.get("startDate"),
+      expireDate: formData.get("expireDate"),
+      selectedItems: selectedItems,
+    };
+
+    fetch("/admin/offer-add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        console.log(response, "resoponose");
+        window.location.href = "/admin/offers";
+      })
+      .catch((error) => {
+        console.error("Error founded in catch", error);
+      });
+  }
+</script>

@@ -1,0 +1,97 @@
+<%- include('../layouts/adminHeader') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+
+
+    <div class="page-header">
+      <h3 class="page-title">Edit Offer</h3>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <button><li class="breadcrumb-item"><a href="Offers">Back</a></li></button>
+        </ol>
+      </nav>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <!-- <h4 class="card-title">Offer Add</h4> -->
+              <form action="/admin/offerEditPost/<%= offer._id %>" method="post"  class="form-sample">
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Offer Title</label>
+                      <div class="col-sm-9">
+                        <input type="text" value="<%= offer.title %>" class="form-control"  name="offerTitle" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Offer %</label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" value="<%= offer.discountPercentage %>" name="offerPercentage" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="exampleTextarea1">Description</label>
+                      <textarea class="form-control" name="description" id="exampleTextarea1" rows="4"><%= offer.description %></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Start Date</label>
+                        <div class="col-sm-9">
+                          <input type="date" id="startDate" name="startDate" class="form-control" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label class="col-sm-3 col-form-label">Expire Date</label>
+                      <div class="col-sm-9">
+                        <input class="form-control" name="expireDate" type="date"  placeholder="dd/mm/yyyy" >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+               
+               <div class="col">
+                <button type="submit" class="btn btn-info ">Submit</button>
+               </div>
+                
+              </form>
+            </div>
+          </div>
+        </div>            
+      </div>
+
+
+
+</div>
+</div>
+
+<%- include('../layouts/adminFooter') %>
+
+<script>
+    // Get current date
+    var currentDate = new Date().toISOString().split('T')[0];
+  
+    // Set the value of the input field to the current date
+    document.getElementById('startDate').value = currentDate;
+  </script>
