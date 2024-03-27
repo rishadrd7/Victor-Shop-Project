@@ -77,14 +77,14 @@
 
                             <div class="col-md-6">
                                 <div class="product-details">
-                                    <h1 class="product-title"><%= pro.name %></h1><!-- End .product-title -->
+                                    <h1 class="product-title"><%= pro.name %></h1>
 
                                     <div class="ratings-container">
                                         <div class="ratings">
-                                            <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                        </div><!-- End .ratings -->
+                                            <div class="ratings-val" style="width: 80%;"></div>
+                                        </div>
                                         <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
-                                    </div><!-- End .rating-container -->
+                                    </div>
 
                                     <div class="product-price">₹
                                         <%= pro.offerPrice  %>
@@ -94,37 +94,20 @@
 
                                     <div class="product-content">
                                         <!-- <p><%= pro.description %></p> -->
-                                        <!-- <p>Sed egestas, ante et vulputate volutpat, eros pede semper est, vitae luctus metus libero eu augue. Morbi purus libero, faucibus adipiscing. Sed lectus. </p> -->
                                     </div>
 
                                     <div class="details-filter-row details-row-size">
                                         <label>Color:</label>
 
                                         <div class="product-nav product-nav-thumbs">
-                                            <a href="#" class="active">
+                                            <a href="" class="active">
                                                 <img src="/uploads/<%= pro.image[0] %>" alt="product desc">
                                             </a>
-                                            <a href="#">
+                                            <a href="">
                                                 <img src="/uploads/<%= pro.image[1] %>" alt="product desc">
                                             </a>
                                         </div>
                                     </div>
-
-
-                                        <!-- <div class="details-filter-row details-row-size">
-                                            <label for="size">Size:</label>
-                                            <div class="select-custom">
-                                                <select name="size" id="size" class="form-control">
-                                                    <option value="#" selected="selected">Select a size</option>
-                                                    <option value="s">Small</option>
-                                                    <option value="m">Medium</option>
-                                                    <option value="l">Large</option>
-                                                    <option value="xl">Extra Large</option>
-                                                </select>
-                                            </div>
-
-                                            <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
-                                        </div> -->
 
 
                                     <!-- quantity and show out of stock -->
@@ -149,17 +132,15 @@
                                           <a href="#" class="btn-product btn-cart" <% if (pro.quantity < 0) { %>disabled<% } %> onclick="addToCart('<%= pro._id %>')">
                                             <span>Add to Cart</span>
                                         </a>
-                                        
+                                    
 
                                         <!-- Add to Wishlist Button -->
-                                        <a href="#" class="btn-product btn-wishlist" onclick="addToWishlist()">
+                                        <a href="#" class="btn-product btn-wishlist" onclick="addProductToWishlist('<%= pro._id %>')">
                                             <span>Add to Wishlist</span>
                                         </a>
-
-                                           
-
-
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a>
+                
+                                        
+                                            <a href="#" class="btn-product btn-compar   " title="Compare"><span></span></a>
                                         </div><!-- End .details-action-wrapper -->
                                     </div><!-- End .product-details-action -->
 
@@ -552,8 +533,56 @@
     <!-- sweetalert message -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
 
+    <script>
+        function addProductToWishlist(productId) {
+            event.preventDefault(); // Prevent the default action of the <a> tag
+    
+            fetch(`/addToWishlist`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId: productId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update wishlist');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Show a SweetAlert to indicate the product was added to the wishlist
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Product added to wishlist',
+                    });
+                } else {
+                    // Handle the case where the product could not be added to the wishlist
+                    // This could involve showing an error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops!',
+                        text: 'Something went wrong',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error updating wishlist:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: 'Something went wrong',
+                });
+            });
+        }
+    </script>
+
+
+
+<!-- add to cart function -->
  <script>
 
     function addToCart(productId) {
@@ -586,26 +615,8 @@
 
 </script>
 
-    
-<script>
-    function addToWishlist() {
-            // Perform additional actions here, such as routing or making AJAX requests
-            // For example:
-            // window.location.href = "/wishlist"; // Redirect to wishlist page
-            // $.post("/add-to-wishlist", { productId: productId }, function(data) { // Make AJAX request
-            //    console.log(data);
-            // });
-    
-            // Show success message
-            Swal.fire({
-            icon: 'success',
-            title: 'Added to Wishlist!',
-            text: 'Item added to wishlist successfully.',
-            showConfirmButton: false,
-            timer: 1500
-            });
-        }
-</script>
+
+   
 
 
     <!-- image zoom function -->
@@ -715,3 +726,4 @@
 
 <%- include('../layouts/footer')  %>
 <%- include('../layouts/footerNav')  %>
+

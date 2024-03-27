@@ -113,12 +113,18 @@
 
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
                       <% if (typeof message !== "undefined") { %>
-                      <h6 style="color: black; " class="text-center"><%= message %></h6>
+                      <h6 style="color: rgb(233, 0, 0); font-weight: 400; " class="text-center"><%= message %></h6>
                       <% } %>
             
+                      <% if(passMsg.length>0){ %>
+                        <h6 style="color: red; font-weight: 400; text-align: center;"><%= passMsg %></h6>
+                    <% } %>
+                    
                       <% if(msg.length>0){ %>
                         <p style="color: green; text-align: center; font-weight: 400;"><%= msg %></p>
                     <%  } %>
+
+                   
 
                       <form method="post" id="form" action="/login" id="login-form">
                         <div class="form-group">

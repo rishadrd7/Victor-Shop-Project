@@ -11,12 +11,12 @@ const Order = require("../models/ordersModel")
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const passport = require('passport');
-require('dotenv').config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
-const { orderDetails } = require("./orderController");
+require('dotenv').config();
 const {ObjectId} = require('mongodb')
+
 
 //google
 const loadAuth = (req, res) => {
@@ -131,8 +131,9 @@ const loginPage = async (req, res) => {
   try {
     const message = req.flash('message');
     const msg = req.flash('passwordChanged');
+    const passMsg = req.flash('passwordIncorrect');
 
-    res.render("users/login", { message, msg });
+    res.render("users/login", { message, msg ,passMsg});
   } catch (error) {
     console.log(error);
   }
@@ -147,7 +148,7 @@ const verifyLogin = async (req, res) => {
     console.log(userData);
 
     if (userData.is_blocked) {
-      req.flash('message', 'account is blocked');
+      req.flash('message', 'Account is blocked');
       return res.redirect('/login');
     }
 
@@ -159,18 +160,17 @@ const verifyLogin = async (req, res) => {
 
         res.redirect("/home");
       } else {
-
-        res.render("users/login", { msg, message: "Incorrect password." });
+        req.flash('passwordIncorrect', 'Incorrect password.'); 
+        res.redirect("/login");
       }
     } else {
-
-      res.render("users/login", { msg, message: "Email and Password incorrect." });
+      req.flash('message', 'Email and Password incorrect.'); // Set flash message for incorrect email/password combination
+      res.redirect("/login");
     }
-
   } catch (error) {
     console.log(error);
 
-    res.status(500).send("Email and Password Incorrect");
+    // res.status(500).send("Email and Password Incorrect");
   }
 }
 

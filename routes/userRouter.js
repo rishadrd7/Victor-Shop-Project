@@ -67,7 +67,9 @@ router.delete('/removeProductFromCart/:cartId/:productId', cartController.remove
 
 //============================================wishlist side controller=========================================
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,wishlistController.wishlistPage);
+router.post('/addToWishlist', wishlistController.addtoWishlist);
 
+router.delete('/wishlist/remove/:productId',wishlistController.removeFromWishlist); 
 
 
 

@@ -86,23 +86,23 @@ adminRouter.get('/orders/orderdetails/:orderId' ,adminAuth.isLogin,orderControll
 adminRouter.post('/orders/updateOrderStatus' ,orderController.updateOrderStatus);
 
 //============================================offer side controller=========================================
-adminRouter.get('/offers',offerController.offerPage);
-adminRouter.get('/addOffer',offerController.addOfferPage);
+adminRouter.get('/offers',adminAuth.isLogin,offerController.offerPage);
+adminRouter.get('/addOffer',adminAuth.isLogin,offerController.addOfferPage);
 
 adminRouter.get('/categoryOffer' ,offerController.categoryOffer);
 adminRouter.get('/productOffer' , offerController.productOffer);
 
 adminRouter.post('/offer-add',offerController.offerAdding);
 adminRouter.delete('/deleteOffer/:offerId' ,offerController.deleteOffer);
-adminRouter.get('/offerEdit/:offerId' ,offerController.editOffers);
+adminRouter.get('/offerEdit/:offerId' ,adminAuth.isLogin,offerController.editOffers);
 adminRouter.post('/offerEditPost/:id',offerController.editOfferPost);
 
 //============================================coupon side controller=========================================
-adminRouter.get('/coupons',couponController.couponPage);
-adminRouter.get('/addCoupon' ,couponController.addCouponPage);
+adminRouter.get('/coupons',adminAuth.isLogin,couponController.couponPage);
+adminRouter.get('/addCoupon' ,adminAuth.isLogin,couponController.addCouponPage);
 adminRouter.post('/coupon-add' ,couponController.addCoupon);
 adminRouter.delete('/deleteCoupon/:couponId' ,couponController.deleteCoupon);
-adminRouter.get('/couponEdit/:couponId', couponController.editCouponPage);
+adminRouter.get('/couponEdit/:couponId',adminAuth.isLogin,couponController.editCouponPage);
 adminRouter.post('/coupon-edit/:couponId', couponController.editedCoupon);
 
 //============================================================================================================
