@@ -26,6 +26,9 @@ const orderSchema = new mongoose.Schema({
             enum: ['Delivered', 'Shipping', 'Pending', 'Cancelled', 'Returned'],
             default: 'Pending'
 
+        },
+        priceAtOrder: {
+            type: Number // Store the price at the time of ordering
         }
     }],
     orderUserDetails: {

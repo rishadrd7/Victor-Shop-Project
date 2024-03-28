@@ -1,0 +1,188 @@
+<%- include("../layouts/profileList")  %>
+
+<style>
+    /* Styling for Scrollable History */
+    #scrollableHistory {
+        max-height: 200px; /* Set a max height and overflow-y to enable scrolling */
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 5px;
+    }
+
+    /* Styling for Collapsible History */
+    #collapseContent {
+        display: none; /* Hide the content by default */
+    }
+</style>
+
+
+<div class='col-md-7 p-5 right' style=" border-radius: 0;">
+
+
+
+    <div id="tab-wallet" role="tabpanel" aria-labelledby="tab-wallet-link">
+        <div class="row" style="padding: 20px; background-color: #f0f0f0;">
+            <h3 style="color: #333;">My E-Wallet</h3>
+            <div class="col-lg-12" style="margin-top: 20px;">
+                <div class="card card-dashboard" style="background-color: #fff; border-radius: 10px; padding: 20px;">
+                    <div class="card-body">
+                        <div class="bg-white" style="padding: 10px; border-radius: 5px; border-width: 1px; border: solid;">
+                            <h4 class="fw-bolder" style="color: #000000;">Available Balance</h4>
+                            <h6 class="text-primary ">₹ <%= walletBalance %></h6>
+                        </div>
+                        <form id="addMoneyForm" action="/wallet/add-money" method="post">
+                            <input type="text" name="amount" id="amountInput" placeholder="Enter Amount" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                            <button type="submit" class="btn btn-primary" style="margin-top: 10px; height: 40px; width: 100px; border-radius: 5px;">Add Now</button>
+                        </form
+                        
+                    
+                        <br>
+                        <br>
+                        <h4>Transaction History</h4>
+                     <!-- Scrollable History -->
+                        <div id="scrollableHistory">
+                            <ul id="scrollableList">
+                                <% transactions.slice().reverse().forEach(transaction => { %>
+                                    <li><%= transaction.reason %> - ₹<%= transaction.transactionAmount %> (<%= transaction.type %>)</li>
+                                <% }); %>
+                            </ul>
+                        </div>
+
+                        <!-- Collapsible History -->
+
+                        <br>
+                        <div id="collapsibleHistory">
+                            <button id="toggleCollapse">Wallet History</button>
+                            <div id="collapseContent">
+                                <table id="collapseTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Reason</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="collapseList">
+                                        <% transactions.slice().reverse().forEach(transaction => { %>
+                                            <tr>
+                                                <td><%= transaction.date.toString().split(' ').slice(0,4) %></td>
+                                                <td><%= transaction.type %></td>
+                                                <td></td>
+                                                <td>₹<%= transaction.transactionAmount %></td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+
+<div class="collapse" id="collapseHistory">
+    <div class="card card-body">
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Reason</th>
+                <th>Amount</th>
+            </tr>
+            
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- profileList end div        -->
+</div>
+</div>
+ <!-- profileList end div        -->
+
+
+
+ <br>
+<br>
+<%- include("../layouts/mobileNav") %>
+<%- include("../layouts/footer")  %>
+<%- include("../layouts/footerNav")  %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // JavaScript for Collapsible History
+    const toggleButton = document.getElementById('toggleCollapse');
+    const collapseContent = document.getElementById('collapseContent');
+
+    toggleButton.addEventListener('click', function() {
+        if (collapseContent.style.display === 'none') {
+            collapseContent.style.display = 'block'; // Show content when button is clicked
+        } else {
+            collapseContent.style.display = 'none'; // Hide content when button is clicked again
+        }
+    });
+</script>
+
+
+<script>
+document.getElementById('addMoneyForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const amount = document.getElementById('amountInput').value;
+    if (isNaN(amount) || amount <= 0) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please enter a valid amount.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    fetch('/wallet/add-money', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: amount }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        window.location.reload()
+    })
+    .then(data => {
+        Swal.fire({
+            title: 'Success!',
+            text: 'Money has been successfully added to your wallet.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'An error occurred while adding money to your wallet.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+});
+</script>

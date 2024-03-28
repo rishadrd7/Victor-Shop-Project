@@ -1176,8 +1176,6 @@ const cancelOrder = async (req, res) => {
 
 
 
-
-
 module.exports = {
   loadAuth,
   successGoogleLogin,

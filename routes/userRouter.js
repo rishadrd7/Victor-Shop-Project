@@ -7,6 +7,7 @@ const router = express.Router();
 const userController=require("../controller/userController");
 const cartController=require('../controller/cartController');
 const wishlistController=require("../controller/wishlistController");
+const walletController=require('../controller/walletController');
 const userAuth = require("../middleware/userAuth");
 require('dotenv').config();
 const passport = require("passport");
@@ -68,10 +69,13 @@ router.delete('/removeProductFromCart/:cartId/:productId', cartController.remove
 //============================================wishlist side controller=========================================
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,wishlistController.wishlistPage);
 router.post('/addToWishlist', wishlistController.addtoWishlist);
-
 router.delete('/wishlist/remove/:productId',wishlistController.removeFromWishlist); 
 
-
+//============================================wishlist side controller=========================================
+router.get('/profile/wallet',userAuth.user,walletController.walletpage);
+router.post('/wallet/add-money', walletController.addMoney);
+router.post('/processWalletPayment',walletController.processWalletPayment);
+router.post('/processRefund',walletController.processRefund);
 
 
 
