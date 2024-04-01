@@ -1,0 +1,77 @@
+<%- include("../layouts/profileList") %>
+
+<style>
+    button{
+        float: right;
+    }
+    p{
+        color: black;
+        font-size: large;
+    }
+    .order-container {
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+  
+    .order-details {
+      font-size: 16px;
+    }
+  
+    .product {
+      display: flex;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+  
+    .product-image img {
+      width: 100px;
+      height: 100px;
+      margin-right: 20px;
+    }
+  
+    .product-details h3 {
+      margin-bottom: 10px;
+    }
+   
+  </style>
+
+<div class='col-md-8 p-5 right' style="border-radius: 0;">
+    <button><a href="/profile/myorders">Back</a></li></button>
+    
+    <div class="order-container">
+        <div class="order-details">
+            <h5>Order Details</h5>
+            <br>
+            
+            <% if (orderDetails) { %>
+        <p>Order ID: <%= orderDetails._id %></p>
+        <p>Order Date: <%= orderDetails.orderDate.toString().split(' ').slice(0,4).join(' ') %></p>
+        <br>
+        <!-- Loop through products and display details -->
+        <% orderDetails.products.forEach(product => { %>
+          <div class="product">
+            <div class="product-image">
+              <img src="/uploads/<%= product.productId.image[0] %>" alt="<%= product.productId.name %>">
+              <br>
+              <h4><%= product.productId.name %></h4>
+                <div class="product-details">
+                <p>Price: <%= product.productId.offerPrice %></p>
+                <p>Quantity: <%= product.quantity %></p>
+                </div>
+            </div>
+            </div>
+        <% }) %>
+        <!-- Add more order details as needed -->
+      <% } else { %>
+        <p>Order not found.</p>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+
+
+<br>
+<br>
+<%- include("../layouts/mobileNav") %>
+<%- include("../layouts/footer") %>

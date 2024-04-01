@@ -118,6 +118,7 @@ const editOffers = async (req,res)=>{
 }
 
 
+//edit offer
 const editOfferPost = async(req,res)=>{
     try {
         const{id}=req.params

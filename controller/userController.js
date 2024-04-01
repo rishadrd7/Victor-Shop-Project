@@ -7,6 +7,8 @@ const Category = require('../models/categoryModel')
 const Cart = require("../models/cartModel")
 const Address = require("../models/addressModel")
 const Order = require("../models/ordersModel")
+const Coupon = require("../models/couponModel");
+const Offer = require("../models/offerModel");
 
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -758,25 +760,25 @@ const productDetails = async (req, res) => {
 
 
 //product search in shop
-const searchProducts = async (req, res) => {
-  try {
-       // Extract search query from request parameters
-       const { q } = req.query;
- 
-       // Search products and categories simultaneously
-       const [products, categories] = await Promise.all([
-           Product.find({ $or: [
-               { name: { $regex: new RegExp(q, 'i') } },
-           ]}),
-           Category.find({ name: { $regex: new RegExp(q, 'i') } })
-       ]);
- 
-       res.render('pages/shop', { products, categories });
-  } catch (error) {
-       console.error(error);
-       res.status(500).send('Internal Server Error');
-  }
-};
+  const searchProducts = async (req, res) => {
+    try {
+        // Extract search query from request parameters
+        const { q } = req.query;
+  
+        // Search products and categories simultaneously
+        const [products, categories] = await Promise.all([
+            Product.find({ $or: [
+                { name: { $regex: new RegExp(q, 'i') } },
+            ]}),
+            Category.find({ name: { $regex: new RegExp(q, 'i') } })
+        ]);
+  
+        res.render('pages/shop', { products, categories });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+  };
 
  
 
@@ -951,15 +953,19 @@ const deleteAddress = async (req, res) => {
 //================================= addtoCart============================
 
 //setup addtoCart
-const addtoCart = async (req, res) => {
-  try {
-    const carts = await Cart.find().populate('products.productId');
+// const addtoCart = async (req, res) => {
+//   try {
+//     const carts = await Cart.find().populate('products.productId');
 
-    res.render('pages/addtoCart', { carts });
-  } catch (error) {
-    console.error('Error fetching carts:', error);
-  }
-};
+//     const cartData = await Cart.findOne({userId : req.session.user});
+
+//     console.log(cartData);
+
+//     res.render('pages/addtoCart', { carts });
+//   } catch (error) {
+//     console.error('Error fetching carts:', error);
+//   }
+// };
 
 
 //======================================set up checkout============================================
@@ -1066,8 +1072,9 @@ const addCheckoutAddress = async (req, res) => {
 const placeOrder = async (req, res) => {
   try {
 
-    const { userId, address, paymentMethod } = req.body;
+    const { userId, address, paymentMethod , totalAmount } = req.body;
     console.log(userId, address, paymentMethod)
+    console.log(totalAmount, "diss");
 
     const ad = await Address.findOne({ userId: req.session.user, _id: address });
     const cart = await Cart.findOne({ userId: req.session.user });
@@ -1089,9 +1096,11 @@ const placeOrder = async (req, res) => {
       userId,
       orderUserDetails: data,
       products: cart.products,
-      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : ''
+      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : '',
+      totalAmount
     });
 
+    //delete product from cart
     await Cart.deleteOne({ userId: req.session.user });
 
     await newOrder.save();
@@ -1107,42 +1116,60 @@ const placeOrder = async (req, res) => {
 
 
 // orders list  in Profile
-const orderPage = async (req, res) => {
+  const orderPage = async (req, res) => {
+    try {
+      const userData = await User.findOne({ _id: req.session.user });
+      // const orders = await Order.find({ userId: req.session.user }).populate('products.productId').sort({ orderDate: 1 });
+      const orderlist = await Order.aggregate([
+        {
+          $match: {
+            userId:new ObjectId( req.session.user)
+          }
+        },
+        {
+          $unwind: "$products"
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "products.productId",
+            foreignField: "_id",
+            as: "productDetail"
+          }
+        },{
+          $sort:{
+            "orderDate": -1 // Sort by orderDate in descending order
+          }
+        },
+        {$unwind:'$productDetail'}
+      ]
+      )
+      console.log(orderlist);
+
+      res.render('pages/ordersPage', { userData, orderlist });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+//order Details page
+
+const orderDetails = async (req, res) => {
   try {
     const userData = await User.findOne({ _id: req.session.user });
-    // const orders = await Order.find({ userId: req.session.user }).populate('products.productId').sort({ orderDate: 1 });
-    const orderlist = await Order.aggregate([
-      {
-        $match: {
-          userId:new ObjectId( req.session.user)
-        }
-      },
-      {
-        $unwind: "$products"
-      },
-      {
-        $lookup: {
-          from: "products",
-          localField: "products.productId",
-          foreignField: "_id",
-          as: "productDetail"
-        }
-      },{
-        $sort:{
-          "orderDate": -1 // Sort by orderDate in descending order
-        }
-      },
-      {$unwind:'$productDetail'}
-    ]
-    )
-    console.log(orderlist);
+    const orderId = req.params.orderId;
 
-    res.render('pages/ordersPage', { userData, orderlist });
+    // Find the order with the provided orderId and populate the products
+    const orderDetails = await Order.findOne({ _id: orderId }).populate('products.productId');
+
+    // Render the order detail page with user data and order details
+    res.render("pages/orderDetail", { userData, orderDetails });
   } catch (error) {
-    console.error(error);
+    console.log(error);
+    // Handle error appropriately
   }
 };
-
 
 
 const cancelOrder = async (req, res) => {
@@ -1168,10 +1195,44 @@ const cancelOrder = async (req, res) => {
   };
 
 
+//======================================set up coupon============================================
+
+
+// coupons set in chekout page
+const getCoupon = async(req,res)=>{
+ try {
+
+  const coupons = await Coupon.find()
+  console.log(coupons, "Get coupon");
+  res.json(coupons)
+ } catch (error) {
+  console.log(error);
+  
+ }
+}
 
 
 
-
+const applyCoupon=async (req,res)=>{
+  try {
+      console.log('its here also in apply coupon ');
+      const { couponCode } = req.body;
+       console.log(couponCode,'coupon code in apply code');
+      const coupon = await Coupon.findOne({ code: couponCode });
+      console.log(coupon,'coupon in apply code apply coupon ')
+      if (!coupon) {
+          return res.json({ success: false, message: 'Coupon not found' });
+      }
+      const discountAmount = coupon.discountAmount || 0;
+      console.log(discountAmount,'discount amount in apply code');
+      
+      res.json({ success: true, message: 'Coupon applied', discountAmount });
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+ 
+ 
 
 
 
@@ -1209,13 +1270,15 @@ module.exports = {
   addAddress,
   deleteAddress,
   editAddress,
-  addtoCart,
   checkoutPage,
   editCheckoutAddress,
   addCheckoutAddress,
   placeOrder,
   orderPage,
+  orderDetails,
   cancelOrder,
+  getCoupon,
+  applyCoupon
 
 
 };

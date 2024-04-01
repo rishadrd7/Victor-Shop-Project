@@ -51,27 +51,30 @@ router.get('/profile/address' ,userAuth.user,userAuth.isBlocked,userController.a
 router.post('/profile/add-address', userController.addAddress);
 router.post('/delete-address',userController.deleteAddress);
 router.post('/profile/edit-address', userController.editAddress);
-router.get('/cartPage',userAuth.user,userAuth.isBlocked,userController.addtoCart);
 router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutPage);
 router.post('/checkout/edit-address', userController.editCheckoutAddress);
 router.post('/checkout/add-address',userController.addCheckoutAddress);
 router.post('/place-order', userController.placeOrder);
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
+router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);
 router.post('/orders/:orderId/cancel', userController.cancelOrder);
 
 
 //============================================cart side controller=========================================
+router.get('/cartPage',userAuth.user,userAuth.isBlocked,cartController.cartPage);
 router.post('/add-to-cart', cartController.addToCart);
 router.delete('/removeProductFromCart/:cartId/:productId', cartController.removeProductFromCart);
 
+router.get('/couponGet',userController.getCoupon);
+router.post('/applyCoupon',userController.applyCoupon);
 
 //============================================wishlist side controller=========================================
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,wishlistController.wishlistPage);
 router.post('/addToWishlist', wishlistController.addtoWishlist);
 router.delete('/wishlist/remove/:productId',wishlistController.removeFromWishlist); 
 
-//============================================wishlist side controller=========================================
+//============================================wallet side controller=========================================
 router.get('/profile/wallet',userAuth.user,walletController.walletpage);
 router.post('/wallet/add-money', walletController.addMoney);
 router.post('/processWalletPayment',walletController.processWalletPayment);

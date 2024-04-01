@@ -6,6 +6,7 @@ const Order = require("../models/ordersModel");
 const Wishlist = require("../models/wishlistModel");
 const mongoose = require('mongoose')
 
+
 //setup wishlist page
 const wishlistPage = async (req, res) => {
   try {

@@ -46,9 +46,87 @@ label{
 }.card-title{
 	line-height: 25px;
 }
+/* Example CSS for the modal */
+.modal-content {
+ background-color: #f9f9f9;
+ color: #333;
+}
+
+.modal-header {
+ background-color: #333;
+ color: #fff;
+}
+
+.modal-footer {
+ background-color: #f9f9f9;
+}
+
+</style>
 
 
+<style>
+	.form-check-label {
+		padding-left: 1.5rem;
+	}
 
+	.modalCoupon {
+		display: none;
+		position: fixed;
+		z-index: 9999;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background-color: rgba(0, 0, 0, 0.4);
+	}
+
+	.modalCoupon-dialog {
+		margin: 50px auto;
+		max-width: 800px;
+	}
+
+	.modalCoupon-content {
+		background-color: #fefefe;
+		border: 1px solid #888;
+		border-radius: 5px;
+	}
+
+	.modalCoupon-header {
+		padding: 15px;
+		background-color: #f5f5f5;
+		border-bottom: 1px solid #ddd;
+		border-radius: 5px 5px 0 0;
+	}
+
+	.modalCoupon-title {
+		margin: 0;
+	}
+
+	.modalCoupon-body {
+		padding: 20px;
+	}
+
+	.modalCoupon-footer {
+		padding: 15px;
+		background-color: #f5f5f5;
+		border-top: 1px solid #ddd;
+		border-radius: 0 0 5px 5px;
+	}
+
+	.copy-coupon-btn {
+		background-color: #007bff;
+		color: #fff;
+		border: none;
+		border-radius: 5px;
+		padding: 5px 10px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+	}
+
+	.copy-coupon-btn:hover {
+		background-color: #0056b3;
+	}
 </style>
 
 
@@ -95,15 +173,39 @@ label{
             <div class="page-content">
             	<div class="checkout">
 	                <div class="container">
+
+						<div class="">
+                            <button class="btn btn-secondary rounded " id="checkCouponsBtn" type="submit">Check Coupons</button>
+                        </div>
+
+						<!-- Modal -->
+						<div class="modalCoupon" id="couponModal">
+							<div class="modalCoupon-dialog">
+								<div class="modalCoupon-content" style="width: 50%;">
+									<div class="modalCoupon-header">
+										<h5 class="modalCoupon-title">Available Coupons</h5>
+										<button type="button" class="close" data-dismiss="modal">&times;</button>
+									</div>
+									<div class="modalCoupon-body" id="couponListContent">
+										<!-- Coupon items will be dynamically added here -->
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<br>
             			<div class="checkout-discount">
-            				<form action="#">
-        						<input type="text" class="form-control" required id="checkout-discount-input">
-            					<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
-            				</form>
-            			</div><!-- End .checkout-discount -->
-		                	<div class="row">
 
-
+							<form id="couponForm">
+                                <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code here">
+                                <button type="submit" class="btn btn-danger	 rounded   " id="applyCouponBtn">Apply</button>
+                            </form>
+							
+            			</div>
+						  <!-- End .checkout-discount -->
+							
+						
+						<div class="row">
 		                		<div class="col-lg-8">
 									<h2 class="checkout-title">Delivery Address</h2>
 									  
@@ -312,6 +414,8 @@ label{
 
 											<tbody>
 												<% let cartTotal = 0; %>
+												<% let offer= 0 %>
+												
 												<% carts.forEach(cart => { %>
 													<% cart.products.forEach(product => { %>
 														<% let totalProductPrice = product.productId.offerPrice * product.quantity; %>
@@ -320,17 +424,26 @@ label{
 															<!-- Add other product details here as needed -->
 															<!-- <td class="total-col">₹<%= totalProductPrice.toFixed(2) %></td> -->
 														</tr>
+														
+														<% offer+=(product.productId.offerApplied?product.productId.price*product.productId.offerApplied/100:0 )*product.quantity %>
 														<% cartTotal += totalProductPrice; %>
+
+														
 													<% }) %>
 												<% }) %>
+												<tr class="summary-discount">
+													<td>Discount</td>
+													<% console.log(typeof offer,'ffd'); %>
+													<% console.log(offer,'offer'); %>
+													<td>-₹ <%= offer %></td>
+												</tr>
 												<!-- Row for total cart price -->
 												<tr id="totalRow" class="summary-total">
 													<td>Total:</td>
 													<td></td>
-													<td id="totalPrice">₹<%= cartTotal.toFixed(2) %></td>
+													<td id="totalPrice">₹<%= totalAmount=cartTotal.toFixed(2) %></td>
 												</tr>
 											</tbody>
-
 		                				</table><!-- End .table table-summary -->
 
 
@@ -342,6 +455,7 @@ label{
 		                				<div class="accordion-summary" id="accordion-payment">
 
 
+											<!-- wallet div -->
 										    <div class="card">
 										        <div class="card-header" id="heading-2">
 										            <h2 class="card-title">
@@ -355,6 +469,7 @@ label{
 										           
 										        </div>
 										    </div>
+
 
 											<!-- cod div -->
 										    <div class="card">
@@ -372,6 +487,7 @@ label{
 										    </div>
 
 
+											<!-- razorpay div  -->
 										    <div class="card">
 										        <div class="card-header" id="heading-4">
 										            <h2 class="card-title">
@@ -495,7 +611,8 @@ label{
 	  </script>
 
 
-<!-- address add vaidation -->
+
+<!-- add address vaidation -->
 <script>
     document.getElementById("addressForm").addEventListener("submit", function(event) {
         var inputs = this.querySelectorAll("input");
@@ -530,6 +647,161 @@ label{
 </script>
 
 
-
 <%- include('../layouts/footer')  %>
 <%- include('../layouts/footerNav')  %>
+
+<!-- get coupon from databse -->
+<script>
+	  document.addEventListener('DOMContentLoaded', function () {
+            const checkCouponsBtn = document.getElementById('checkCouponsBtn');
+            const modal = document.getElementById('couponModal');
+            const couponListContent = document.getElementById('couponListContent');
+
+            checkCouponsBtn.addEventListener('click', function () {
+
+                fetch('/couponGet')
+                    .then(response => response.json())
+                    .then(coupons => {
+
+                        couponListContent.innerHTML = '';
+
+                        coupons.forEach(coupon => {
+                            const couponItem = document.createElement('div');
+                            couponItem.classList.add('coupon-item');
+                            couponItem.innerHTML = `
+                        <div class="coupon-info">
+                            <p style="color: black;">Name: ${coupon.name}</p>
+							<p style="color: black;">Description: ${coupon.description}</p>
+							<p style="color: black;">Discount Amount: ${coupon.discountAmount}</p>
+							<p style="color: black;">Expire Date: ${new Date(coupon.expireDate).toLocaleDateString()}</p>
+
+
+                        </div>
+                        <button class="btn btn-outline-dark copy-coupon-btn" data-coupon-code="${coupon.code}"  data-tippy-content="Copy the code">Copy</button>
+                    `;
+
+                            couponListContent.appendChild(couponItem);
+                        });
+
+                        $(modal).modal('show');
+                        tippy('.copy-coupon-btn', {
+                            placement: 'top', 
+                            theme: 'light', 
+                            arrow: true,
+                            delay: [500, 0], 
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching coupons:', error);
+                    });
+            });
+
+			// copy option
+            couponListContent.addEventListener('click', function (event) {
+                if (event.target.classList.contains('copy-coupon-btn')) {
+                    const couponCode = event.target.getAttribute('data-coupon-code');
+                    copyToClipboard(couponCode);
+                    showCopiedAlert()
+                }
+            });
+
+            modal.querySelector('.close').addEventListener('click', function () {
+                $(modal).modal('hide');
+            });
+
+
+            function copyToClipboard(text) {
+                const input = document.createElement('input');
+                input.value = text;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+            }
+
+
+            function showCopiedAlert() {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Code copied"
+                });
+            }
+        });
+</script>
+
+
+
+<script>
+	document.addEventListener('DOMContentLoaded',()=>{
+	const checkCouponsBtn=document.getElementById('checkCouponsBtn');
+	const modal=document.getElementById('couponModal')
+	const couponListContent=document.getElementById('couponListContent')
+	const applyCouponBtn=document.getElementById('applyCouponBtn')
+
+	const applyCoupon=async(couponCode)=>{
+		try {
+			console.log('its here in apply coupon ');
+			const response= await fetch('/applyCoupon',{
+				method:'POST',
+				headers:{
+					'Content-Type':'application/json'
+				},
+				body:JSON.stringify({couponCode})
+			})
+			const data=await response.json()
+			console.log(data,'data in daat');
+			if(data.success){
+				console.log(data,'data in applu coupon in checkoute pagea')
+				Swal.fire({
+					title:'Coupon Applied',
+					text:`Discount applied: ₹${data.discountAmount}`,
+					icon:'success'
+				}).then(()=>{
+					console.log('its agian herer');
+					const discountRow=document.querySelector('.summary-discount')
+					discountRow.innerHTML=`
+						<td>Discount</td>
+						<td>₹${data.discountAmount}</td>
+					`;
+					const totalAmount=document.querySelector('.summary-total td:last-child')
+					const newTotal=parseFloat(totalAmount.innerText.replace('₹', '').trim())-parseFloat(data.discountAmount)
+					totalAmount.innerText=`₹${newTotal}`
+
+					document.getElementById('couponCode').disabled = true;
+					applyCouponBtn.disabled = true;
+
+				})
+			}else{
+				Swal.fire({
+				title: 'Coupon Error',
+				text: 'Invalid coupon code',
+				icon: 'error'
+		});
+			}
+		} catch (error) {
+			console.error('Error applying coupon:', error);
+			Swal.fire({
+				title: 'Coupon Error',
+				text: 'Failed to apply coupon. Please try again later.',
+				icon: 'error'
+			});
+		}
+	};
+	applyCouponBtn.addEventListener('click',(event)=>{
+		event.preventDefault();
+		const couponCode = document.getElementById('couponCode').value;
+		applyCoupon(couponCode);
+	})
+})
+</script>

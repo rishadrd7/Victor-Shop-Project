@@ -14,7 +14,7 @@
     <div class="order-list">
       
   <% if (orderlist.length > 0) { %>
-    <% orderlist.forEach(order => { %>
+    <% orderlist.reverse().forEach(order => { %>
       
       <ul class="product-list">
               <li class="product-item">
@@ -31,10 +31,14 @@
                     <div>
                       <p><%= order.orderDate.toString().split(' ').slice(0, 4).join(' ') %></p>
                       <p style="font-size: larger; font-weight: 400;"><%= order.paymentMethod %></p>
+
+                      <p><a href="/profile/myorders/orderDetails/<%= order._id %>"><button class="btn btn-primary">Show</button></a></p>
+
                       <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(73, 213, 75);" id="deliveryStatus_<%= order.products._id %>"><%= order.products.status %></span></p>
                     </div>
 
                     <div>
+                      <br><br>
                       <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
                     </div>
 
@@ -65,7 +69,6 @@
 <br>
 <%- include("../layouts/mobileNav") %>
 <%- include("../layouts/footer")  %>
-<%- include("../layouts/footerNav")  %>
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

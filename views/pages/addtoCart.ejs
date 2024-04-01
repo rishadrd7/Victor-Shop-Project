@@ -64,7 +64,7 @@
 										
 									<tbody>
 										<% carts.forEach((cart, cartIndex) => { %>
-											<% cart.products.forEach((product, productIndex) => { %>
+											<% cart.products.slice().reverse().forEach((product, productIndex) => { %>
 												<tr>
 													<td class="product-col">
 														<div class="product">
@@ -83,6 +83,8 @@
 													</td>
 
 													<td class="price-col">₹<%= product.productId.offerPrice %></td>
+
+
 													<td class="quantity-col">
 														
 														<div class="cart-product-quantity">
@@ -90,6 +92,8 @@
 														</div>
 															
 													</td>
+
+													
 													<td class="total-col">₹<%= product.productId.offerPrice * product.quantity %></td>
 													
 

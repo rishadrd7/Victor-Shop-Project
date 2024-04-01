@@ -58,6 +58,7 @@
                                     <thead>
                                         <tr>
                                             <th>Date</th>
+                                            <th></th>
                                             <th>Type</th>
                                             <th>Reason</th>
                                             <th>Amount</th>
@@ -67,6 +68,7 @@
                                         <% transactions.slice().reverse().forEach(transaction => { %>
                                             <tr>
                                                 <td><%= transaction.date.toString().split(' ').slice(0,4) %></td>
+                                                <td></td>
                                                 <td><%= transaction.type %></td>
                                                 <td></td>
                                                 <td>₹<%= transaction.transactionAmount %></td>

@@ -37,7 +37,7 @@
                         // Sort orders by orderDate in descending order
                         orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
                          if (orders && orders.length > 0) { %>
-                            <% orders.forEach((order, index) => { %>
+                            <% orders.reverse().forEach((order, index) => { %>
                                 <tr>
                                     <td><%= index + 1 %></td>
                                     <td><%= order._id %></td>

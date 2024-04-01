@@ -86,11 +86,13 @@
                                         <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
                                     </div>
 
+                                    
                                     <div class="product-price">₹
                                         <%= pro.offerPrice  %>
                                         <p class="offer-price">₹  <%= pro.price  %></p>
                                         <!-- <span class="discount">77% off</span> -->
                                     </div><!-- End .product-price -->   
+
 
                                     <div class="product-content">
                                         <!-- <p><%= pro.description %></p> -->
@@ -583,8 +585,8 @@
 
 
 <!-- add to cart function -->
- <script>
 
+ <script>
     function addToCart(productId) {
         let data = { productId: productId }; 
         console.log('data is:', data);

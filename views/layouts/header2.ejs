@@ -106,66 +106,21 @@
 
 
                 
-                <a href="/wishlistPage" class="wishlist-link">
-                    <i class="icon-heart-o"></i>
-                    <span class="wishlist-count">3</span>
-                </a>
-              
+            <a href="/wishlistPage" class="wishlist-link" data-wishlist-count="0">
+                <i class="icon-heart-o"></i>
+                <span class="wishlist-count"></span> <!-- Count will be inserted dynamically here -->
+            </a>
+            
+        
+
                 <div class="dropdown cart-dropdown">
                     <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="icon-shopping-cart"></i>
-                        <span class="cart-count">2</span>
+                        <span class="cart-count"></span>
                     </a>
 
 
                     <div class="dropdown-menu dropdown-menu-right">
-                        <div class="dropdown-cart-products">
-                            <div class="product">
-                                <div class="product-cart-details">
-                                    <h4 class="product-title">
-                                        <a href="product.html">Beige knitted elastic runner shoes</a>
-                                    </h4>
-
-                                    <span class="cart-product-info">
-                                        <span class="cart-product-qty">1</span>
-                                        x $84.00
-                                    </span>
-                                </div><!-- End .product-cart-details -->
-
-                                <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="/user/assets/images/products/cart/product-1.jpg" alt="product">
-                                    </a>
-                                </figure>
-                                <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                            </div><!-- End .product -->
-
-                            <div class="product">
-                                <div class="product-cart-details">
-                                    <h4 class="product-title">
-                                        <a href="product.html">Blue utility pinafore denim dress</a>
-                                    </h4>
-
-                                    <span class="cart-product-info">
-                                        <span class="cart-product-qty">1</span>
-                                        x $76.00
-                                    </span>
-                                </div><!-- End .product-cart-details -->
-
-                                <figure class="product-image-container">
-                                    <a href="product.html" class="product-image">
-                                        <img src="/user/assets/images/products/cart/product-2.jpg" alt="product">
-                                    </a>
-                                </figure>
-                                <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                            </div><!-- End .product -->
-                        </div><!-- End .cart-product -->
-
-                        <div class="dropdown-cart-total">
-                            <span>Total</span>
-
-                            <span class="cart-total-price">$160.00</span>
-                        </div><!-- End .dropdown-cart-total -->
 
                         <div class="dropdown-cart-action">
                             <a href="/cartPage" class="btn btn-primary">View Cart</a>
@@ -173,6 +128,8 @@
                         </div><!-- End .dropdown-cart-total -->
                     </div><!-- End .dropdown-menu -->
                 </div><!-- End .cart-dropdown -->
+
+
 
                 <a href="/profile" class="wishlist-link">
                   <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -188,3 +145,26 @@
         </div><!-- End .container -->
     </div><!-- End .header-middle -->
 </header><!-- End .header -->
+
+
+
+    <!-- search product in shop -->
+    <script>
+        // JavaScript to handle form submission (optional, you can use plain HTML)
+        document.getElementById('searchForm').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+    
+            const searchQuery = document.getElementById('searchQuery');
+    
+            // Send GET request to backend with search query
+            try {
+                const response = await fetch(`/search?q=${searchQuery}`);
+                const data = await response.json();
+                
+                // Handle response data (e.g., display search results on the page)
+                console.log(data);
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    </script>

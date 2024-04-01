@@ -4,33 +4,45 @@ const Category = require("../models/categoryModel");
 const Order = require("../models/ordersModel")
 
 
-
+//setup cartPage
+const cartPage = async (req, res) => {
+    try {
+      const carts = await Cart.find().populate('products.productId');
+  
+      const cartData = await Cart.findOne({userId : req.session.user});
+  
+      console.log(cartData);
+  
+      res.render('pages/addtoCart', { carts });
+    } catch (error) {
+      console.error('Error fetching carts:', error);
+    }
+  };
 
 
 //product add to cart
 const addToCart = async (req, res) => {
     try {
         console.log("Product added to cart");
-        const productId = req.body.productId; // Assuming productId is sent in the request body
-
-        // Find the product by its ID
+        const productId = req.body.productId;
+      
         const product = await Product.findById(productId);
         if (!product) {
         }
 
-        // Create a new cart object or find an existing cart for the user
+       
         let cart = await Cart.findOne({ userId: req.session.user });
         if (!cart) {
             cart = new Cart({ userId: req.session.user });
         }
 
-        // Check if the product already exists in the cart
+       
         const existingProduct = cart.products.find(item => item.productId.toString() === productId);
         if (existingProduct) {
-            // If the product already exists, increment its quantity
+          
             existingProduct.quantity++;
         } else {
-            // If the product doesn't exist, add it to the cart
+        
             cart.products.push({
                 productId: product._id,
                 quantity: 1
@@ -50,25 +62,26 @@ const addToCart = async (req, res) => {
 
 
 
+
+
 //product remove from cart
 const removeProductFromCart = async (req, res) => {
     try {
         const { cartId, productId } = req.params;
 
-        // Find the cart based on cartId
+       
         const cart = await Cart.findById(cartId);
 
-        // Check if the cart exists
+      
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
 
-        // Find the index of the product to be removed in the cart's products array
+       
         const productIndex = cart.products.findIndex(product => product.productId.toString() === productId);
 
  
 
-        // Remove the product from the cart's products array
         cart.products.splice(productIndex, 1);
 
         // Save the updated cart
@@ -84,6 +97,7 @@ const removeProductFromCart = async (req, res) => {
 
 
 module.exports={
+    cartPage,
     addToCart,
     removeProductFromCart
 }

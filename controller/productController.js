@@ -6,6 +6,7 @@ const ObjectId = mongoose.Types.ObjectId
 const multer=require('multer');
 const path=require('path');
 const { category } = require('./categoryController');
+const { log } = require('console');
 const id = new ObjectId()
 
 
@@ -35,10 +36,10 @@ const productAdd = async(req,res)=>{
     }
 }
 
-
+//post method
 const addProduct = async (req, res) => {
     try {
-        // console.log('Adding product...');
+        log("product added")
         const { name, category, price, quantity, date, description, offerPrice, offer } = req.body;
         const images = req.files.map(file => file.filename);
         
@@ -61,10 +62,12 @@ const addProduct = async (req, res) => {
 
         await newProduct.save();
 
-        res.redirect('/admin/products' );
+        // Send a success response
+        res.status(200).json({ message: 'Product added successfully', redirectUrl: '/admin/products' });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Internal Server Error');
+        // Send an error response
+        res.status(400).json({ message: 'Failed to add product', error: error.message });
     }
 };
 

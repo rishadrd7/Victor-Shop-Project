@@ -99,63 +99,77 @@
 </div>
 
 
-<!-- form validation of add product -->
+
+
 <script>
-  // Function to validate the form
-  function validateForm() {
-      // Get form inputs
-      var productName = document.getElementById("productName").value.trim();
-      var price = document.getElementById("price").value.trim();
-      var offerPrice = document.getElementById("offerPrice").value.trim();
-      var quantity = document.getElementById("quantity").value.trim();
-      var description = document.getElementById("description").value.trim();
-
-      // Regular expression to check for spaces
-      var spaceRegex = /\s/;
-      
-      // Check if product name contains spaces
-      if (spaceRegex.test(productName)) {
-          alert("Product name cannot contain spaces.");
-          return false;
-      }
-
-      // Check if price contains spaces or is less than or equal to zero
-      if (spaceRegex.test(price) || parseFloat(price) <= 0) {
-          alert("Price must be a valid number greater than zero.");
-          return false;
-      }
-
-      // Check if offer price contains spaces or is less than or equal to zero
-      if (spaceRegex.test(offerPrice) || parseFloat(offerPrice) <= 0) {
-          alert("Offer price must be a valid number greater than zero.");
-          return false;
-      }
-
-      // Check if quantity contains spaces or is less than or equal to zero
-      if (spaceRegex.test(quantity) || parseInt(quantity) <= 0) {
-          alert("Quantity must be a valid integer greater than zero.");
-          return false;
-      }
-
-      // If all validations pass, return true to submit the form
-      return true;
-  }
-
-  // Add event listener to form submission
-  document.getElementById("submitButton").addEventListener("click", function(event) {
-      // Prevent default form submission
-      event.preventDefault();
-      // Call the validateForm function
-      if (validateForm()) {
-          // If form is valid, submit the form
-          document.getElementById("form").submit();
-      }
+  document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('form');
+      form.addEventListener('submit', async function(event) {
+          event.preventDefault(); // Prevent the default form submission
+  
+          const name = document.getElementById('productName').value.trim(); // Trim white spaces
+          const price = document.getElementById('price').value;
+          const offerPrice = document.getElementById('offerPrice').value;
+          const quantity = document.getElementById('quantity').value;
+          const image = document.getElementById('image').files.length;
+  
+          // Check if name is empty or contains only white spaces
+          if (!name || name.length === 0) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Product name cannot be empty or contain only white spaces!',
+              });
+              return; // Stop further execution if name is invalid
+          } else if (price <= 0 || offerPrice <= 0 || quantity <= 0 || image === 0) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Price, offer price, quantity, and image must be valid!',
+              });
+              return; // Stop further execution if other validations fail
+          }
+  
+          // If all validations pass, submit the form
+          const formData = new FormData(form);
+          try {
+              const response = await fetch('/admin/submit_product', {
+                  method: 'POST',
+                  body: formData
+              });
+  
+              const data = await response.json();
+              if (response.ok) {
+                  // Redirect or show success message
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Success',
+                      text: data.message,
+                      onClose: () => {
+                          window.location.href = data.redirectUrl;
+                      }
+                  });
+              } else {
+                  // Show error message
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: data.message,
+                  });
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'An unexpected error occurred.',
+              });
+          }
+      });
   });
-</script>
-
-
-
-
+  </script>
+  
+  
 
 <!-- date showing add product page-->
 <script>
