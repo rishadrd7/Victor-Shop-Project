@@ -41,7 +41,7 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['Wallet', 'Cash on Delivery', 'Online Payment'],
+        enum: ['Wallet', 'Cash on Delivery', 'online'],
         
     },
     orderDate: {
@@ -62,6 +62,9 @@ const orderSchema = new mongoose.Schema({
     offerApplied: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offer'
+    },
+    paymentStatus:{
+     type: String   
     }
 });
 

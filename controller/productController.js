@@ -105,10 +105,10 @@ const updateProduct = async(req,res)=>{
 
 
 //product list and unlist
-const listUnlistProduct=async(req,res)=>{
+const listUnlistProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
-        console.log(productId,'Changed');
+        console.log(productId, 'Changed');
         const product = await Product.findById(productId);
 
         if (!product) {
@@ -119,11 +119,20 @@ const listUnlistProduct=async(req,res)=>{
         product.status = !product.status;
         await product.save();
 
+        // If product is unlisted, remove it from all carts
+        if (!product.status) {
+            await Cart.updateMany(
+                { "products.productId": productId },
+                { $pull: { products: { productId: productId } } }
+            );
+        }
+
         res.status(200).json({ message: 'Product status toggled successfully' });
     } catch (error) {
         console.log(error.message);
     }
-}
+};
+
 
 module.exports = {
     product,

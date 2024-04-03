@@ -7,17 +7,33 @@ const Order = require("../models/ordersModel")
 //setup cartPage
 const cartPage = async (req, res) => {
     try {
-      const carts = await Cart.find().populate('products.productId');
-  
-      const cartData = await Cart.findOne({userId : req.session.user});
-  
-      console.log(cartData);
-  
-      res.render('pages/addtoCart', { carts });
+        const carts = await Cart.find().populate('products.productId');
+        let listedProductsExist = false;
+        let unavailableProducts = [];
+
+        for (const cart of carts) {
+            for (const product of cart.products) {
+                if (product.productId.status) {
+                    listedProductsExist = true;
+                    unavailableProducts.push(product.productId.name); // Store the name of the unavailable product
+                }
+            }
+        }
+
+        let errorMessage = '';
+        if (listedProductsExist) {
+            errorMessage = `The following products in your cart are listed and no longer available: ${unavailableProducts.join(', ')}`;
+        }
+
+        res.render('pages/addtoCart', { carts, errorMessage });
     } catch (error) {
-      console.error('Error fetching carts:', error);
+        console.error('Error fetching carts:', error);
     }
-  };
+};
+
+
+
+
 
 
 //product add to cart

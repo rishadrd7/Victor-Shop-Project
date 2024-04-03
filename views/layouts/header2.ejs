@@ -91,18 +91,22 @@
 
             <!-- search div -->
 
-            <div class="header-right">
-                <div class="header-search header-search-extended header-search-visible">
-                    <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                    <form id="searchForm" action="/search" method="get">
-                        <div class="header-search-wrapper">
-                            <label for="q" class="sr-only">Search</label>
-                            <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
-                            <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                        </div>
-                    </form>
+          
+                <div class="header-right">
+                    <div class="header-search header-search-extended header-search-visible">
+                        <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
+                        <form id="searchForm" action="/search" method="get">
+                            <div class="header-search-wrapper">
+                                <label for="q" class="sr-only">Search</label>
+                                <input type="search" class="form-control" name="q" id="searchQuery" placeholder="Search product ..." required>
+                                <!-- Hidden input for category ID -->
+                                <input type="hidden" name="categoryId" id="categoryId" value="">
+                                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
+    
 
 
                 
@@ -150,21 +154,18 @@
 
     <!-- search product in shop -->
     <script>
-        // JavaScript to handle form submission (optional, you can use plain HTML)
         document.getElementById('searchForm').addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent default form submission
     
             const searchQuery = document.getElementById('searchQuery');
     
-            // Send GET request to backend with search query
             try {
                 const response = await fetch(`/search?q=${searchQuery}`);
-                const data = await response.json();
+                // const data = await response.json();
                 
-                // Handle response data (e.g., display search results on the page)
-                console.log(data);
+                // console.log(data);
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         });
     </script>

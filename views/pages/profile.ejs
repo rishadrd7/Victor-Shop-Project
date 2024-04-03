@@ -73,24 +73,27 @@
                 
             
             <form class='col-md-10' id="passwordForm" action="/change-password" method="post">
-                <div class="collapse" id="passwordCollapse">
-                    <div class="card card-body">
-                        <div class="form-group">
-                            <label for="currentPassword">Current Password</label>
-                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Current Password">
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password">
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
-                        </div>
-                        <button type="submit" style="width: 50px;" class="btn btn-edit">Save changes</button>
+              <div class="collapse" id="passwordCollapse">
+                  <div class="card card-body">
+                      <div class="form-group">
+                          <label for="currentPassword">Current Password</label>
+                          <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Current Password">
+                      </div>
+                      <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password">
+                        <div id="newPasswordError" style="color: red;"></div>
                     </div>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+                        <div id="confirmPasswordError" style="color: red;"></div>
+                    </div>
+                    
+                      <button type="submit" style="width: 50px;" class="btn btn-edit">Save changes</button>
+                  </div>
+              </div>
+          </form>
             
             
             
@@ -104,6 +107,7 @@
  
 
  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+ <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
  
 <!-- form validation of profile -->
@@ -152,49 +156,72 @@
  
  <!-- change password function-->
 <script>
-  // Function to display sweet alert
-  function showSuccessAlert(message) {
+  function isStrongPassword(password) {
+ // At least one uppercase letter, one lowercase letter, one number and one special character
+ const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+ return regex.test(password);
+}
+
+
+  document.getElementById('passwordForm').addEventListener('submit', async function(event) {
+ event.preventDefault(); // Prevent default form submission
+
+ const currentPassword = document.getElementById('currentPassword').value;
+ const newPassword = document.getElementById('newPassword').value;
+ const confirmPassword = document.getElementById('confirmPassword').value;
+
+ // Clear previous error messages
+ document.getElementById('newPasswordError').textContent = '';
+ document.getElementById('confirmPasswordError').textContent = '';
+
+ if (newPassword !== confirmPassword) {
+    document.getElementById('confirmPasswordError').textContent = 'New password and confirm password do not match';
+    return;
+ }
+
+ if (!isStrongPassword(newPassword)) {
+    document.getElementById('newPasswordError').textContent = 'Password must be at least  characters long and include a mix of uppercase and lowercase letters, numbers, and symbols';
+    return;
+ }
+
+ try {
+    const response = await fetch('/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to change password');
+    }
+
+    const data = await response.json();
+    // Show success alert using SweetAlert
+    showSuccessAlert(data.message);
+ } catch (error) {
+    console.error(error);
+    // Show error alert using SweetAlert
     swal({
-      title: "Success!",
-      text: message,
-      icon: "success",
+      title: "Error!",
+      text: "An error occurred while changing password",
+      icon: "error",
       button: "OK",
     });
-  }
+ }
+});
 
-  // Assuming you have the form submission logic using Fetch API or AJAX
-  document.getElementById('passwordForm').addEventListener('submit', async function(event) {
-    event.preventDefault(); // Prevent default form submission
+// Function to display sweet alert
+function showSuccessAlert(message) {
+ swal({
+    title: "Success!",
+    text: message,
+    icon: "success",
+    button: "OK",
+ });
+}
 
-    const currentPassword = document.getElementById('currentPassword').value;
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    if (newPassword !== confirmPassword) {
-      alert('New password and confirm password do not match');
-      return;
-    }
-
-    try {
-      const response = await fetch('/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ currentPassword, newPassword })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to change password');
-      }
-
-      const data = await response.json();
-      showSuccessAlert(data.message); // Display success message using sweet alert
-    } catch (error) {
-      console.error(error);
-      alert('An error occurred while changing password');
-    }
-  });
 </script>
 
 

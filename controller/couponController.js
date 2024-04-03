@@ -29,30 +29,42 @@ const addCouponPage  = async (req,res)=>{
 
 
 //coupon add post
-const addCoupon = async (req,res)=>{
+const addCoupon = async (req, res) => {
     try {
         console.log("coupon added");
-        const {couponName,couponCode,description,discount,expireDate}=req.body
-            console.log(couponCode,'couponcode ');
-            console.log(expireDate,'expiredate');
-            console.log(description,'description in coupon add');
+        const { couponName, couponCode, description, discount, expireDate, minPurchaseAmount, maxDiscountLimit } = req.body;
+        console.log(couponCode, 'couponcode ');
+        console.log(expireDate, 'expiredate');
+        console.log(description, 'description in coupon add');
 
-        const newCoupon= new Coupon({
-            name:couponName,
-            code:couponCode,
+        // Validate minPurchaseAmount and maxDiscountLimit
+        if (!minPurchaseAmount || isNaN(minPurchaseAmount) || minPurchaseAmount < 0) {
+            return res.status(400).json({ error: 'Minimum purchase amount is required and must be a positive number.' });
+        }
+
+        if (!maxDiscountLimit || isNaN(maxDiscountLimit) || maxDiscountLimit < 0) {
+            return res.status(400).json({ error: 'Maximum discount limit is required and must be a positive number.' });
+        }
+
+        const newCoupon = new Coupon({
+            name: couponName,
+            code: couponCode,
             description,
-            discountAmount:discount,
-            expireDate
+            discountAmount: discount,
+            expireDate,
+            minPurchaseAmount,
+            maxDiscountLimit
         })
 
-        const savedCoupon = await newCoupon.save()
-        res.redirect('/admin/coupons')
+        const savedCoupon = await newCoupon.save();
+        res.redirect('/admin/coupons');
 
     } catch (error) {
         console.log(error);
-        
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 
 
 

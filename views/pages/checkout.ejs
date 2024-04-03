@@ -433,15 +433,14 @@ label{
 												<% }) %>
 												<tr class="summary-discount">
 													<td>Discount</td>
-													<% console.log(typeof offer,'ffd'); %>
-													<% console.log(offer,'offer'); %>
+													
 													<td>-₹ <%= offer %></td>
 												</tr>
 												<!-- Row for total cart price -->
 												<tr id="totalRow" class="summary-total">
 													<td>Total:</td>
 													<td></td>
-													<td id="totalPrice">₹<%= totalAmount=cartTotal.toFixed(2) %></td>
+													<td >₹<div id="totalPrice"><%= totalAmount=cartTotal.toFixed(2) %></div></td>
 												</tr>
 											</tbody>
 		                				</table><!-- End .table table-summary -->
@@ -450,11 +449,12 @@ label{
 										
 										
 										<!-- payment options -->
+										
+										
+										
 									<form id="orderForm">
-
 		                				<div class="accordion-summary" id="accordion-payment">
-
-
+											
 											<!-- wallet div -->
 										    <div class="card">
 										        <div class="card-header" id="heading-2">
@@ -487,20 +487,20 @@ label{
 										    </div>
 
 
-											<!-- razorpay div  -->
-										    <div class="card">
-										        <div class="card-header" id="heading-4">
-										            <h2 class="card-title">
-														<input type="radio" id="Razorpay" class="peyment" name="payment">
-										                <label for="Razorpay" class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
-										                    Razorpay 
-										                </label>
-										            </h2>
-										        </div>
-										        <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
-										           
-										        </div>
-										    </div>
+										 <!-- Razorpay div -->
+											<div class="card">
+												<div class="card-header" id="heading-4">
+													<h2 class="card-title">
+														<input type="radio" id="Razorpay" value="online" class="payment" name="payment">
+														<label for="Razorpay" class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
+															Razorpay 
+														</label>
+													</h2>
+												</div>
+												<div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
+												</div>
+											</div>
+
 
 
 										    <div class="card">
@@ -522,13 +522,12 @@ label{
 											
 										</div>
 
-
-
 										<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">
 											<span class="btn-text">Place Order</span>
 											<span class="btn-hover-text">Proceed to Checkout</span>
 										</button>
 									</form>
+
 		                			</div>	
 		                		</aside><!-- End .col-lg-3 -->
 		                	</div><!-- End .row -->
@@ -541,74 +540,146 @@ label{
 
 
 
+<%- include('../layouts/footer')  %>
+<%- include('../layouts/footerNav')  %>
 
-	<!-- <script></script> -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- <script></script> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
 
 
 	<!-- order place function -->
-	<script>
-		document.addEventListener("DOMContentLoaded", function () {
-		  const orderForm = document.getElementById("orderForm");
-	  
-		  orderForm.addEventListener("submit", function (event) {
-			event.preventDefault(); // Prevent default form submission
-	  
-			const selectedPaymentMethod = document.querySelector(
-			  'input[name="payment"]:checked'
-			);
-			const address = document.querySelector(
-			  'input[name="selectedAddress"]:checked'
-			);
-	  
-			if (!selectedPaymentMethod) {
-			  Swal.fire("Error", "Please select a payment method.", "error");
-			  return;
-			}
-	  
-			const formData = {
-			  userId: "<%= userData._id %>",
-			  address: address.value,
-			  paymentMethod: selectedPaymentMethod.value,
-			};
-	  
-			// Example: Send formData to server using fetch or XMLHttpRequest
-			fetch("/place-order", {
-			  method: "POST",
-			  headers: {
-				"Content-Type": "application/json",
-			  },
-			  body: JSON.stringify(formData),
-			})
-			  .then((response) => {
-				if (!response.ok) {
-				  throw new Error("Failed to place order");
-				}
-				return response.json();
-			  })
-			  .then((data) => {
-				Swal.fire({
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+ const orderForm = document.getElementById("orderForm");
+
+ orderForm.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked');
+    const address = document.querySelector('input[name="selectedAddress"]:checked');
+
+    if (!selectedPaymentMethod) {
+      Swal.fire("Error", "Please select a payment method.", "error");
+      return;
+    }
+    console.log(document.getElementById("totalPrice").innerText);
+	const totalAmount = Number(document.getElementById("totalPrice").innerText)
+	const formData = {
+	userId: "<%= userData._id %>",
+	address: address.value,
+	paymentMethod: selectedPaymentMethod.value,
+	totalAmount:totalAmount
+	};
+
+    fetch("/place-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to place order");
+      }
+      return response.json();
+    })
+    .then((data) => {
+		console.log(data);
+		Swal.fire({
 				  icon: "success",
 				  title: "Order Placed Successfully!",
 				  text: "Thank you for your order.",
-				  showConfirmButton: false,
-				  timer: 1000,
+				  showConfirmButton: "Ok",
+				  
+				})
+		
+      if (selectedPaymentMethod.value === 'online') {
+        // Initialize Razorpay payment
+        var options = {
+          "key": "rzp_test_2gWPLmDC73KBec", // Enter the Key ID generated from the Dashboard
+          "amount":totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "currency": "INR",
+          "name": "Your Company Name",
+          "description": "Test Transaction",
+          "image": "/user/assets/images/new/Victor-Logo.png",
+          "order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of the previous step.
+		  "handler": function (response) {
+			console.log(response);
+			fetch('/verify-razo', {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					receipt: data.receipt,
+					order_id: response.razorpay_order_id,
+					razorpay_payment_id: response.razorpay_payment_id,
+					razorpay_signature: response.razorpay_signature
+				})
+			})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Failed to verify payment");
+				}
+				return response.json();
+			})
+			.then((data) => {
+				console.log(data.message); // Log the response from the server
+				// Extract order ID and paid amount from the response
+				const orderId = data.orderId;
+				const paidAmount = data.totalAmount;
+
+				// Display SweetAlert with order ID and paid amount
+				Swal.fire({
+					title: "Payment Verified",
+					text: `Your payment has been successfully verified.\nOrder ID: ${orderId}\nPaid Amount: ${paidAmount}`,
+					icon: "success",
+					showConfirmButton: false,
+					timer: 1000,
 				}).then(() => {
 				  window.location.reload();
 			  
 				});
-			  })
-			  .catch((error) => {
+			})
+			.catch((error) => {
 				console.error(error.message);
-				Swal.fire(
-				  "Error",
-				  "An error occurred while placing your order. Please try again later.",
-				  "error"
-				);
-			  });
-		  });
-		});
-	  </script>
+				Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
+			});
+		},
+
+          "prefill": {
+              "name": "Gaurav Kumar",
+              "email": "gaurav.kumar@example.com",
+              "contact": "9999999999"
+          },
+          "notes": {
+              "address": "Razorpay Corporate Office"
+          },
+          "theme": {
+              "color": "#F37254"
+          }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+      } else {
+        // Handle other payment methods
+      }
+    })
+    .catch((error) => {
+      console.error(error.message);
+      Swal.fire("Error", "An error occurred while placing your order. Please try again later.", "error");
+    });
+ });
+});
+
+</script>
 
 
 
@@ -647,8 +718,7 @@ label{
 </script>
 
 
-<%- include('../layouts/footer')  %>
-<%- include('../layouts/footerNav')  %>
+
 
 <!-- get coupon from databse -->
 <script>

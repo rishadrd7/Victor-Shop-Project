@@ -3,6 +3,7 @@
 <%- include('../layouts/mobileNav')  %>
 
 
+
 <style>
 
     .shop-bar{
@@ -90,6 +91,19 @@
                         <% }); %>
                     </div>
                 </div> -->
+
+                <div class="drop">
+                    <br>
+                    <button class="dropbtn">Category</button>
+                    <div class="drop-content">
+                        <a href="/shop?category=allCategory">All Categories</a>
+                        <!-- Add links for each category -->
+                        <% categories.forEach(category => { %>
+                            <a href="/shop?category=<%= category.name %>"><%= category.name %></a>
+                        <% }) %>
+                    </div>
+                </div>
+                
                 
 
                 <div class="drop">
@@ -111,6 +125,8 @@
                         <a href="/shop?sortby=highToLow">Price: High to Low</a>
                     </div>
                 </div>
+              
+                
                 
                 <div class="drop">
                     <div class="header-right">
@@ -120,12 +136,16 @@
                                 <div class="header-search-wrapper">
                                     <label for="q" class="sr-only">Search</label>
                                     <input type="search" class="form-control" name="q" id="searchQuery" placeholder="Search product ..." required>
+                                    <!-- Hidden input for category ID -->
+                                    <input type="hidden" name="categoryId" id="categoryId" value="">
                                     <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+                
+                
     
               
               
@@ -136,7 +156,7 @@
                     <div class="row justify-content-center">
 
                      <!-- sorting and list and unlist code -->
-                    <% locals.products.forEach(element => { %>
+                    <% locals.product.forEach(element => { %>
                         
                 
                         <div class="col-6 col-md-4" >
@@ -146,36 +166,39 @@
                                     <!-- passing query  -->
                                     <a href="/productDetails?id=<%= element._id %>">
                                         <img src="/uploads/<%= element.image[0] %>" alt="Product image" class="product-image1">
-                                        <img src="/uploads/<%= element.image[1] %>" alt="Product image" class="product-image-hover">
+                                        <!-- <img src="/uploads/<%= element.image[1] %>" alt="Product image" class="product-image-hover"> -->
                                     </a>
 
                                         <!-- Add to Wishlist Button -->
                                     <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable" onclick="addToWishlist()"><span>add to wishlist</span></a>
+                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable" onclick="addProductToWishlist('<%= element._id %>')"><span>add to wishlist</span></a>
                                     </div>
 
                                     <!-- Add to Cart Button -->
                                     <div class="product-action" style="z-index: 0;">
-                                        <a href="#" class="btn-product btn-cart" <% if (element.quantity < 0) { %>disabled<% } %> onclick="addToCart('<%= element._id %>')">
-                                            <span>Add to Cart</span>
+                                        <a href="#" class="btn-product btn-cart" <% if (element.quantity < 0) { %>disabled<% } %> onclick="addToCa('<%= element._id %>')">
+                                            <!-- <span>Add to Cart</span> -->
                                         </a>
                                     </div>
                                     
                                 </figure>
 
-                                <div class="product-body">
+                                <div class="product-body" >
                                     <!-- <div class="product-cat">
                                         <a href="#">Clothing</a>
                                     </div> -->
                                     <%= element.category?.name   %>
                                     <h3 class="product-title"><a href="product.html"><%= element.name %></a></h3>
-                                    <div class="product-price" >
+
+                                    <div class="product-price" style="font-size: larger;">
                                         ₹<%= element.offerPrice %>
-                                        <!-- ₹<%= element.price %> -->
+                                        <p class="offer-price" style="text-decoration: line-through; margin-left:50px; margin-top: -18px; ">₹<%= element.price  %></p>
+                                    </div>
+                                    
+                                        
 
                                     
                                         
-                                    </div>
                                     <!-- <div class="product-nav product-nav-dots">
                                         <a href="#" class="active" style="background: #e5dcb1;"><span class="sr-only">Color name</span></a>
                                         <a href="#" style="background: #bacbd8;"><span class="sr-only">Color name</span></a>
@@ -187,7 +210,6 @@
                   <%  }); %>
                        
                         
-
 
                     </div>
 
@@ -206,6 +228,7 @@
         <!-- sweetalert message -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <!-- addtocart -->
         <script>
 
             function addToCart(productId) {
@@ -239,58 +262,75 @@
         </script>
 
 
+<!-- addtoWishlist -->
+<script>
+    function addProductToWishlist(productId) {
+        event.preventDefault(); // Prevent the default action of the <a> tag
 
-        <script>
-            function addToCart() {
+        fetch(`/addToWishlist`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId: productId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update wishlist');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Show a SweetAlert to indicate the product was added to the wishlist
                 Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Item added to cart successfully",
-                    text: 'Item added to cart successfully.',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    customClass: {
-                    popup: 'alert-modal-container'
-                }
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Product added to wishlist',
+                });
+            } else {
+                // Handle the case where the product could not be added to the wishlist
+                // This could involve showing an error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: 'Something went wrong',
                 });
             }
-        
-            function addToWishlist() {
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Item added to wishlist successfully",
-                    text: 'Item added to wishlist successfully.',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    customClass: {
-                    popup: 'alert-modal-container'
-                }
-                });
-            }
-        </script>
-    
+        })
+        .catch(error => {
+            console.error('Error updating wishlist:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Something went wrong',
+            });
+        });
+    }
+</script>
+
 
 
     <!-- search product in shop -->
     <script>
-        // JavaScript to handle form submission (optional, you can use plain HTML)
-        document.getElementById('searchForm').addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent default form submission
-    
-            const searchQuery = document.getElementById('searchQuery');
-    
-            // Send GET request to backend with search query
-            try {
-                const response = await fetch(`/search?q=${searchQuery}`);
-                const data = await response.json();
-                
-                // Handle response data (e.g., display search results on the page)
-                console.log(data);
-            } catch (error) {
-                console.error(error);
-            }
-        });
+    document.getElementById('searchForm').addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const searchQuery = document.getElementById('searchQuery').value;
+    const categoryId = 'yourCategoryId'; // Replace 'yourCategoryId' with the actual category ID
+
+    document.getElementById('categoryId').value = categoryId;
+
+    try {
+        const response = await fetch(`/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`);
+        // const data = await response.json();
+        
+        // console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
     </script>
     
 

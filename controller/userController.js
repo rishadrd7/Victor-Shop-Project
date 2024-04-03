@@ -9,6 +9,7 @@ const Address = require("../models/addressModel")
 const Order = require("../models/ordersModel")
 const Coupon = require("../models/couponModel");
 const Offer = require("../models/offerModel");
+const Razorpay = require('razorpay');
 
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -17,7 +18,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
 require('dotenv').config();
-const {ObjectId} = require('mongodb')
+const { ObjectId } = require('mongodb')
 
 
 //google
@@ -135,7 +136,7 @@ const loginPage = async (req, res) => {
     const msg = req.flash('passwordChanged');
     const passMsg = req.flash('passwordIncorrect');
 
-    res.render("users/login", { message, msg ,passMsg});
+    res.render("users/login", { message, msg, passMsg });
   } catch (error) {
     console.log(error);
   }
@@ -162,7 +163,7 @@ const verifyLogin = async (req, res) => {
 
         res.redirect("/home");
       } else {
-        req.flash('passwordIncorrect', 'Incorrect password.'); 
+        req.flash('passwordIncorrect', 'Incorrect password.');
         res.redirect("/login");
       }
     } else {
@@ -679,46 +680,45 @@ const logoutHome = async (req, res) => {
 //setup shopPage
 const shopPage = async (req, res) => {
   try {
-    const categories = await Category.find({})
-    // const products = await Product.find().populate('category')
+    const categories = await Category.find({});
+    const selectedCategory = req.query.category || 'allCategory';
+    const sortBy = req.query.sortby || 'popularity';
     let productss;
 
-
-    const selectedCategory = req.query.category || 'allCategory'
-
-
-    const sortBy = req.query.sortby || 'popularity'
     switch (sortBy) {
       case 'lowToHigh':
-        productss = await Product.find({ status: false }).sort({ price: 1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ price: 1 }).populate('category');
         break;
       case 'highToLow':
-        productss = await Product.find({ status: false }).sort({ price: -1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ price: -1 }).populate('category');
         break;
       case 'alphabetical':
-        productss = await Product.find({ status: false }).sort({ name: 1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ name: 1 }).populate('category');
         break;
       case 'analphabetic':
-        productss = await Product.find({ status: false }).sort({ name: -1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ name: -1 }).populate('category');
         break;
       case 'latest':
-        productss = await Product.find({ status: false }).sort({ _id: -1 }).populate('category')
+        productss = await Product.find({ status: false }).sort({ _id: -1 }).populate('category');
         break;
-
       default:
-        productss = await Product.find({ status: false }).populate('category')
+        productss = await Product.find({ status: false }).populate('category');
         break;
     }
 
+    let categoryMatch = {};
+    if (selectedCategory !== 'allCategory') {
+      categoryMatch = { 'category.name': selectedCategory };
+    }
 
     const products = await Product.aggregate([
       {
         $match: {
           status: false,
-          quantity: { $gte: 0 }
+          quantity: { $gte: 0 },
+          ...categoryMatch // Filter by selected category
         }
       },
-
       {
         $lookup: {
           from: "categories",
@@ -736,14 +736,15 @@ const shopPage = async (req, res) => {
         }
       }
     ]);
-    // console.log("products", productss);
 
     res.render('pages/shop', { product: products, categories: categories, products: productss, selectedCategory })
   } catch (error) {
     console.log(error);
-
   }
 }
+
+
+
 
 
 //set up product details page
@@ -760,27 +761,29 @@ const productDetails = async (req, res) => {
 
 
 //product search in shop
-  const searchProducts = async (req, res) => {
-    try {
-        // Extract search query from request parameters
-        const { q } = req.query;
-  
-        // Search products and categories simultaneously
-        const [products, categories] = await Promise.all([
-            Product.find({ $or: [
-                { name: { $regex: new RegExp(q, 'i') } },
-            ]}),
-            Category.find({ name: { $regex: new RegExp(q, 'i') } })
-        ]);
-  
-        res.render('pages/shop', { products, categories });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-    }
-  };
+const searchProducts = async (req, res) => {
+  try {
+    // Extract search query from request parameters
+    const { q } = req.query;
 
- 
+    // Search products and categories simultaneously
+    const [products, categories] = await Promise.all([
+      Product.find({
+        $or: [
+          { name: { $regex: new RegExp(q, 'i') } },
+        ]
+      }),
+      Category.find({ name: { $regex: new RegExp(q, 'i') } })
+    ]);
+    console.log("dsajlkdsa")
+    res.render('pages/shop', { products, categories });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
 
 // ==============================set up user Profile=========================
 
@@ -974,6 +977,7 @@ const deleteAddress = async (req, res) => {
 // setup checkout page
 const checkoutPage = async (req, res) => {
   try {
+    console.log("checkoutpage");
     const userId = req.session.user;
     const userData = await User.findById(userId);
     const addressData = await Address.find({ userId: userId })
@@ -988,6 +992,7 @@ const checkoutPage = async (req, res) => {
 
   }
 }
+
 
 //edit checkoutAddress
 const editCheckoutAddress = async (req, res) => {
@@ -1069,10 +1074,11 @@ const addCheckoutAddress = async (req, res) => {
 
 
 // Place order from checkout
+
 const placeOrder = async (req, res) => {
   try {
 
-    const { userId, address, paymentMethod , totalAmount } = req.body;
+    const { userId, address, paymentMethod, totalAmount } = req.body;
     console.log(userId, address, paymentMethod)
     console.log(totalAmount, "diss");
 
@@ -1096,7 +1102,8 @@ const placeOrder = async (req, res) => {
       userId,
       orderUserDetails: data,
       products: cart.products,
-      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : '',
+      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'online',
+      paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
       totalAmount
     });
 
@@ -1105,52 +1112,106 @@ const placeOrder = async (req, res) => {
 
     await newOrder.save();
 
-    res.json({ status: true });
+    if (paymentMethod === 'online') {
+      var instance = new Razorpay({ key_id: 'rzp_test_2gWPLmDC73KBec', key_secret: 'KXgNwcsIDb4x4y9MJCHmHtaG' })
+
+      const razo = await instance.orders.create({
+        amount: totalAmount*100,
+        currency: "INR",
+        receipt: newOrder._id,
+
+      })
+      console.log(razo);
+      res.json({ status: true, id: razo.id, receipt: razo.receipt, key_id: 'rzp_test_2gWPLmDC73KBec' });
+    }
+    else
+      res.json({ status: true });
   } catch (error) {
     console.error(error);
   }
 };
 
 
+
+//verify razorpay
+const verifyRazo = async (req, res) => {
+  try {
+    const { order_id, razorpay_payment_id, razorpay_signature, receipt } = req.body;
+    console.log( order_id, razorpay_payment_id, razorpay_signature,  receipt, "aaaa");
+    const secret = "KXgNwcsIDb4x4y9MJCHmHtaG";
+
+    const crypto = require("crypto");
+    const hmac = crypto.createHmac('sha256', secret);
+
+    hmac.update(order_id + "|" + razorpay_payment_id);
+    let generatedSignature = hmac.digest('hex');
+    console.log(generatedSignature , "bbbb"); 
+     
+    let isSignatureValid = generatedSignature == razorpay_signature;
+
+    if (isSignatureValid) {
+      console.log(isSignatureValid , "cccc");
+      console.log("Payment verified successfully");
+
+      const  razoreceipt = await Order.findByIdAndUpdate({_id: receipt},{paymentStatus : "paid"});
+      console.log(razoreceipt , "dddd");
+
+
+      res.status(200).json({
+         message: "Payment verified successfully",
+         orderId: order_id, // Send order ID in the response
+         totalAmount: totalAmount // Send paid amount in the response
+
+     });
+    } else {
+      console.log("Invalid signature");
+      res.status(400).json({ error: "Invalid signature" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "An error occurred while verifying payment" });
+  }
+};
+
 //======================================set up orderpage============================================
 
 
 // orders list  in Profile
-  const orderPage = async (req, res) => {
-    try {
-      const userData = await User.findOne({ _id: req.session.user });
-      // const orders = await Order.find({ userId: req.session.user }).populate('products.productId').sort({ orderDate: 1 });
-      const orderlist = await Order.aggregate([
-        {
-          $match: {
-            userId:new ObjectId( req.session.user)
-          }
-        },
-        {
-          $unwind: "$products"
-        },
-        {
-          $lookup: {
-            from: "products",
-            localField: "products.productId",
-            foreignField: "_id",
-            as: "productDetail"
-          }
-        },{
-          $sort:{
-            "orderDate": -1 // Sort by orderDate in descending order
-          }
-        },
-        {$unwind:'$productDetail'}
-      ]
-      )
-      console.log(orderlist);
+const orderPage = async (req, res) => {
+  try {
+    const userData = await User.findOne({ _id: req.session.user });
+    // const orders = await Order.find({ userId: req.session.user }).populate('products.productId').sort({ orderDate: 1 });
+    const orderlist = await Order.aggregate([
+      {
+        $match: {
+          userId: new ObjectId(req.session.user)
+        }
+      },
+      {
+        $unwind: "$products"
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetail"
+        }
+      }, {
+        $sort: {
+          "orderDate": -1 // Sort by orderDate in descending order
+        }
+      },
+      { $unwind: '$productDetail' }
+    ]
+    )
+    console.log(orderlist);
 
-      res.render('pages/ordersPage', { userData, orderlist });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    res.render('pages/ordersPage', { userData, orderlist });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 
 //order Details page
@@ -1173,66 +1234,66 @@ const orderDetails = async (req, res) => {
 
 
 const cancelOrder = async (req, res) => {
-    try {
-      const orderId = req.params.orderId;
-      
-      // Update the order status to "Cancelled"
-      const order = await Order.findByIdAndUpdate(orderId, { 
-        $set: { 
-          'products.$[].status': 'Cancelled' 
-        } 
-      }, { new: true });
-  
-      if (!order) {
-        return res.status(404).send('Order not found');
+  try {
+    const orderId = req.params.orderId;
+
+    // Update the order status to "Cancelled"
+    const order = await Order.findByIdAndUpdate(orderId, {
+      $set: {
+        'products.$[].status': 'Cancelled'
       }
-  
-      res.status(200).send('Order cancelled successfully');
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+    }, { new: true });
+
+    if (!order) {
+      return res.status(404).send('Order not found');
     }
-  };
+
+    res.status(200).send('Order cancelled successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 
 //======================================set up coupon============================================
 
 
 // coupons set in chekout page
-const getCoupon = async(req,res)=>{
- try {
-
-  const coupons = await Coupon.find()
-  console.log(coupons, "Get coupon");
-  res.json(coupons)
- } catch (error) {
-  console.log(error);
-  
- }
-}
-
-
-
-const applyCoupon=async (req,res)=>{
+const getCoupon = async (req, res) => {
   try {
-      console.log('its here also in apply coupon ');
-      const { couponCode } = req.body;
-       console.log(couponCode,'coupon code in apply code');
-      const coupon = await Coupon.findOne({ code: couponCode });
-      console.log(coupon,'coupon in apply code apply coupon ')
-      if (!coupon) {
-          return res.json({ success: false, message: 'Coupon not found' });
-      }
-      const discountAmount = coupon.discountAmount || 0;
-      console.log(discountAmount,'discount amount in apply code');
-      
-      res.json({ success: true, message: 'Coupon applied', discountAmount });
+
+    const coupons = await Coupon.find()
+    console.log(coupons, "Get coupon");
+    res.json(coupons)
   } catch (error) {
-      console.log(error.message);
+    console.log(error);
+
   }
 }
- 
- 
+
+
+
+const applyCoupon = async (req, res) => {
+  try {
+    console.log('its here also in apply coupon ');
+    const { couponCode } = req.body;
+    console.log(couponCode, 'coupon code in apply code');
+    const coupon = await Coupon.findOne({ code: couponCode });
+    console.log(coupon, 'coupon in apply code apply coupon ')
+    if (!coupon) {
+      return res.json({ success: false, message: 'Coupon not found' });
+    }
+    const discountAmount = coupon.discountAmount || 0;
+    console.log(discountAmount, 'discount amount in apply code');
+
+    res.json({ success: true, message: 'Coupon applied', discountAmount });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 
 
 
@@ -1274,6 +1335,7 @@ module.exports = {
   editCheckoutAddress,
   addCheckoutAddress,
   placeOrder,
+  verifyRazo,
   orderPage,
   orderDetails,
   cancelOrder,

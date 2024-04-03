@@ -55,6 +55,7 @@ router.get('/checkout',userAuth.user,userAuth.isBlocked,userController.checkoutP
 router.post('/checkout/edit-address', userController.editCheckoutAddress);
 router.post('/checkout/add-address',userController.addCheckoutAddress);
 router.post('/place-order', userController.placeOrder);
+router.post('/verify-razo',userController.verifyRazo);
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
 router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);

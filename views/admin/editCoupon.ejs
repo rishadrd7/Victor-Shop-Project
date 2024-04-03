@@ -71,6 +71,26 @@
                     </div>
                   </div>
                 </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                      <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Minimum Purchase Amount</label>
+                          <div class="col-sm-9">
+                              <input type="text" name="minPurchaseAmount" class="form-control" value="<%= coupon.minPurchaseAmount %>"/>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-6">
+                      <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Maximum Discount Limit</label>
+                          <div class="col-sm-9">
+                              <input type="text" name="maxDiscountLimit" class="form-control" value="<%= coupon.maxDiscountLimit %>"/>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
                
                <div class="col">
                 <button type="submit" class="btn btn-info ">Submit</button>
@@ -97,62 +117,64 @@
 
 <!-- add coupon form validation -->
 <script>
-    function validateForm() {
-     // Get form elements
-     var couponName = document.getElementsByName('couponName')[0].value;
-     var couponCode = document.getElementById('couponCodeInput').value;
-     var description = document.getElementById('exampleTextarea1').value;
-     var discount = document.getElementsByName('discount')[0].value;
-     var expireDate = document.getElementById('couponExpire').value;
-    
-   // Check if offerTitle or description is empty or contains only whitespace
-   if (!couponName.trim() || !description.trim()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Coupon Title and Description cannot be empty or contain only whitespace.',
-      });
-      return false; // Prevent form submission
-   }
-  
 
-     // Check if any field is empty
-     if (!couponName || !couponCode || !description || !discount || !expireDate) {
+function validateForm() {
+    // Get form elements
+    var couponName = document.getElementsByName('couponName')[0].value;
+    var couponCode = document.getElementById('couponCodeInput').value;
+    var description = document.getElementById('exampleTextarea1').value;
+    var discount = document.getElementsByName('discount')[0].value;
+    var expireDate = document.getElementById('couponExpire').value;
+    var minPurchaseAmount = document.getElementsByName('minPurchaseAmount')[0].value;
+    var maxDiscountLimit = document.getElementsByName('maxDiscountLimit')[0].value;
+
+    // Check if offerTitle or description is empty or contains only whitespace
+    if (!couponName.trim() || !description.trim()) {
         Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'All fields are required.',
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Coupon Title and Description cannot be empty or contain only whitespace.',
         });
-        return false;
-     }
-    
-     // Check if discount is a positive number between 1 and 100
-     if (isNaN(discount) || discount < 1 || discount > 100) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Discount amount must be a positive number between 1 and 100.',
-        });
-        return false;
-     }
-    
-     // Check if expire date is not before current date
-     var currentDate = new Date();
-     var expireDateObj = new Date(expireDate);
-     if (expireDateObj < currentDate) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Expiration date cannot be before the current date.',
-        });
-        return false;
-     }
-    
-     // If all checks pass, return true to submit the form
-     return true;
+        return false; // Prevent form submission
     }
-    </script>
-    
+
+    // Check if any field is empty
+    if (!couponName || !couponCode || !description || !discount || !expireDate || !minPurchaseAmount || !maxDiscountLimit) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'All fields are required.',
+        });
+        return false;
+    }
+
+    // Check if discount, minPurchaseAmount, and maxDiscountLimit are positive numbers
+    if (isNaN(discount) || discount < 1 || discount > 100 || isNaN(minPurchaseAmount) || minPurchaseAmount < 0 || isNaN(maxDiscountLimit) || maxDiscountLimit < 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Discount amount, Minimum Purchase Amount, and Maximum Discount Limit must be positive numbers.',
+        });
+        return false;
+    }
+
+    // Check if expire date is not before current date
+    var currentDate = new Date();
+    var expireDateObj = new Date(expireDate);
+    if (expireDateObj < currentDate) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Expiration date cannot be before the current date.',
+        });
+        return false;
+    }
+
+    // If all checks pass, return true to submit the form
+    return true;
+}
+
+</script> 
 
 
 

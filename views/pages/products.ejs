@@ -117,23 +117,21 @@
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
                                             <% if (pro.quantity > 0) { %>
-                                                <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity  %>" step="1" data-decimals="0" required>
-                                                <% } else { %>
-                                                    <span class="out-of-stock-message" style="font-size: 30px; color: rgb(0, 0, 0); font-weight: 400">Sold Out</span>
-                                                <span>This item currently out of stock</span> 
+                                                <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity %>" step="1" data-decimals="0" required>
+                                            <% } else { %>
+                                                <span class="out-of-stock-message" style="font-size: 30px; color: rgb(0, 0, 0); font-weight: 400">Sold Out</span>
+                                                <span>This item is currently out of stock</span> 
                                             <% } %>
                                         </div>
                                     </div>
                                     
-
-
-
-                                    <div class="details-action-wrapper">
                                     
-                                          <!-- Add to Cart Button -->
-                                          <a href="#" class="btn-product btn-cart" <% if (pro.quantity < 0) { %>disabled<% } %> onclick="addToCart('<%= pro._id %>')">
+                                    <div class="details-action-wrapper">
+                                        <!-- Add to Cart Button -->
+                                        <a href="#" class="btn-product btn-cart" <% if (pro.quantity <= 0) { %>style="display: none"<% } %> onclick="addToCart('<%= pro._id %>')">
                                             <span>Add to Cart</span>
                                         </a>
+                                    
                                     
 
                                         <!-- Add to Wishlist Button -->
@@ -536,6 +534,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+
+
+    
     <script>
         function addProductToWishlist(productId) {
             event.preventDefault(); // Prevent the default action of the <a> tag
