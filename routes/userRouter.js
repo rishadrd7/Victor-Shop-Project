@@ -65,6 +65,7 @@ router.post('/orders/:orderId/cancel', userController.cancelOrder);
 //============================================cart side controller=========================================
 router.get('/cartPage',userAuth.user,userAuth.isBlocked,cartController.cartPage);
 router.post('/add-to-cart', cartController.addToCart);
+router.post('/updateCartQuantity/:productId',cartController.updateCartQuantity)
 router.delete('/removeProductFromCart/:cartId/:productId', cartController.removeProductFromCart);
 
 router.get('/couponGet',userController.getCoupon);

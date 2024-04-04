@@ -14,7 +14,7 @@
     <div class="order-list">
       
   <% if (orderlist.length > 0) { %>
-    <% orderlist.reverse().forEach(order => { %>
+    <% orderlist.slice().reverse().forEach(order => { %>
       
       <ul class="product-list">
               <li class="product-item">
@@ -24,7 +24,7 @@
                     <img style="width: 100px; height: 100px;" src="/uploads/<%= order.productDetail.image[0] %>" class="mr-3 order-image" alt="<%= order.productDetail.name %>">
                     <div class="media-body" style="width: 33%; flex: none;">
                       <h5 class="mt-0"><%= order.productDetail.name %></h5>
-                      <p style="font-weight: 500;">₹<%= order.productDetail.offerPrice %></p>
+                      <p style="font-weight: 500;">₹<%= order.totalAmount %></p>
                       <p>Quantity: <%= order.products.quantity %></p>
                     </div>
 

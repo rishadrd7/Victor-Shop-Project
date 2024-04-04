@@ -81,22 +81,12 @@
         <div class="row">
             <div class="col-lg-12">
 
-                <!-- <div class="drop">
-                    <br>
-                    <button class="dropbtn">Category</button>
-                    <div class="drop-content">
-                        <a href="/shop?sortby=allCategory">All Categories</a>
-                        <% categories.forEach(category => { %>
-                            <a href="/shop?sortby=<%= category._id %>"><%= category.name %></a>
-                        <% }); %>
-                    </div>
-                </div> -->
 
                 <div class="drop">
                     <br>
                     <button class="dropbtn">Category</button>
                     <div class="drop-content">
-                        <a href="/shop?category=allCategory">All Categories</a>
+                        <a href="/shop">All Categories</a>
                         <!-- Add links for each category -->
                         <% categories.forEach(category => { %>
                             <a href="/shop?category=<%= category.name %>"><%= category.name %></a>
@@ -104,8 +94,6 @@
                     </div>
                 </div>
                 
-                
-
                 <div class="drop">
                     <br>
                     <button class="dropbtn">Sort</button>
@@ -121,6 +109,7 @@
                     <br>
                     <button class="dropbtn">Price</button>
                     <div class="drop-content">
+                        <a href="/shop">Price: All</a>
                         <a href="/shop?sortby=lowToHigh">Price: Low to High</a>
                         <a href="/shop?sortby=highToLow">Price: High to Low</a>
                     </div>
@@ -128,7 +117,7 @@
               
                 
                 
-                <div class="drop">
+                <div class="drop" style="width: 70%;">
                     <div class="header-right">
                         <div class="header-search header-search-extended header-search-visible">
                             <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
@@ -150,13 +139,13 @@
               
               
               <h2 class="title">All Catagory</h2>
-              <button class="pop">Popularity</button>
+              <a href="/shop?sortby=latest"><button class="pop">Popularity</button></a>
                 <div class="products-container mb-7">
 
                     <div class="row justify-content-center">
 
                      <!-- sorting and list and unlist code -->
-                    <% locals.product.forEach(element => { %>
+                    <% locals.products.forEach(element => { %>
                         
                 
                         <div class="col-6 col-md-4" >
@@ -225,41 +214,41 @@
 
 
 
-        <!-- sweetalert message -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- sweetalert message -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- addtocart -->
-        <script>
+<!-- addtocart -->
+<script>
 
-            function addToCart(productId) {
-                let data = { productId: productId }; 
-                console.log('data is:', data);
-        
-                axios.post('/add-to-cart', data) // Adjust the route path as needed
-                    .then(response => {
-                        console.log('Product added to cart:', response.data);
-        
-                        // Show success message using SweetAlert
-                        swal.fire({
-                            icon: 'success',
-                            title: 'Product added to cart!',
-                            text: 'The product has been added to your cart.',
-                            timer: 1500, // Time in milliseconds (adjust as needed)
-                            showConfirmButton: false
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error adding product to cart:', error);
-                        // Show error message using SweetAlert if needed
-                        swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Failed to add the product to cart. Please try again.'
-                        });
-                    });
-            }
-        
-        </script>
+    function addToCart(productId) {
+        let data = { productId: productId }; 
+        console.log('data is:', data);
+
+        axios.post('/add-to-cart', data) // Adjust the route path as needed
+            .then(response => {
+                console.log('Product added to cart:', response.data);
+
+                // Show success message using SweetAlert
+                swal.fire({
+                    icon: 'success',
+                    title: 'Product added to cart!',
+                    text: 'The product has been added to your cart.',
+                    timer: 1500, // Time in milliseconds (adjust as needed)
+                    showConfirmButton: false
+                });
+            })
+            .catch(error => {
+                console.error('Error adding product to cart:', error);
+                // Show error message using SweetAlert if needed
+                swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to add the product to cart. Please try again.'
+                });
+            });
+    }
+
+</script>
 
 
 <!-- addtoWishlist -->
@@ -311,28 +300,28 @@
 
 
 
-    <!-- search product in shop -->
-    <script>
-    document.getElementById('searchForm').addEventListener('submit', async (event) => {
-    event.preventDefault(); // Prevent default form submission
+<!-- search product in shop -->
+<script>
+document.getElementById('searchForm').addEventListener('submit', async (event) => {
+event.preventDefault(); // Prevent default form submission
 
-    const searchQuery = document.getElementById('searchQuery').value;
-    const categoryId = 'yourCategoryId'; // Replace 'yourCategoryId' with the actual category ID
+const searchQuery = document.getElementById('searchQuery').value;
+const categoryId = 'yourCategoryId'; // Replace 'yourCategoryId' with the actual category ID
 
-    document.getElementById('categoryId').value = categoryId;
+document.getElementById('categoryId').value = categoryId;
 
-    try {
-        const response = await fetch(`/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`);
-        // const data = await response.json();
-        
-        // console.log(data);
-    } catch (error) {
-        console.log(error);
-    }
+try {
+    const response = await fetch(`/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`);
+    // const data = await response.json();
+    
+    // console.log(data);
+} catch (error) {
+    console.log(error);
+}
 });
 
-    </script>
-    
+</script>
+
 
 <%- include('../layouts/footerNav')  %>
 <%- include('../layouts/footer')  %>

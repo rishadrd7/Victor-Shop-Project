@@ -114,10 +114,10 @@
 
                                     <!-- quantity and show out of stock -->
                                     <div class="details-filter-row details-row-size">
-                                        <label for="qty">Qty:</label>
+                                        <!-- <label for="qty">Qty:</label> -->
                                         <div class="product-details-quantity">
                                             <% if (pro.quantity > 0) { %>
-                                                <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity %>" step="1" data-decimals="0" required>
+                                                <!-- <input type="number" id="qty" class="form-control" value="1" min="1" max="<%= pro.quantity %>" step="1" data-decimals="0" required> -->
                                             <% } else { %>
                                                 <span class="out-of-stock-message" style="font-size: 30px; color: rgb(0, 0, 0); font-weight: 400">Sold Out</span>
                                                 <span>This item is currently out of stock</span> 
@@ -591,6 +591,7 @@
     function addToCart(productId) {
         let data = { productId: productId }; 
         console.log('data is:', data);
+
 
         axios.post('/add-to-cart', data) // Adjust the route path as needed
             .then(response => {

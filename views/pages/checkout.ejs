@@ -1,4 +1,4 @@
-<%- include('../layouts/header')  %>
+t<%- include('../layouts/header')  %>
 <%- include('../layouts/header2')  %>
 
 <style>
@@ -547,6 +547,7 @@ label{
 <!-- <script></script> -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
 <!-- Razorpay -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
@@ -691,7 +692,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var value = inputs[i].value.trim();
             inputs[i].value = value; // Update value with trimmed one
             if (!value) {
-                alert("Please fill in all fields.");
+                Swal.fire('Error!', 'Please fill in all fields.', 'error');
                 event.preventDefault();
                 return;
             }
@@ -701,7 +702,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var pincodeValue = pincodeInput.value;
         var pincodeRegex = /^[1-9][0-9]{5}$/;
         if (!pincodeRegex.test(pincodeValue)) {
-            alert("Please enter a valid pincode.");
+            Swal.fire('Error!', 'Please enter a valid pincode.', 'error');
             event.preventDefault();
             return;
         }
@@ -710,12 +711,13 @@ document.addEventListener("DOMContentLoaded", function () {
         var phoneValue = phoneInput.value;
         var phoneRegex = /^[0-9]{10,15}$/;
         if (!phoneRegex.test(phoneValue)) {
-            alert("Please enter a valid phone number.");
+            Swal.fire('Error!', 'Please enter a valid phone number.', 'error');
             event.preventDefault();
             return;
         }
     });
 </script>
+
 
 
 

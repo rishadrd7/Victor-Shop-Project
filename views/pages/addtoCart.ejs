@@ -3,6 +3,8 @@
 
 
 
+
+
 <div class="page-wrapper">
         <header class="header">
            
@@ -89,19 +91,36 @@
 														</div><!-- End .product -->
 													</td>
 
-													<td class="price-col">₹<%= product.productId.offerPrice %></td>
-
-
-													<td class="quantity-col">
-														
-														<div class="cart-product-quantity">
-															<input type="number" class="form-control" value="<%= product.quantity %>" min="1" max="10" step="1" data-decimals="0" required>
-														</div>
-															
+													<td class="price-col">₹<span id="offerPrice_<%= product.productId._id %>">
+														<% 
+														const priceQuantity = product.productId.offerApplied ? 
+																			(product.productId.offerPrice - (product.productId.offerPrice * (product.productId.offerApplied / 100))) :
+																			product.productId.offerPrice;
+															%>
+															<%= priceQuantity %>
+														</span>
 													</td>
 
+													<td class="quantity-col">
+														<div class="cart-product-quantity">
+															<input type="number" aria-readonly="false" class="form-control  quantity-input" 
+																id="quantity_<%= product.productId._id %>"
+																data-productid="<%= product.productId._id %>"
+																value="<%= product.quantity %>" min="1"
+																max="<%= product.productId.quantity %>" step="1"
+																data-decimals="0" onkeydown="return false" required
+																onchange="updateTotalPrice(this,'<%= product.productId._id %>')">
+														</div>
+													</td>
 													
-													<td class="total-col">₹<%= product.productId.offerPrice * product.quantity %></td>
+													
+													<td class="total-col">
+														<% const totalPrice = priceQuantity * product.quantity; %>
+														₹<span class="total-price" id="total_<%= product.productId._id %>">
+															<%= totalPrice %>
+															
+														</span>
+													</td>
 													
 
 													<!-- Button to remove the product from the cart -->
@@ -206,8 +225,8 @@
 	                				</table>
 
 
+									
 									<div class="summary summary-cart">
-										<!-- Your existing code for cart summary -->
 									
 										<% if(errorMessage) { %>
 											<div class="alert alert-primary" role="alert">
@@ -218,9 +237,10 @@
 										<% } %>
 									</div>
 									
-	                			</div><!-- End .summary -->
 
+	                			</div><!-- End .summary -->
 		            			<a href="/shop" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
+
 	                		</aside><!-- End .col-lg-3 -->
 	                	</div><!-- End .row -->
 	                </div><!-- End .container -->
@@ -240,43 +260,73 @@
 
 
 
-<!-- price totaling -->
 <script>
-    // Function to update total price when quantity changes
-    function updateTotalPrice(input, price) {
-        var quantity = parseInt(input.value);
-        var totalPrice = quantity * price;
-        input.closest('tr').querySelector('.total-col').textContent = '₹' + totalPrice.toFixed(2);
+	    function updateCartQuantity(productId) {
+            const quantity = $('#quantity_' + productId).val();
+            const maxQuantity = parseInt($('#quantity_' + productId).attr('max')) || 0;
+            console.log(maxQuantity,'maxquantity')
+            const priceQuantity = parseFloat($('#offerPrice_' + productId).text().replace('₹', ''))
+            const totalPrice = priceQuantity * quantity
 
-        // Update total cart price
-        updateCartTotal();
-    }
-
-    // Function to update total cart price
-    function updateCartTotal() {
-        var cartTotal = 0;
-        var totalRows = document.querySelectorAll('.total-col');
-        totalRows.forEach(function(row) {
-            cartTotal += parseFloat(row.textContent.slice(1));
-        });
-
-        // Update total price displayed
-        document.getElementById('totalPrice').textContent = '₹' + cartTotal.toFixed(2);
-    }
-
-    // Add event listener to all quantity input fields
-    var quantityInputs = document.querySelectorAll('.form-control');
-    quantityInputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            var price = parseFloat(input.closest('tr').querySelector('.price-col').textContent.slice(1));
-            updateTotalPrice(input, price);
-        });
-    });
-
-    // Call updateCartTotal initially to calculate total price on page load
-    updateCartTotal();
+          
+      
+            $.ajax({
+                type: 'POST',
+                url: '/updateCartQuantity/' + productId,
+                data: { quantity: quantity },
+                success: function (response) {
+                    if (response.success) {
+                        console.log('its success in update cart quantity');
+                    } else {
+                        console.log('its failed in update cart quantity');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error upadating cart quantity');
+                }
+            })
+         
+        }
 </script>
 
+
+<!-- price totaling -->
+<script>
+	  function updateTotalPrice(input, productId) {
+            const quantity = input.value
+            console.log(quantity,'input.value');
+            const priceQuantity = parseFloat($('#offerPrice_' + productId).text().replace('₹', ''))
+			console.log($('#offerPrice_' + productId));
+
+            console.log(priceQuantity);
+            const totalPrice = priceQuantity * quantity
+            console.log(totalPrice);
+            $('#total_' + productId).text('' + totalPrice);
+            updateCartQuantity(productId, quantity)
+        }
+
+
+        function calculateTotal() {
+            let subtotal = 0
+            $('.total-price').each(function () {
+                subtotal += parseFloat($(this).text().replace('₹', ''))
+            })
+            let discount = 0
+            let deliveryCharges = subtotal < 500 ? 50 : 0
+            let totalAmount = subtotal - discount + deliveryCharges
+
+            $('.summary-subtotal td:last-child').text('₹' + subtotal.toFixed(2))
+            $('.summary-discount td:last-child').text('₹' + discount.toFixed(2))
+            $('.summary-delivery td:last-child').text('₹' + deliveryCharges.toFixed(2))
+            $('.summary-total td:last-child').text('₹' + totalAmount.toFixed(2))
+        }
+
+        calculateTotal();
+        $('.quantity-input').on('change', function () {
+            // updateTotalPrice(this);
+            calculateTotal()
+        })
+</script>
 
 
 <!-- remove product from cart -->

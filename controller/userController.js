@@ -681,63 +681,239 @@ const logoutHome = async (req, res) => {
 const shopPage = async (req, res) => {
   try {
     const categories = await Category.find({});
-    const selectedCategory = req.query.category || 'allCategory';
-    const sortBy = req.query.sortby || 'popularity';
-    let productss;
 
+    const selectedCategory = req.query.category || null;
+    console.log(selectedCategory, 'Category Selected');
+
+    const sortBy = req.query.sortby || 'popularity';
+  
+    console.log(sortBy ,'next' ,selectedCategory);
+
+    let pipeline;
+
+    //LowToHigh
     switch (sortBy) {
       case 'lowToHigh':
-        productss = await Product.find({ status: false }).sort({ price: 1 }).populate('category');
-        break;
-      case 'highToLow':
-        productss = await Product.find({ status: false }).sort({ price: -1 }).populate('category');
-        break;
-      case 'alphabetical':
-        productss = await Product.find({ status: false }).sort({ name: 1 }).populate('category');
-        break;
-      case 'analphabetic':
-        productss = await Product.find({ status: false }).sort({ name: -1 }).populate('category');
-        break;
-      case 'latest':
-        productss = await Product.find({ status: false }).sort({ _id: -1 }).populate('category');
-        break;
-      default:
-        productss = await Product.find({ status: false }).populate('category');
-        break;
-    }
+         pipeline = [
+          {
+              $match: {
+                  status: false,
+                  quantity: { $gte: 0 },
+                  // ...categoryMatch
+              }
+          },
+          {
+              $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categorys"
+              }
+          },
+          {
+              $unwind: "$categorys"
+          }
+      ];
 
-    let categoryMatch = {};
-    if (selectedCategory !== 'allCategory') {
-      categoryMatch = { 'category.name': selectedCategory };
-    }
-
-    const products = await Product.aggregate([
-      {
-        $match: {
-          status: false,
-          quantity: { $gte: 0 },
-          ...categoryMatch // Filter by selected category
-        }
-      },
-      {
-        $lookup: {
-          from: "categories",
-          localField: "category",
-          foreignField: "_id",
-          as: "category"
-        }
-      },
-      {
-        $unwind: "$category"
-      },
-      {
-        $match: {
-          "category.listed": false
-        }
+      if (selectedCategory) {
+        
+        console.log(selectedCategory);
+          pipeline.push({
+              $match: {
+                  "category.name": selectedCategory,
+                  "category.listed": true
+              }
+          });
       }
-    ]);
+      
+      pipeline.push({ $sort: { offerPrice: 1 } });
+      
+      break;
+     
+      //HighToLow
+      case 'highToLow':
+         pipeline = [
+          {
+              $match: {
+                  status: false,
+                  quantity: { $gte: 0 },
+                  // ...categoryMatch
+              }
+          },
+          {
+              $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categorys"
+              }
+          },
+          {
+              $unwind: "$categorys"
+          }
+      ];
+      
+      if (selectedCategory) {
+          pipeline.push({
+              $match: {
+                  "category.name": selectedCategory,
+                  "category.listed": true
+              }
+          });
+      }
+      
+      pipeline.push({ $sort: { offerPrice: -1 } });
+      
+      break;
 
-    res.render('pages/shop', { product: products, categories: categories, products: productss, selectedCategory })
+      //Aa-Zz
+      case 'alphabetical':
+         pipeline = [
+          {
+              $match: {
+                  status: false,
+                  quantity: { $gte: 0 },
+                  // ...categoryMatch
+              }
+          },
+          {
+              $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categorys"
+              }
+          },
+          {
+              $unwind: "$categorys"
+          }
+      ];
+      
+      if (selectedCategory) {
+          pipeline.push({
+              $match: {
+                  "category.name": selectedCategory,
+                  "category.listed": true
+              }
+          });
+      }
+      
+      pipeline.push({ $sort: { name: 1 } });
+      
+      break;
+      
+      //Zz-Aa
+      case 'analphabetic':
+         pipeline = [
+          {
+              $match: {
+                  status: false,
+                  quantity: { $gte: 0 },
+                  // ...categoryMatch
+              }
+          },
+          {
+              $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categorys"
+              }
+          },
+          {
+              $unwind: "$categorys"
+          }
+      ];
+      
+      if (selectedCategory) {
+          pipeline.push({
+              $match: {
+                  "category.name": selectedCategory,
+                  "category.listed": true
+              }
+          });
+      }
+      
+      pipeline.push({ $sort: { name: -1 } });
+      
+      break;
+
+      //Latest Products
+      case 'latest':
+         pipeline = [
+          {
+              $match: {
+                  status: false,
+                  quantity: { $gte: 0 },
+                  // ...categoryMatch
+              }
+          },
+          {
+              $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categorys"
+              }
+          },
+          {
+              $unwind: "$categorys"
+          }
+      ];
+      
+      if (selectedCategory) {
+          pipeline.push({
+              $match: {
+                  "category.name": selectedCategory,
+                  "category.listed": true
+              }
+          });
+      }
+      
+      pipeline.push({ $sort: { _id: -1 } });
+      
+      break;
+      
+      default:
+
+      //Category Select
+        pipeline = [
+          {
+              $match: {
+                  status: false,
+                  quantity: { $gte: 0 },
+                  // ...categoryMatch
+              }
+          },
+          {
+              $lookup: {
+                  from: "categories",
+                  localField: "category",
+                  foreignField: "_id",
+                  as: "categorys"
+              }
+          },
+          {  
+              $unwind: "$categorys"
+          }
+      ];
+      
+      if (selectedCategory) {
+        console.log("Category Selected")
+          pipeline.push({
+              $match: {
+                  "categorys.name": selectedCategory,
+                  "categorys.listed": false,
+              }
+          });
+      }
+        break;
+    }
+
+    const productss = await Product.aggregate(pipeline);
+
+
+    res.render('pages/shop', { categories: categories, products: productss, selectedCategory ,categoryMatch:selectedCategory })
   } catch (error) {
     console.log(error);
   }
@@ -763,10 +939,10 @@ const productDetails = async (req, res) => {
 //product search in shop
 const searchProducts = async (req, res) => {
   try {
-    // Extract search query from request parameters
+   
     const { q } = req.query;
 
-    // Search products and categories simultaneously
+    
     const [products, categories] = await Promise.all([
       Product.find({
         $or: [
@@ -775,7 +951,7 @@ const searchProducts = async (req, res) => {
       }),
       Category.find({ name: { $regex: new RegExp(q, 'i') } })
     ]);
-    console.log("dsajlkdsa")
+   
     res.render('pages/shop', { products, categories });
   } catch (error) {
     console.error(error);
@@ -866,6 +1042,7 @@ const addressPage = async (req, res) => {
     console.error(error);
   }
 };
+
 
 //add address 
 const addAddress = async (req, res) => {
@@ -1107,11 +1284,29 @@ const placeOrder = async (req, res) => {
       totalAmount
     });
 
+    console.log(newOrder,'dfdfddfdfedfdfdf');
+
     //delete product from cart
     await Cart.deleteOne({ userId: req.session.user });
 
     await newOrder.save();
+    
 
+    // stock check and decrement
+    async function aa() {
+      for (const product of newOrder.products) {
+          let productId = product.productId;
+          let quantity = product.quantity; 
+  
+         const decrement =  await Product.findByIdAndUpdate(productId, { $inc: { quantity: -quantity } });
+         console.log(decrement , 'ihciasheud');
+      }
+  }
+  aa()
+  
+
+
+  // razorpay
     if (paymentMethod === 'online') {
       var instance = new Razorpay({ key_id: 'rzp_test_2gWPLmDC73KBec', key_secret: 'KXgNwcsIDb4x4y9MJCHmHtaG' })
 
@@ -1124,6 +1319,7 @@ const placeOrder = async (req, res) => {
       console.log(razo);
       res.json({ status: true, id: razo.id, receipt: razo.receipt, key_id: 'rzp_test_2gWPLmDC73KBec' });
     }
+
     else
       res.json({ status: true });
   } catch (error) {
