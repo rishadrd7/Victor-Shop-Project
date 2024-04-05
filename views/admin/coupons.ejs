@@ -30,7 +30,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% coupons.forEach((coupon,index)=>{ %>
+                <% coupons.slice().reverse().forEach((coupon,index)=>{ %>
                 <tr>
                   <td class="py-1"><%= index+1 %></td>
                   <td><%= coupon.name %></td>

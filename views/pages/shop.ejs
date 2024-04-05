@@ -158,10 +158,14 @@
                                         <!-- <img src="/uploads/<%= element.image[1] %>" alt="Product image" class="product-image-hover"> -->
                                     </a>
 
+                                    
                                         <!-- Add to Wishlist Button -->
                                     <div class="product-action-vertical">
                                         <a href="#" class="btn-product-icon btn-wishlist btn-expandable" onclick="addProductToWishlist('<%= element._id %>')"><span>add to wishlist</span></a>
-                                    </div>
+                                        </div>
+                                        
+
+                                   
 
                                     <!-- Add to Cart Button -->
                                     <div class="product-action" style="z-index: 0;">
@@ -177,12 +181,25 @@
                                         <a href="#">Clothing</a>
                                     </div> -->
                                     <%= element.category?.name   %>
-                                    <h3 class="product-title"><a href="product.html"><%= element.name %></a></h3>
+                                    <h3 class="product-title"><a href="/productDetails?id=<%= element._id %>"><%= element.name %></a></h3>
 
-                                    <div class="product-price" style="font-size: larger;">
+                                        
+                                        <span class="discount" style="font-weight: bold; font-size: larger; color: rgb(45, 126, 12); float: right;"><%= element.offerApplied %>% off</span>
+                                        <div class="product-price" style="font-size: larger;">
                                         ₹<%= element.offerPrice %>
                                         <p class="offer-price" style="text-decoration: line-through; margin-left:50px; margin-top: -18px; ">₹<%= element.price  %></p>
+                                        
                                     </div>
+
+
+                                    <% if(element.offerApplied ) { %>
+                                        <div class="product-price">
+                                            <span class="new-price">₹<%= element.offerPrice - (element.offerPrice * (element.offerApplied /100)) %></span>
+                                            <span class="old-price"> ₹<%= element.offerPrice %></span>
+                                        </div>
+                                        <% }else { %>
+                                            <div class="product-price">₹<%= element.offerPrice %></div>
+                                        <% } %>
                                     
                                         
 

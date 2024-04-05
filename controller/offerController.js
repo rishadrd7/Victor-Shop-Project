@@ -61,11 +61,12 @@ const offerAdding=async(req,res)=>{
     try {
         const {offerTitle,offerPercentage,description,startDate,expireDate,selectedItems}=req.body
 
-        // console.log(offerPercentage,'offer percenteage');
-        // console.log(startDate,'start date in offer adidng ');
-        // console.log(expireDate,'expire date in offer adding ');
-        // console.log(selectedItems,'selected items in controler')
+        console.log(offerPercentage,'offer percenteage added');
+        console.log(startDate,'start date in offer adidng ');
+        console.log(expireDate,'expire date in offer adding ');
+        console.log(selectedItems,'selected items in controler')
         
+
         for (const itemId of selectedItems) {
             let offerApplied = 0;
 

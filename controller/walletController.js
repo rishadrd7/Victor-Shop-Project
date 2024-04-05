@@ -11,16 +11,14 @@ const ObjectId = mongoose.Types.ObjectId
 //set up wallet page
 const walletpage = async (req, res) => {
     try {
-        // Fetch user data
+        
         const userData = await User.findOne({ _id: req.session.user });
         if (!userData) {
             return res.status(404).send('User not found');
         }
 
-        // Fetch wallet data for the user
         const wallet = await Wallet.findOne({ userId: req.session.user }).populate('transactions');
         if (!wallet) {
-            // If the wallet doesn't exist, initialize it with a default balance and transactions
             const newWallet = new Wallet({
                 userId: req.session.user,
                 balance: 0, // Default balance
@@ -30,7 +28,6 @@ const walletpage = async (req, res) => {
             return res.render('pages/wallet', { userData, walletBalance: newWallet.balance, transactions: newWallet.transactions });
         }
 
-        // If the wallet exists, render the page with the wallet balance and transactions
         res.render('pages/wallet', { userData, walletBalance: wallet.balance, transactions: wallet.transactions });
     } catch (error) {
         console.error(error);
@@ -51,7 +48,6 @@ const addMoney = async (req, res) => {
 
         const wallet = await Wallet.findOne({ userId: req.session.user });
         if (!wallet) {
-            // If the wallet doesn't exist, create a new one
             const newWallet = new Wallet({
                 userId: req.session.user,
                 balance: amount,
@@ -65,7 +61,6 @@ const addMoney = async (req, res) => {
             return res.json({ message: 'Money added successfully', newBalance: amount });
         }
 
-        // If the wallet exists, update the balance and add a transaction
         wallet.balance += amount;
         wallet.transactions.push({
             type: 'credit',

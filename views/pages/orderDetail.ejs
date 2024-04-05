@@ -58,6 +58,17 @@
                 </div>
             </div>
             </div>
+
+            <div class="box-content">
+              <h5 >Delivery Address :</h5>
+              
+                <p><%= orderDetails.orderUserDetails.name %> - <%= orderDetails.orderUserDetails.phone %></p>
+                <p> <%= orderDetails.orderUserDetails.streetaddress %> - <%= orderDetails.orderUserDetails.pincode %></p>
+                <p> <%= orderDetails.orderUserDetails.landmark %> -  <%= orderDetails.orderUserDetails.place %> , <%= orderDetails.orderUserDetails.country %></p>
+                <p> <%= orderDetails.orderUserDetails.locality %></p>
+                <p> <%= orderDetails.orderUserDetails.alternatePhone %></p>
+                
+              </div>
         <% }) %>
         <!-- Add more order details as needed -->
       <% } else { %>

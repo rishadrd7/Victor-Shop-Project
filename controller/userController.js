@@ -1393,15 +1393,11 @@ const orderPage = async (req, res) => {
           foreignField: "_id",
           as: "productDetail"
         }
-      }, {
-        $sort: {
-          "orderDate": -1 // Sort by orderDate in descending order
-        }
       },
       { $unwind: '$productDetail' }
     ]
     )
-    console.log(orderlist);
+    // console.log(orderlist);
 
     res.render('pages/ordersPage', { userData, orderlist });
   } catch (error) {
@@ -1417,10 +1413,10 @@ const orderDetails = async (req, res) => {
     const userData = await User.findOne({ _id: req.session.user });
     const orderId = req.params.orderId;
 
-    // Find the order with the provided orderId and populate the products
+  
     const orderDetails = await Order.findOne({ _id: orderId }).populate('products.productId');
+    
 
-    // Render the order detail page with user data and order details
     res.render("pages/orderDetail", { userData, orderDetails });
   } catch (error) {
     console.log(error);
@@ -1448,6 +1444,51 @@ const cancelOrder = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
+  }
+};
+
+
+const returnOrder = async (req, res) => {
+  try {
+    console.log("haiaiiaia");
+    const { orderId, returnAmount, returnReason } = req.body;
+    const userId = req.session.user;
+
+    // Find user's wallet
+    let userWallet = await Wallet.findOne({ userId });
+
+    // If wallet doesn't exist, create a new one
+    if (!userWallet) {
+      userWallet = new Wallet({
+        userId,
+        balance: returnAmount,
+        transactions: [{
+          type: 'credit',
+          reason: 'refund',
+          transactionAmount: returnAmount,
+          returnReason,
+          orderId
+        }]
+      });
+    } else {
+      // Update wallet balance and add transaction record
+      userWallet.balance += returnAmount;
+      userWallet.transactions.push({
+        type: 'credit',
+        reason: 'refund',
+        transactionAmount: returnAmount,
+        returnReason,
+        orderId
+      });
+    }
+
+    // Save or update wallet
+    await userWallet.save();
+
+    res.status(200).json({ message: 'Return processed successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
   }
 };
 
@@ -1535,6 +1576,7 @@ module.exports = {
   orderPage,
   orderDetails,
   cancelOrder,
+  returnOrder,
   getCoupon,
   applyCoupon
 

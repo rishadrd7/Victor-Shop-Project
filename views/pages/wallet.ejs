@@ -67,11 +67,20 @@
                                     <tbody id="collapseList">
                                         <% transactions.slice().reverse().forEach(transaction => { %>
                                             <tr>
-                                                <td><%= transaction.date.toString().split(' ').slice(0,4) %></td>
-                                                <td></td>
+                                                <td><%= transaction.date.toDateString() %></td>
                                                 <td><%= transaction.type %></td>
-                                                <td></td>
+                                                <td><%= transaction.reason %></td>
                                                 <td>₹<%= transaction.transactionAmount %></td>
+                                                <% if (transaction.orderId) { %>
+                                                    <td><a href="/profile/myorders/orderDetails/<%= transaction.orderId %>">View Order</a></td>
+                                                <% } else { %>
+                                                    <td></td>
+                                                <% } %>
+                                                <% if (transaction.returnReason) { %>
+                                                    <td><%= transaction.returnReason %></td>
+                                                <% } else { %>
+                                                    <td></td>
+                                                <% } %>
                                             </tr>
                                         <% }); %>
                                     </tbody>
@@ -126,16 +135,16 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- wallet history collapse -->
 <script>
-    // JavaScript for Collapsible History
     const toggleButton = document.getElementById('toggleCollapse');
     const collapseContent = document.getElementById('collapseContent');
 
     toggleButton.addEventListener('click', function() {
         if (collapseContent.style.display === 'none') {
-            collapseContent.style.display = 'block'; // Show content when button is clicked
+            collapseContent.style.display = 'block'; 
         } else {
-            collapseContent.style.display = 'none'; // Hide content when button is clicked again
+            collapseContent.style.display = 'none'; 
         }
     });
 </script>

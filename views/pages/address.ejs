@@ -184,7 +184,7 @@ label{
        <div class="collapse" id="collapse_<%= address._id %>">
         <div class="card card-body">
 
-         <form id="editAddressForm" action="/profile/edit-address" method="POST" onsubmit="editSubmit(event)">
+         <form id="editAddressForm" action="/profile/edit-address" method="POST" onsubmit="editSubmit(edit)">
                 <input type="hidden" name="addressId" value="<%= address._id %>">
     
                 <div class="form-group">
@@ -305,15 +305,16 @@ label{
   </script>
 
 
+<!-- edit address -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Attach the event listener to the form's submit event
     document.getElementById("editAddressForm").addEventListener("submit", editSubmit);
 });
 
-function editSubmit(event) {
+function editSubmit(edit) {
     // Prevent the default form submission
-    // event.preventDefault();
+    edit.preventDefault();
     
     // Get form input values and trim them
     var name = document.getElementById("name").value.trim();
