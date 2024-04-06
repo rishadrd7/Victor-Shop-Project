@@ -11,32 +11,35 @@ const ObjectId = mongoose.Types.ObjectId
 //set up wallet page
 const walletpage = async (req, res) => {
     try {
-        
-        const userData = await User.findOne({ _id: req.session.user });
-        if (!userData) {
-            return res.status(404).send('User not found');
-        }
-
-        const wallet = await Wallet.findOne({ userId: req.session.user }).populate('transactions');
-        if (!wallet) {
-            const newWallet = new Wallet({
-                userId: req.session.user,
-                balance: 0, // Default balance
-                transactions: [] // No transactions initially
-            });
-            await newWallet.save();
-            return res.render('pages/wallet', { userData, walletBalance: newWallet.balance, transactions: newWallet.transactions });
-        }
-
-        res.render('pages/wallet', { userData, walletBalance: wallet.balance, transactions: wallet.transactions });
+      const userData = await User.findOne({ _id: req.session.user });
+      if (!userData) {
+        return res.status(404).send('User not found');
+      }
+  
+      // Find user's wallet and populate transactions
+      const wallet = await Wallet.findOne({ userId: req.session.user }).populate('transactions');
+  
+      // If wallet doesn't exist, create a new one with a balance of 0 and no transactions
+      if (!wallet) {
+        const newWallet = new Wallet({
+          userId: req.session.user,
+          balance: 0,
+          transactions: []
+        });
+        await newWallet.save();
+        return res.render('pages/wallet', { userData, walletBalance: newWallet.balance, transactions: newWallet.transactions });
+      }
+  
+      res.render('pages/wallet', { userData, walletBalance: wallet.balance, transactions: wallet.transactions });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('An error occurred');
+      console.error(error);
+      res.status(500).send('An error occurred');
     }
-};
+  };
+  
 
 
-
+//uiser add money to wallet
 const addMoney = async (req, res) => {
     try {
         console.log("amount added");

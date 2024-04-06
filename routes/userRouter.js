@@ -60,7 +60,7 @@ router.post('/verify-razo',userController.verifyRazo);
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
 router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);
 router.post('/orders/:orderId/cancel', userController.cancelOrder);
-router.post('/returnOrder', userController.returnOrder);
+router.post('/profile/myorders/returnOrder', userController.returnOrder);
 
 //============================================cart side controller=========================================
 router.get('/cartPage',userAuth.user,userAuth.isBlocked,cartController.cartPage);

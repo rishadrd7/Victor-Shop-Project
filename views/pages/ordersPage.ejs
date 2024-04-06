@@ -57,7 +57,7 @@ textarea.form-control {
 </style>
 
 
-<div class='col-md-8 p-5 right' style=" border-radius:0;">
+<div class='col-md-10 p-5 right' style=" border-radius:0;">
 
   <div class="order-container">
     <div class="order-list">
@@ -88,49 +88,83 @@ textarea.form-control {
                     </div>
 
                     <!-- cancel and return -->
-                    <div>
-                      <br>
-                      <% if (order.products.status === 'Delivered') { %>
-                          <button class="btn btn-dark return-order-btn" data-order-id="<%= order._id %>" data-toggle="modal" data-target="#returnModal">Return Order</button>
-                      <% } else if (order.products.status === 'Cancelled') { %>
-                          <span class="can" style="font-size: larger; margin-right: 30px;">Order Cancelled</span>
-                      <% } else if (order.products.status === 'Returned') { %>
-                          <span class="can" style="font-size: larger; margin-right: 30px;">Return Pending</span>
-                      <% } else { %>
-                          <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
-                      <% } %>
+                    <div class="container">
+                      <div class="row justify-content-center">
+                          <div class="col-md-6 text-center">
+                              <br>
+                              <% if (order.products.status === 'Delivered') { %>
+                                <button class="btn btn-dark return-order-btn" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#returnModal">Return Order</button>
+                              <% } else if (order.products.status === 'Cancelled') { %>
+                                  <span class="can" style="font-size: larger; color: red;">Order Cancelled</span>
+                              <% } else if (order.products.status === 'Returned') { %>
+                                  <span class="can" style="font-size: larger;">Return Pending</span>
+                              <% } else { %>
+                                  <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#cancelOrderModal">Cancel Order</button>
+                              <% } %>
+                          </div>
+                      </div>
                   </div>
                   
+                  
 
-
-
-                              <!-- Modal for reason of return -->
-                              <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" style="color: #fff;" id="returnModalLabel">Reason for Return</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- Form for entering reason of return -->
-                                            <form id="returnForm">
-                                                <div class="form-group">
-                                                    <label for="reason">Reason:</label>
-                                                    <textarea class="form-control" id="reason" rows="5" placeholder="Enter reason for return"></textarea>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary" id="submitReturn">Submit</button>
-                                        </div>
-                                    </div>
-                                </div>
+                         <!-- Modal for cancelling order -->
+                        <!-- <div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" style="color: #fff;" id="cancelOrderModalLabel">Cancel Order</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
                               </div>
+                              <div class="modal-body">
+                                <p><strong>Order Name:</strong> <span id="cancelOrderName"></span></p>
+                                <p><strong>Total Amount:</strong> ₹<span id="cancelOrderAmount"></span></p>
+                                <form id="cancelOrderForm">
+                                  <div class="form-group">
+                                    <label for="cancelReason">Reason:</label>
+                                    <textarea class="form-control" id="cancelReason" rows="5" placeholder="Enter reason for cancellation" required></textarea>
+                                  </div>
+                                </form>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="submitCancelOrder">Submit</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div> -->
 
+
+
+                        <!-- Modal for reason of return -->
+                        <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" style="color: #fff;" id="returnModalLabel">Return Order Details</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                      </button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <p><strong>Order Name:</strong> <span id="orderName"></span></p>
+                                      <p><strong>Total Amount:</strong> ₹<span id="orderAmount"></span></p>
+                                      <!-- Form for entering reason of return -->
+                                      <form id="returnForm">
+                                          <div class="form-group">
+                                              <label for="reason">Reason:</label>
+                                              <textarea class="form-control" id="reason" rows="5" placeholder="Enter reason for return" required></textarea>
+                                          </div>
+                                      </form>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                      <button type="button" class="btn btn-primary" id="submitReturn">Submit</button>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
 
 
                   </div>
@@ -145,7 +179,7 @@ textarea.form-control {
     <% } %>
   </div>
   
-  
+
     
           
 
@@ -165,58 +199,50 @@ textarea.form-control {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-<script>
-  // JavaScript logic to handle button visibility and modal display
-  document.addEventListener('DOMContentLoaded', function() {
-      const returnBtn = document.querySelector('.return-order-btn');
-      const returnModal = document.getElementById('returnModal');
 
-      returnBtn.addEventListener('click', function() {
-          // Show the modal when "Return Order" button is clicked
-          $(returnModal).modal('show');
-      });
-
-      const submitReturnBtn = document.getElementById('submitReturn');
-      submitReturnBtn.addEventListener('click', function() {
-          // Implement logic to handle return submission
-          // For example, you can submit the reason of return via AJAX to the server
-          const reason = document.getElementById('reason').value.trim();
-          // Send the reason to the server for processing
-          // After successful return submission, you may want to update the order status or UI accordingly
-          // You can hide the modal and update the UI as needed
-          $(returnModal).modal('hide');
-      });
-  });
-</script>
 
 <!-- order cancel in user side -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Add event listener to cancel order buttons 
-    document.querySelectorAll('.cancel-order-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        const orderId = button.dataset.orderId;
-        const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
-        
-        // Check if the order is already cancelled
-        if (statusElement && statusElement.textContent.trim() === 'Cancelled') {
-          Swal.fire('Already Cancelled!', 'This order has already been cancelled.', 'info');
-          return; // Exit the function if order is already cancelled
-        }
-        
-        // Display confirmation dialog with SweetAlert
-        Swal.fire({
-          title: 'Are you sure?',
-          text: 'Cancel the Order!',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, cancel it!',
-          cancelButtonText: 'No, keep it'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // If user confirms, send request to cancel order
+  // Add event listener to cancel order buttons 
+  document.querySelectorAll('.cancel-order-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const orderId = button.dataset.orderId;
+      const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
+      
+      // Check if the order is already cancelled
+      if (statusElement && statusElement.textContent.trim() === 'Cancelled') {
+        Swal.fire('Already Cancelled!', 'This order has already been cancelled.', 'info');
+        return; // Exit the function if order is already cancelled
+      }
+      
+      // Display confirmation dialog with SweetAlert
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Cancel the Order!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Open cancel order modal
+          const orderName = button.dataset.orderName;
+          const orderAmount = button.dataset.orderAmount;
+          document.getElementById('cancelOrderName').textContent = orderName;
+          document.getElementById('cancelOrderAmount').textContent = orderAmount;
+          $('#cancelOrderModal').modal('show');
+          
+          // Handle submission of cancel order form
+          document.getElementById('submitCancelOrder').addEventListener('click', () => {
+            const cancelReason = document.getElementById('cancelReason').value;
+            // Send request to cancel order
             fetch(`/orders/${orderId}/cancel`, {
-              method: 'POST'
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ reason: cancelReason })
             })
             .then(response => {
               if (response.ok) {
@@ -241,72 +267,111 @@ textarea.form-control {
               // Show error message if fetch fails
               Swal.fire('Error!', 'Failed to cancel the order.', 'error');
             });
-          }
-        });
+          });
+        }
       });
     });
+  });
+});
+
+</script>
+
+
+<!-- return modal -->
+<script>
+  let orderName;
+  let orderAmount;
+
+document.querySelectorAll('.return-order-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        // Retrieve order name and total amount from the button's data attributes
+         orderName = this.dataset.orderName;
+         orderAmount = this.dataset.orderAmount;
+
+        // Update the modal content with the order name and total amount
+        document.getElementById('orderName').textContent = orderName;
+        document.getElementById('orderAmount').textContent = orderAmount;
+        console.log(orderName, orderAmount);
+    });
+});
+
+
+  // JavaScript logic to handle button visibility and modal display
+  document.addEventListener('DOMContentLoaded', function() {
+      const returnBtn = document.querySelector('.return-order-btn');
+      const returnModal = document.getElementById('returnModal');
+
+      returnBtn.addEventListener('click', function() {
+          // Show the modal when "Return Order" button is clicked
+          $(returnModal).modal('show');
+      });
+
+      const submitReturnBtn = document.getElementById('submitReturn');
+      submitReturnBtn.addEventListener('click', function() {
+         
+          const reason = document.getElementById('reason').value.trim();
+      
+          $(returnModal).modal('hide');
+      });
   });
 </script>
 
 
 <script>
-  document.getElementById('submitReturn').addEventListener('click', async function() {
-      const orderId = order._id; // Ensure 'order' is defined and accessible
-      const returnAmount = totalAmount; // Ensure 'totalAmount' is defined and accessible
-      const returnReason = document.getElementById('reason').value.trim();
-  
-      // Validate the return reason
-      if (!returnReason || !returnReason.length) {
-          // Show an error message if the reason is empty or contains only white spaces
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Please enter a valid return reason.',
-          });
-          return; // Exit function if validation fails
-      }
-  
-      // Send data to backend
-      try {
-          const response = await fetch('/returnOrder', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  orderId,
-                  returnAmount,
-                  returnReason
-              })
-          });
-  
-          // Handle response
-          if (response.ok) {
-              // Show success message using SweetAlert
-              Swal.fire({
-                  icon: 'success',
-                  title: 'Order Returned Successfully',
-                  showConfirmButton: false,
-                  timer: 1500 // Close alert after 1.5 seconds
-              });
-              // Optionally, perform additional actions after successful return
-          } else {
-              // Handle error response
+  $(document).ready(function () {
+      $('#submitReturn').click(function () {
+          var reason = $('#reason').val();
+          console.log(reason);
+          if (reason.trim() === '') {
               Swal.fire({
                   icon: 'error',
                   title: 'Oops...',
-                  text: 'Error: Failed to return order.',
+                  text: 'Please enter a reason for return!',
+              });
+          } else {
+              // Prepare the data to be sent
+              var data = {
+                  reason: reason,
+                  orderAmount:orderAmount
+              };
+
+              // Make the POST request using Fetch API
+              fetch('/profile/myorders/returnOrder', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data)
+              })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then(data => {
+                  // Show success alert
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Success!',
+                      text: 'Return submitted successfully.',
+                  });
+                  $('#returnModal').modal('hide'); // Hide the modal after success
+                  // Reset the form
+                  $('#returnForm')[0].reset();
+              })
+              .catch(error => {
+                  // Show error alert
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Oops...',
+                      text: 'There was an error submitting the return. Please try again later.',
+                  });
+                  console.error('There was an error:', error);
               });
           }
-      } catch (error) {
-          // Handle network errors or other issues
-          Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'An error occurred while processing your request.',
-          });
-      }
+      });
   });
-  </script>
-  
+</script>
+
   

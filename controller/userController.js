@@ -9,6 +9,7 @@ const Address = require("../models/addressModel")
 const Order = require("../models/ordersModel")
 const Coupon = require("../models/couponModel");
 const Offer = require("../models/offerModel");
+const Wallet = require('../models/walletModel');
 const Razorpay = require('razorpay');
 
 const nodemailer = require("nodemailer");
@@ -1420,16 +1421,16 @@ const orderDetails = async (req, res) => {
     res.render("pages/orderDetail", { userData, orderDetails });
   } catch (error) {
     console.log(error);
-    // Handle error appropriately
+    
   }
 };
 
 
+//cancel order
 const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
-    // Update the order status to "Cancelled"
     const order = await Order.findByIdAndUpdate(orderId, {
       $set: {
         'products.$[].status': 'Cancelled'
@@ -1448,37 +1449,41 @@ const cancelOrder = async (req, res) => {
 };
 
 
+//return order
 const returnOrder = async (req, res) => {
   try {
-    console.log("haiaiiaia");
-    const { orderId, returnAmount, returnReason } = req.body;
+    console.log('haiodihidc');
+    console.log(req.body);
+    let {  orderAmount, reason } = req.body;
+    console.log(orderAmount , reason);
+    orderAmount =Number(orderAmount)
     const userId = req.session.user;
-
-    // Find user's wallet
+    
+    
     let userWallet = await Wallet.findOne({ userId });
 
-    // If wallet doesn't exist, create a new one
+  
     if (!userWallet) {
       userWallet = new Wallet({
         userId,
-        balance: returnAmount,
+        balance: orderAmount,
         transactions: [{
           type: 'credit',
           reason: 'refund',
-          transactionAmount: returnAmount,
-          returnReason,
-          orderId
+          transactionAmount: orderAmount,
+          returnReason: reason 
+        
         }]
       });
     } else {
       // Update wallet balance and add transaction record
-      userWallet.balance += returnAmount;
+      userWallet.balance += orderAmount;
       userWallet.transactions.push({
         type: 'credit',
         reason: 'refund',
-        transactionAmount: returnAmount,
-        returnReason,
-        orderId
+        transactionAmount: orderAmount,
+        returnReason: reason
+      
       });
     }
 
