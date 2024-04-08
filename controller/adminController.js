@@ -7,6 +7,9 @@ const Wallet = require('../models/walletModel');
 const bcrypt = require('bcrypt');
 const flash = require('express-flash');
 require('dotenv').config();
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const ExcelJS = require('exceljs');
 
 
 
@@ -265,7 +268,72 @@ const showReport = async (req, res) => {
         console.log(reportData, 'dhssssssssssssssssssssssssssssssss');
         console.log(formattedReportData, 'formmmmmmmmmmmmmmmmmmmmmmmmmmm');
 
-        res.json(formattedReportData);
+
+        if (req.query.format && req.query.format === 'pdf') {
+            // Generate PDF
+            const doc = new PDFDocument();
+            const filename = 'sales_report.pdf';
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            doc.pipe(res);
+
+            doc.fontSize(16).text('Sales Report', { align: 'center' });
+            doc.moveDown();
+
+           // Create table header
+           const tableHeader = ['Date', 'Sales Count', 'Revenue'];
+
+           // Set initial x and y positions
+           let xPos = 50;
+           let yPos = doc.y + 50;
+
+           // Draw header row
+           tableHeader.forEach(header => {
+               doc.text(header, xPos, yPos, { width: 150, align: 'left' });
+               xPos += 200;
+           });
+
+           // Draw data rows
+           yPos += 25;
+           formattedReportData.forEach(item => {
+               xPos = 50;
+               doc.text(item.date.toString(), xPos, yPos, { width: 150, align: 'left' });
+               xPos += 200;
+               doc.text(item.salesCount.toString(), xPos, yPos, { width: 150, align: 'left' });
+               xPos += 200;
+               doc.text(item.revenue.toString(), xPos, yPos, { width: 150, align: 'left' });
+               yPos += 25;
+           });
+
+           doc.end();
+
+           
+        }else if (req.query.format && req.query.format === 'excel') {
+             // Excel generation code
+             const workbook = new ExcelJS.Workbook();
+             const worksheet = workbook.addWorksheet('Sales Report');
+ 
+             // Add headers
+             worksheet.addRow(['Date', 'Sales Count', 'Revenue']);
+ 
+             // Add data rows
+             formattedReportData.forEach(item => {
+                 worksheet.addRow([item.date.toString(), item.salesCount, item.revenue]);
+             });
+ 
+             // Set content type and disposition
+             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+             res.setHeader('Content-Disposition', 'attachment; filename="sales_report.xlsx"');
+ 
+             // Stream Excel workbook to response
+             await workbook.xlsx.write(res);
+             res.end();
+        }
+        
+        else {
+            // Respond with JSON data
+            res.json(formattedReportData);
+        }
+
     } catch (error) {
         console.error(error);
     }

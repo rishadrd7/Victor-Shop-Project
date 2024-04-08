@@ -56,26 +56,7 @@ adminRouter.post('/adminUser',adminController.blockUser);
 adminRouter.post('/adminUser',adminController.unblockUser);
 adminRouter.get('/salesReport' ,adminAuth.isLogin, adminController.loadReport);
 adminRouter.post('/loadReports' ,adminController.showReport);
-adminRouter .get('/download-pdf', (req, res) => {
-    // Create PDF document
-    const doc = new PDFDocument();
-    
-    // Set response headers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="sales_report.pdf"');
 
-    // Pipe PDF document to response
-    doc.pipe(res);
-
-    // Generate PDF content (replace this with your sales report data)
-    doc.text('Sales Report', { align: 'center' });
-    doc.text('-----------------------------------');
-    doc.text('Date: April 8, 2024');
-    doc.text('Total Sales: $1000');
-    
-    // Finalize PDF document
-    doc.end();
-});
 
 
 //========================================product side controller========================================

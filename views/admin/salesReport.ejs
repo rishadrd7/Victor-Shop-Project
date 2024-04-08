@@ -27,7 +27,7 @@
 							<div class="table-responsive">
 								<table class="table table-dark" style="color: white;">
 									<button class="btn btn-outline-primary" id="downloadBtn">Download As PDF</button>
-                                    <button id="downloadExcelButton" class="btn btn-outline-primary ">Download As Excel</button>
+                                    <button id="downloadExcelButton" class="btn btn-outline-primary">Download As Excel</button>
                                     <br><br>
                                     <h3 class="card-title">Sales Report</h3>
 
@@ -111,9 +111,9 @@
                                                                 <tr>
                                                                     <td colspan="2"><strong
                                                                             style="color: red;">Total</strong></td>
-                                                                    <td id="totalSalesCount"><strong
-                                                                            style="color: red;">0</strong></td>
-                                                                    <td id="totalOrderAmount"><strong
+                                                                    <td id="totalSalesCount" style="color: white; font-weight: bold;"><strong
+                                                                            style="color: red; ">0</strong></td>
+                                                                    <td id="totalOrderAmount" style="color: white; font-weight: bold;"><strong
                                                                             style="color: red;">0</strong></td>
                                                                     <td id="totalDiscountAmount"><strong
                                                                             style="color: red;">0</strong></td>
@@ -149,6 +149,7 @@
 <%- include('../layouts/adminFooter') %>
 
 
+<!-- show report from database -->
 <script>
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -235,25 +236,43 @@ function updateSalesReportTable(data) {
 </script>
 
 
+<!-- pdf dw -->
 <script>
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-        // Make AJAX request to download PDF
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/admin/download-pdf');
-        xhr.responseType = 'blob'; // Set response type to Blob
-        xhr.onload = function() {
-            if (this.status === 200) {
-                // Create a URL for the Blob
-                var blobUrl = URL.createObjectURL(this.response);
-                // Create a link and click it to trigger download
-                var a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = 'sales_report.pdf';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+        const response = await fetch('/admin/loadReports?format=pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/pdf'
             }
-        };
-        xhr.send();
+        });
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sales_report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
     });
-    </script>
+</script>
+
+
+<!-- excel dw -->
+<script>
+    document.getElementById('downloadExcelButton').addEventListener('click', async () => {
+        const response = await fetch('/admin/loadReports?format=excel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
+        });
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sales_report.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+</script>

@@ -18,6 +18,7 @@ const orderSchema = new mongoose.Schema({
         },
         quantity: {
             type: Number,
+             originalQuantity: Number // New field to store original quantity
             
             
         },

@@ -432,9 +432,10 @@ label{
 													<% }) %>
 												<% }) %>
 												<tr class="summary-discount">
-													<td>Discount</td>
 													
+													<td>Discount</td>
 													<td>-₹ <%= offer %></td>
+													
 												</tr>
 												<!-- Row for total cart price -->
 												<tr id="totalRow" class="summary-total">
@@ -846,9 +847,10 @@ document.addEventListener("DOMContentLoaded", function () {
 						<td>Discount</td>
 						<td>₹${data.discountAmount}</td>
 					`;
-					const totalAmount=document.querySelector('.summary-total td:last-child')
+					const totalAmount=document.getElementById('totalPrice')
+					console.log(totalAmount , 'aaaaaaaaaaaa');
 					const newTotal=parseFloat(totalAmount.innerText.replace('₹', '').trim())-parseFloat(data.discountAmount)
-					totalAmount.innerText=`₹${newTotal}`
+					totalAmount.innerText=`${newTotal}`
 
 					document.getElementById('couponCode').disabled = true;
 					applyCouponBtn.disabled = true;

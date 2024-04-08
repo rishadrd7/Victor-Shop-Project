@@ -1448,6 +1448,7 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+
 //return order
 const returnOrder = async (req, res) => {
   try {
@@ -1488,6 +1489,7 @@ const returnOrder = async (req, res) => {
 
     // Save or update wallet
     await userWallet.save();
+    
 
     res.status(200).json({ message: 'Return processed successfully' });
   } catch (error) {
@@ -1501,38 +1503,49 @@ const returnOrder = async (req, res) => {
 
 
 // coupons set in chekout page
-const getCoupon = async (req, res) => {
-  try {
+  const getCoupon = async (req, res) => {
+    try {
 
-    const coupons = await Coupon.find()
-    console.log(coupons, "Get coupon");
-    res.json(coupons)
-  } catch (error) {
-    console.log(error);
+      const coupons = await Coupon.find()
+      console.log(coupons, "Get coupon");
+      res.json(coupons)
+    } catch (error) {
+      console.log(error);
 
-  }
-}
-
-
-
-const applyCoupon = async (req, res) => {
-  try {
-    console.log('its here also in apply coupon ');
-    const { couponCode } = req.body;
-    console.log(couponCode, 'coupon code in apply code');
-    const coupon = await Coupon.findOne({ code: couponCode });
-    console.log(coupon, 'coupon in apply code apply coupon ')
-    if (!coupon) {
-      return res.json({ success: false, message: 'Coupon not found' });
     }
-    const discountAmount = coupon.discountAmount || 0;
-    console.log(discountAmount, 'discount amount in apply code');
-
-    res.json({ success: true, message: 'Coupon applied', discountAmount });
-  } catch (error) {
-    console.log(error.message);
   }
-}
+
+
+
+  const applyCoupon = async (req, res) => {
+    try {
+      console.log("show coupons");
+      const { couponCode } = req.body;
+      console.log(couponCode, 'coupon code');
+      const coupon = await Coupon.findOne({ code: couponCode });
+      console.log(coupon, 'coupon in apply code apply coupon ');
+      
+      // Check if the coupon exists
+      if (!coupon) {
+        return res.json({ success: false, message: 'Coupon not found' });
+      }
+  
+      // Check if the coupon has expired
+      if (coupon.expireDate && new Date() > coupon.expireDate) {
+        return res.json({ success: false, message: 'Coupon has expired' });
+      }
+      
+      // If the coupon exists and is not expired, apply it
+      const discountAmount = coupon.discountAmount || 0;
+      console.log(discountAmount, 'discount amount in apply code');
+  
+      res.json({ success: true, message: 'Coupon applied', discountAmount });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+  }
+  
 
 
 
