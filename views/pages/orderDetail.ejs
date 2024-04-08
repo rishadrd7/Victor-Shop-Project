@@ -1,5 +1,7 @@
 <%- include("../layouts/profileList") %>
 
+
+
 <style>
    
     p{
@@ -44,6 +46,7 @@
             <% if (orderDetails) { %>
         <p>Order ID: <%= orderDetails._id %></p>
         <p>Order Date: <%= orderDetails.orderDate.toString().split(' ').slice(0,4).join(' ') %></p>
+        <p>Coupon : </p>
         <br>
         <!-- Loop through products and display details -->
         <% orderDetails.products.forEach(product => { %>

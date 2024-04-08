@@ -184,7 +184,7 @@
                                     <h3 class="product-title"><a href="/productDetails?id=<%= element._id %>"><%= element.name %></a></h3>
 
                                         
-                                        <span class="discount" style="font-weight: bold; font-size: larger; color: rgb(45, 126, 12); float: right;"><%= element.offerApplied %>% off</span>
+                                        <!-- <span class="discount" style="font-weight: bold; font-size: larger; color: rgb(45, 126, 12); float: right;"><%= element.offerApplied %>% off</span> -->
                                         <div class="product-price" style="font-size: larger;">
                                         ₹<%= element.offerPrice %>
                                         <p class="offer-price" style="text-decoration: line-through; margin-left:50px; margin-top: -18px; ">₹<%= element.price  %></p>
@@ -192,15 +192,7 @@
                                     </div>
 
 
-                                    <% if(element.offerApplied ) { %>
-                                        <div class="product-price">
-                                            <span class="new-price">₹<%= element.offerPrice - (element.offerPrice * (element.offerApplied /100)) %></span>
-                                            <span class="old-price"> ₹<%= element.offerPrice %></span>
-                                        </div>
-                                        <% }else { %>
-                                            <div class="product-price">₹<%= element.offerPrice %></div>
-                                        <% } %>
-                                    
+                                  
                                         
 
                                     

@@ -57,7 +57,7 @@ textarea.form-control {
 </style>
 
 
-<div class='col-md-10 p-5 right' style=" border-radius:0;">
+<div class='col-md-9 p-5 right' style=" border-radius:0;">
 
   <div class="order-container">
     <div class="order-list">
@@ -70,7 +70,10 @@ textarea.form-control {
                 <div class="product-container">
 
                   <div class="media" style="display: flex; justify-content: space-between;">
+                    
+                    <div class="media col-2" style="width: 300px;">
                     <img style="width: 100px; height: 100px;" src="/uploads/<%= order.productDetail.image[0] %>" class="mr-3 order-image" alt="<%= order.productDetail.name %>">
+                  </div>
                     <div class="media-body" style="width: 33%; flex: none;">
                       <h5 class="mt-0"><%= order.productDetail.name %></h5>
                       <p style="font-weight: 500;">₹<%= order.totalAmount %></p>
@@ -99,7 +102,7 @@ textarea.form-control {
                               <% } else if (order.products.status === 'Returned') { %>
                                   <span class="can" style="font-size: larger;">Return Pending</span>
                               <% } else { %>
-                                  <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#cancelOrderModal">Cancel Order</button>
+                                <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#cancelOrder">Cancel Order</button>
                               <% } %>
                           </div>
                       </div>
@@ -204,45 +207,31 @@ textarea.form-control {
 <!-- order cancel in user side -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-  // Add event listener to cancel order buttons 
-  document.querySelectorAll('.cancel-order-btn').forEach(button => {
-    button.addEventListener('click', () => {
-      const orderId = button.dataset.orderId;
-      const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
-      
-      // Check if the order is already cancelled
-      if (statusElement && statusElement.textContent.trim() === 'Cancelled') {
-        Swal.fire('Already Cancelled!', 'This order has already been cancelled.', 'info');
-        return; // Exit the function if order is already cancelled
-      }
-      
-      // Display confirmation dialog with SweetAlert
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'Cancel the Order!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, cancel it!',
-        cancelButtonText: 'No, keep it'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Open cancel order modal
-          const orderName = button.dataset.orderName;
-          const orderAmount = button.dataset.orderAmount;
-          document.getElementById('cancelOrderName').textContent = orderName;
-          document.getElementById('cancelOrderAmount').textContent = orderAmount;
-          $('#cancelOrderModal').modal('show');
-          
-          // Handle submission of cancel order form
-          document.getElementById('submitCancelOrder').addEventListener('click', () => {
-            const cancelReason = document.getElementById('cancelReason').value;
-            // Send request to cancel order
+    // Add event listener to cancel order buttons 
+    document.querySelectorAll('.cancel-order-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const orderId = button.dataset.orderId;
+        const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
+        
+        // Check if the order is already cancelled
+        if (statusElement && statusElement.textContent.trim() === 'Cancelled') {
+          Swal.fire('Already Cancelled!', 'This order has already been cancelled.', 'info');
+          return; // Exit the function if order is already cancelled
+        }
+        
+        // Display confirmation dialog with SweetAlert
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'Cancel the Order!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, cancel it!',
+          cancelButtonText: 'No, keep it'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If user confirms, send request to cancel order
             fetch(`/orders/${orderId}/cancel`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ reason: cancelReason })
+              method: 'POST'
             })
             .then(response => {
               if (response.ok) {
@@ -267,13 +256,11 @@ textarea.form-control {
               // Show error message if fetch fails
               Swal.fire('Error!', 'Failed to cancel the order.', 'error');
             });
-          });
-        }
+          }
+        });
       });
     });
   });
-});
-
 </script>
 
 
@@ -296,7 +283,7 @@ document.querySelectorAll('.return-order-btn').forEach(button => {
 });
 
 
-  // JavaScript logic to handle button visibility and modal display
+// reason modal
   document.addEventListener('DOMContentLoaded', function() {
       const returnBtn = document.querySelector('.return-order-btn');
       const returnModal = document.getElementById('returnModal');
