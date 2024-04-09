@@ -65,6 +65,7 @@ router.post('/profile/myorders/returnOrder', userController.returnOrder);
 //============================================cart side controller=========================================
 router.get('/cartPage',userAuth.user,userAuth.isBlocked,cartController.cartPage);
 router.post('/add-to-cart', cartController.addToCart);
+router.get('/checkStock/:productId', cartController.checkStock);
 router.post('/updateCartQuantity/:productId',cartController.updateCartQuantity)
 router.delete('/removeProductFromCart/:cartId/:productId', cartController.removeProductFromCart);
 

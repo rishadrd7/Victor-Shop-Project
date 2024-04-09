@@ -1426,20 +1426,34 @@ const orderDetails = async (req, res) => {
 };
 
 
-//cancel order
+// Cancel order
 const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
-    const order = await Order.findByIdAndUpdate(orderId, {
-      $set: {
-        'products.$[].status': 'Cancelled'
-      }
-    }, { new: true });
+    // Find the order by ID
+    const order = await Order.findById(orderId);
 
     if (!order) {
       return res.status(404).send('Order not found');
     }
+
+    // Iterate through the products in the order
+    for (const product of order.products) {
+      const productId = product.productId;
+      const quantity = product.quantity;
+
+      console.log("stock re-added");
+      // Increment the product stock by the cancelled quantity
+      await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
+    }
+
+    // Update order status to Cancelled
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, {
+      $set: {
+        'products.$[].status': 'Cancelled'
+      }
+    }, { new: true });
 
     res.status(200).send('Order cancelled successfully');
   } catch (error) {
@@ -1449,15 +1463,22 @@ const cancelOrder = async (req, res) => {
 };
 
 
+
 //return order
 const returnOrder = async (req, res) => {
   try {
-    console.log('haiodihidc');
+    console.log('Return order request received');
     console.log(req.body);
-    let {  orderAmount, reason } = req.body;
-    console.log(orderAmount , reason);
-    orderAmount =Number(orderAmount)
+    let { orderId, orderAmount, reason } = req.body; // Assuming orderId is sent from the client
+    console.log(orderAmount, reason);
+    orderAmount = Number(orderAmount);
     const userId = req.session.user;
+
+    const order = await Order.findByIdAndUpdate(orderId, { status: 'Returned' }, { new: true });
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
     
     
     let userWallet = await Wallet.findOne({ userId });
@@ -1486,6 +1507,7 @@ const returnOrder = async (req, res) => {
       
       });
     }
+    console.log("Cash refund to wallet");
 
     // Save or update wallet
     await userWallet.save();
@@ -1525,7 +1547,7 @@ const returnOrder = async (req, res) => {
       const coupon = await Coupon.findOne({ code: couponCode });
       console.log(coupon, 'coupon in apply code apply coupon ');
       
-      // Check if the coupon exists
+
       if (!coupon) {
         return res.json({ success: false, message: 'Coupon not found' });
       }
@@ -1535,7 +1557,6 @@ const returnOrder = async (req, res) => {
         return res.json({ success: false, message: 'Coupon has expired' });
       }
       
-      // If the coupon exists and is not expired, apply it
       const discountAmount = coupon.discountAmount || 0;
       console.log(discountAmount, 'discount amount in apply code');
   

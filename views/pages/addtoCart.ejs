@@ -261,33 +261,98 @@
 
 
 <script>
-	    function updateCartQuantity(productId) {
-            const quantity = $('#quantity_' + productId).val();
-            const maxQuantity = parseInt($('#quantity_' + productId).attr('max')) || 0;
-            console.log(maxQuantity,'maxquantity')
-            const priceQuantity = parseFloat($('#offerPrice_' + productId).text().replace('₹', ''))
-            const totalPrice = priceQuantity * quantity
-
-          
-      
-            $.ajax({
-                type: 'POST',
-                url: '/updateCartQuantity/' + productId,
-                data: { quantity: quantity },
-                success: function (response) {
-                    if (response.success) {
-                        console.log('its success in update cart quantity');
-                    } else {
-                        console.log('its failed in update cart quantity');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error upadating cart quantity');
-                }
-            })
-         
-        }
-</script>
+	function updateCartQuantity(productId) {
+		const quantity = $('#quantity_' + productId).val();
+		const maxQuantity = parseInt($('#quantity_' + productId).attr('max')) || 0;
+		const priceQuantity = parseFloat($('#offerPrice_' + productId).text().replace('₹', ''))
+		const totalPrice = priceQuantity * quantity;
+	
+		// Check stock before updating
+		$.ajax({
+			type: 'GET',
+			url: '/checkStock/' + productId,
+			data: { quantity: quantity }, // Pass the requested quantity to the server
+			success: function (response) {
+				if (response.success && response.stock >= quantity) {
+					// Proceed with updating cart quantity
+					$.ajax({
+						type: 'POST',
+						url: '/updateCartQuantity/' + productId,
+						data: { quantity: quantity },
+						success: function (response) {
+							if (response.success) {
+								// Show success toast
+								Swal.fire({
+									icon: 'success',
+									title: 'Cart Updated',
+									text: 'Your cart has been updated successfully.',
+									toast: true,
+									position: 'top-end',
+									showConfirmButton: false,
+									timer: 3000,
+									timerProgressBar: true,
+								});
+							} else {
+								// Show error toast
+								Swal.fire({
+									icon: 'error',
+									title: 'Update Failed',
+									text: 'Failed to update your cart.',
+									toast: true,
+									position: 'top-end',
+									showConfirmButton: false,
+									timer: 3000,
+									timerProgressBar: true,
+								});
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error('Error updating cart quantity');
+							// Show error toast
+							Swal.fire({
+								icon: 'error',
+								title: 'Update Failed',
+								text: 'Failed to update your cart.',
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000,
+								timerProgressBar: true,
+							});
+						}
+					});
+				} else {
+					// Show warning toast if stock is insufficient
+					Swal.fire({
+						icon: 'warning',
+						title: 'Insufficient Stock',
+						text: response.message || 'The requested quantity is not available.', // Use the message from the server if available
+						toast: true,
+						position: 'top-end',
+						showConfirmButton: false,
+						timer: 3000,
+						timerProgressBar: true,
+					});
+				}
+			},
+			error: function (xhr, status, error) {
+				console.error('Error checking stock');
+				// Show error toast
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Failed to check stock.',
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+				});
+			}
+		});
+	}
+	</script>
+	
 
 
 <!-- price totaling -->

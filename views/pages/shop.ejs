@@ -320,7 +320,9 @@ const categoryId = 'yourCategoryId'; // Replace 'yourCategoryId' with the actual
 document.getElementById('categoryId').value = categoryId;
 
 try {
-    const response = await fetch(`/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`);
+    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`;
+
+    // const response = await fetch(`/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`);
     // const data = await response.json();
     
     // console.log(data);

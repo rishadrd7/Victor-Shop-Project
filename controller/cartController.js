@@ -76,6 +76,29 @@ const addToCart = async (req, res) => {
 };
 
 
+const checkStock = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { quantity } = req.body; // Get the requested quantity from the request body
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        if (quantity > product.quantity) {
+            // If the requested quantity exceeds the available stock, return a specific message
+            return res.json({ success: false, message: 'The requested quantity exceeds the available stock.' });
+        }
+
+        // If the requested quantity is within the available stock, return the stock information
+        return res.json({ success: true, stock: product.quantity });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
 
 
 const updateCartQuantity = async (req, res) => {
@@ -93,7 +116,7 @@ const updateCartQuantity = async (req, res) => {
             { new: true }
         )
         console.log(cart,'cart in update cart quantity');
-        res.json({ success: true, cart })
+        res.json({ success: true, cart , message: 'Cart updated successfully'})
     } catch (error) {
 
         console.log(error.message+'dfdfdff');
@@ -137,6 +160,7 @@ const removeProductFromCart = async (req, res) => {
 module.exports = {
     cartPage,
     addToCart,
+    checkStock,
     updateCartQuantity,
     removeProductFromCart
 }
