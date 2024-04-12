@@ -1,5 +1,58 @@
 <%- include('../layouts/adminHeader') %>
 
+<style>
+    /* Table */
+#myTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Table Header */
+#myTable thead th {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Table Body */
+#myTable tbody td {
+  padding: 10px;
+  text-align: left;
+}
+
+/* Alternating row colors */
+/* #myTable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+} */
+
+/* Footer */
+#myTable tfoot td {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Total row */
+#myTable tfoot td strong {
+  color: red;
+}
+
+/* Total cells */
+#totalSalesCount,
+#totalOrderAmount,
+#totalDiscountAmount,
+#totalCoupon {
+  font-weight: bold;
+}
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+
+
 
 	<!-- partial -->
 	<div class="main-panel">
@@ -26,8 +79,8 @@
 							
 							<div class="table-responsive">
 								<table class="table table-dark" style="color: white;">
-									<button class="btn btn-outline-primary" id="downloadBtn">Download As PDF</button>
-                                    <button id="downloadExcelButton" class="btn btn-outline-primary">Download As Excel</button>
+									<button class="btn btn-outline-primary" id="download-pdf">Download As PDF</button>
+                                    <button id="download-excel" class="btn btn-outline-primary">Download As Excel</button>
                                     <br><br>
                                     <h3 class="card-title">Sales Report</h3>
 
@@ -65,7 +118,7 @@
                                                 <div class="card-body">
 
                                                     <div class="table-responsive">
-                                                        <table class="table table-striped">
+                                                        <table id="myTable" class=" table-stripe">
                                                             <thead>
                                                                 <tr>
                                                                     <th>
@@ -84,7 +137,7 @@
                                                                     <th>Coupon</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody id="tbody" style="color: white;">
+                                                            <tbody id="tbody" style="color: white; background-color: #000;">
                                                                 <tr>
                                                                     <td>
                                                                         <!-- index here -->
@@ -149,6 +202,7 @@
 <%- include('../layouts/adminFooter') %>
 
 
+
 <!-- show report from database -->
 <script>
 
@@ -190,10 +244,6 @@
                 .then(data => {
                     console.log(data, 'data from backend');
                     updateSalesReportTable(data)
-                    // const salesReportDataElement = data
-                    // document.getElementById("downloadExcelButton").addEventListener('click', downloadSalesReportAsExcel(data))
-
-
                 })
                 .catch(error => {
                     console.error('Error generating sales report', error);
@@ -206,6 +256,7 @@
 
     });
 
+    
 
 function updateSalesReportTable(data) {
     const tbody = document.querySelector('#tbody');
@@ -232,47 +283,165 @@ function updateSalesReportTable(data) {
     document.getElementById('totalOrderAmount').textContent = totalRevenue;
 }
 
+</script>
+
+
+<script>
+   
+    function downloadExcel() {
+       
+        const table = document.getElementById('myTable');
+        const wb = XLSX.utils.table_to_book(table);
+    
+        XLSX.writeFile(wb, 'sales_report.xlsx');
+    }
+
+    document.getElementById('download-excel').addEventListener('click', function() {
+        downloadExcel();
+    });
+
+    
+   document.getElementById('download-pdf').addEventListener('click', function() {
+    const element = document.getElementById('myTable');
+    
+    // Get the report type from the page
+    const reportType = document.getElementById('reportType').value;
+
+    // Set the filename based on the report type
+    const filename = `sales_report_${reportType}.pdf`;
+
+    // Set options for PDF generation
+    const opt = {
+        margin: 0.5,
+        filename: filename, // Use the dynamically generated filename
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Generate PDF and save
+    html2pdf().from(element).set(opt).save();
+});
 
 </script>
 
+
+
+
+
+
+<!-- <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const salesReportForm = document.getElementById('salesReportForm');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadExcelButton = document.getElementById('downloadExcelButton');
+
+    downloadBtn.addEventListener('click', function () {
+        document.getElementById('downloadFormat').value = 'pdf';
+        salesReportForm.submit();
+    });
+
+    downloadExcelButton.addEventListener('click', function () {
+        document.getElementById('downloadFormat').value = 'excel';
+        salesReportForm.submit();
+    });
+
+    salesReportForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const downloadFormat = document.getElementById('downloadFormat').value;
+        const filterType = document.getElementById('filterType').value;
+        const reportType = document.getElementById('reportType').value;
+        let startDate = null, endDate = null;
+
+        if (reportType === 'custom') {
+            startDate = document.getElementById('startDate').value;
+            endDate = document.getElementById('endDate').value;
+        }
+
+        // Assuming you have a function to handle the download logic
+        handleDownload(downloadFormat, filterType, reportType, startDate, endDate);
+    });
+});
+
+function handleDownload(format, filterType, reportType, startDate, endDate) {
+    // Implement the logic to download the report as PDF or Excel
+    // This could involve making an AJAX request to your server with the necessary parameters
+    console.log(`Downloading report as ${format} with filter type ${filterType}`);
+}
+
+</script> -->
+
+
+<!-- <script>
+    function getFormData() {
+    const reportType = document.getElementById('reportType').value;
+    let startDate, endDate;
+    if (reportType === 'custom') {
+        startDate = document.getElementById('startDate').value;
+        endDate = document.getElementById('endDate').value;
+    }
+    return { reportType, startDate, endDate };
+}
+
+</script> -->
 
 <!-- pdf dw -->
-<script>
-    document.getElementById('downloadBtn').addEventListener('click', async () => {
-        const response = await fetch('/admin/loadReports?format=pdf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/pdf'
-            }
-        });
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'sales_report.pdf';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+<!-- <script>
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+    const { reportType, startDate, endDate } = getFormData();
+    let url = '/admin/loadReports?format=pdf';
+    if (reportType === 'custom') {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+    } else {
+        url += `&reportType=${reportType}`;
+    }
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/pdf'
+        }
     });
-</script>
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');  
+    a.href = downloadUrl;
+    a.download = 'sales_report.pdf';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+});
+
+</script> -->
+
 
 
 <!-- excel dw -->
-<script>
-    document.getElementById('downloadExcelButton').addEventListener('click', async () => {
-        const response = await fetch('/admin/loadReports?format=excel', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            }
-        });
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'sales_report.xlsx';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+<!-- <script>
+  document.getElementById('downloadExcelButton').addEventListener('click', async () => {
+    const { reportType, startDate, endDate } = getFormData();
+    let url = '/admin/loadReports?format=excel';
+    if (reportType === 'custom') {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+    } else {
+        url += `&reportType=${reportType}`;
+    }
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
     });
-</script>
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = 'sales_report.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+});
+
+</script> -->

@@ -38,6 +38,8 @@ router.post('/resetpassword',userController.verifyConfirmPassword);
 router.get("/otppage",userAuth.loginTrue,userController.otpPage); 
 router.post("/otpVerify",userController.verifyOTP);
 router.get('/resendOtp', userController.loadResendOtp);
+router.get('/contact',userAuth.user,userAuth.isBlocked,userController.contactPage)
+router.get('/about',userAuth.user,userAuth.isBlocked,userController.aboutPage)
 
 
 //==========================views/pages===================================================================
@@ -61,6 +63,8 @@ router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.o
 router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);
 router.post('/orders/:orderId/cancel', userController.cancelOrder);
 router.post('/profile/myorders/returnOrder', userController.returnOrder);
+router.get('/profile/myorders/orderDetails/invoice/:orderId',userAuth.user,userAuth.isBlocked,userController.invoicePage);  
+
 
 //============================================cart side controller=========================================
 router.get('/cartPage',userAuth.user,userAuth.isBlocked,cartController.cartPage);

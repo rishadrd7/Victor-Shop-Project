@@ -1,11 +1,12 @@
 <%- include('../layouts/adminHeader') %>
 
+
 <div class="main-panel">
   <div class="content-wrapper">
 
 
     <div class="page-header">
-      <h3 class="page-title">Add Offers </h3>
+      <h3 class="page-title">Add Coupons </h3>
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="coupons">Back</a></li>
@@ -117,9 +118,21 @@
 
 <!-- add coupon form validation -->
 <script>
-  function validateForm() {
+  // Initialize variable to store existing coupon names
+var existingCouponNames = [];
+
+// Function to fetch existing coupon names from the page
+function fetchExistingCouponNames() {
+    existingCouponNames = Array.from(document.querySelectorAll('[name="couponName"]')).map(input => input.value.trim().toLowerCase());
+}
+
+// Call the function to fetch existing coupon names when the page loads
+fetchExistingCouponNames();
+
+// Function to validate form
+function validateForm() {
     // Get form elements
-    var couponName = document.getElementsByName('couponName')[0].value;
+    var couponName = document.getElementsByName('couponName')[0].value.trim().toLowerCase(); // Convert to lowercase
     var couponCode = document.getElementById('couponCodeInput').value;
     var description = document.getElementById('exampleTextarea1').value;
     var discount = document.getElementsByName('discount')[0].value;
@@ -128,11 +141,11 @@
     var maxDiscountLimit = document.getElementsByName('maxDiscountLimit')[0].value;
 
     // Check if offerTitle or description is empty or contains only whitespace
-    if (!couponName.trim() || !description.trim()) {
+    if (!couponName || !description) {
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Coupon Title and Description cannot be empty or contain only whitespace.',
+            text: 'All fields are required.',
         });
         return false; // Prevent form submission
     }
@@ -169,7 +182,17 @@
         return false;
     }
 
-    // If all checks pass, return true to submit the form
+    // Check if coupon name already exists
+    if (existingCouponNames.includes(couponName)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Coupon name already exists.',
+        });
+        return false;
+    }
+
+    // If all checks pass, allow form submission
     return true;
 }
 

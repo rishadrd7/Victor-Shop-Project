@@ -46,6 +46,13 @@ const addCoupon = async (req, res) => {
             return res.status(400).json({ error: 'Maximum discount limit is required and must be a positive number.' });
         }
 
+        // Check if the coupon name already exists in the database
+        const existingCoupon = await Coupon.findOne({ name: couponName });
+        if (existingCoupon) {
+            // Display error message using SweetAlert
+            return res.send('<script>alert("Coupon name already exists.");window.location.href="/admin/coupons";</script>');
+        }
+
         const newCoupon = new Coupon({
             name: couponName,
             code: couponCode,
@@ -64,6 +71,8 @@ const addCoupon = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+
 
 
 

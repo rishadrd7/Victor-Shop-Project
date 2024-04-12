@@ -460,8 +460,8 @@ label{
 										    <div class="card">
 										        <div class="card-header" id="heading-2">
 										            <h2 class="card-title">
-														<input type="radio" id="Wallet" class="peyment" name="payment">
-										                <label class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
+														<input type="radio" id="wallet" value="wallet" class="peyment" name="payment">
+										                <label for="wallet" class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
 										                     Wallet
 														</label>
 										            </h2>
@@ -570,14 +570,21 @@ document.addEventListener("DOMContentLoaded", function () {
       Swal.fire("Error", "Please select a payment method.", "error");
       return;
     }
+
     console.log(document.getElementById("totalPrice").innerText);
-	const totalAmount = Number(document.getElementById("totalPrice").innerText)
-	const formData = {
-	userId: "<%= userData._id %>",
-	address: address.value,
-	paymentMethod: selectedPaymentMethod.value,
-	totalAmount:totalAmount
-	};
+    const totalAmount = Number(document.getElementById("totalPrice").innerText);
+    const formData = {
+      userId: "<%= userData._id %>",
+      address: address.value,
+      paymentMethod: selectedPaymentMethod.value,
+      totalAmount: totalAmount
+    };
+
+    // Check if totalAmount is above 1000 and if COD is selected, show an error
+    if (totalAmount > 1000 && selectedPaymentMethod.value === 'cod') {
+      Swal.fire("Error", "Orders with a total amount above 1000 Rs cannot choose Cash on Delivery.", "error");
+      return;
+    }
 
     fetch("/place-order", {
       method: "POST",
@@ -593,69 +600,73 @@ document.addEventListener("DOMContentLoaded", function () {
       return response.json();
     })
     .then((data) => {
-		console.log(data);
-		Swal.fire({
-				  icon: "success",
-				  title: "Order Placed Successfully!",
-				  text: "Thank you for your order.",
-				  showConfirmButton: "Ok",
-				  
-				})
-		
+      console.log(data);
+      Swal.fire({
+        icon: "success",
+        title: "Order Placed Successfully!",
+        text: "Thank you for your order.",
+        showConfirmButton: true, // Make sure this is true to show the confirm button
+      }).then((result) => {
+        // Redirect to the "My Orders" page when the user clicks the "OK" button
+        if (result.isConfirmed) {
+          window.location.href = "/profile/myorders"; // Adjust the URL as necessary
+        }
+      });
+
       if (selectedPaymentMethod.value === 'online') {
         // Initialize Razorpay payment
         var options = {
           "key": "rzp_test_2gWPLmDC73KBec", // Enter the Key ID generated from the Dashboard
-          "amount":totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "amount": totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
           "currency": "INR",
           "name": "Your Company Name",
           "description": "Test Transaction",
           "image": "/user/assets/images/new/Victor-Logo.png",
           "order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of the previous step.
-		  "handler": function (response) {
-			console.log(response);
-			fetch('/verify-razo', {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({
-					receipt: data.receipt,
-					order_id: response.razorpay_order_id,
-					razorpay_payment_id: response.razorpay_payment_id,
-					razorpay_signature: response.razorpay_signature
-				})
-			})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Failed to verify payment");
-				}
-				return response.json();
-			})
-			.then((data) => {
-				console.log(data.message); // Log the response from the server
-				// Extract order ID and paid amount from the response
-				const orderId = data.orderId;
-				const paidAmount = data.totalAmount;
+          "handler": function (response) {
+            console.log(response);
+            fetch('/verify-razo', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                receipt: data.receipt,
+                order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to verify payment");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log(data.message); // Log the response from the server
+              // Extract order ID and paid amount from the response
+              const orderId = data.orderId;
+              const paidAmount = data.totalAmount;
 
-				// Display SweetAlert with order ID and paid amount
-				Swal.fire({
-					title: "Payment Verified",
-					text: `Your payment has been successfully verified.\nOrder ID: ${orderId}\nPaid Amount: ${paidAmount}`,
-					icon: "success",
-					showConfirmButton: false,
-					timer: 1000,
-				}).then(() => {
-				  window.location.reload();
-			  
-				});
-			})
-			.catch((error) => {
-				console.error(error.message);
-				Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
-			});
-		},
-
+              // Display SweetAlert with order ID and paid amount
+              Swal.fire({
+                title: "Payment Verified",
+                text: `Your payment has been successfully verified.\nOrder ID: ${orderId}\nPaid Amount: ${paidAmount}`,
+                icon: "success",
+                showConfirmButton: true,
+              }).then((result) => {
+                // Redirect to the "My Orders" page when the user clicks the "OK" button
+                if (result.isConfirmed) {
+                 window.location.href = "/profile/myorders"; // Adjust the URL as necessary
+                }
+              });
+            })
+            .catch((error) => {
+              console.error(error.message);
+              Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
+            });
+          },
           "prefill": {
               "name": "Gaurav Kumar",
               "email": "gaurav.kumar@example.com",
@@ -680,8 +691,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
  });
 });
-
 </script>
+
 
 
 

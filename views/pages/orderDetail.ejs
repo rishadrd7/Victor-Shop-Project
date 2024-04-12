@@ -38,6 +38,7 @@
 <div class='col-md-8 p-5 right' style="border-radius: 0;">
     <button style="float: right;"><a href="/profile/myorders">Back</a></li></button>
     
+    
     <div class="order-container">
         <div class="order-details">
             <h5>Order Details</h5>
@@ -72,12 +73,25 @@
                 <p> <%= orderDetails.orderUserDetails.alternatePhone %></p>
                 
               </div>
-        <% }) %>
-        <!-- Add more order details as needed -->
-      <% } else { %>
-        <p>Order not found.</p>
-      <% } %>
-    </div>
+
+              <div class="row mt-3">
+                <div class="col-md-12  text-center">
+
+                  
+                   
+                  <% if(product.status==='Delivered') { %>
+                  <a class="btn btn-outline-primary rounded" href="/profile/myorders/orderDetails/invoice/<%= orderDetails._id %>">Download Invoice</a>
+                  <% } %>
+                  
+                  
+                </div>
+              </div>
+              <% }) %>
+              <!-- Add more order details as needed -->
+              <% } else { %>
+                <p>Order not found.</p>
+                <% } %>
+              </div>
   </div>
 </div>
 

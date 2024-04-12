@@ -1164,7 +1164,7 @@ const checkoutPage = async (req, res) => {
       return res.status(404).send('User not found');
     }
 
-    res.render('pages/checkout', { userData, addressData, carts })
+    res.render('pages/checkout', { userData, addressData, carts });
   } catch (error) {
     console.log(error);
 
@@ -1255,78 +1255,88 @@ const addCheckoutAddress = async (req, res) => {
 
 const placeOrder = async (req, res) => {
   try {
-
-    const { userId, address, paymentMethod, totalAmount } = req.body;
-    console.log(userId, address, paymentMethod)
-    console.log(totalAmount, "diss");
-
-    const ad = await Address.findOne({ userId: req.session.user, _id: address });
-    const cart = await Cart.findOne({ userId: req.session.user });
-    console.log('this : ' + ad)
-
-    const data = {
-      name: ad.name,
-      phone: ad.phone,
-      pincode: ad.pincode,
-      locality: ad.locality,
-      streetaddress: ad.streetaddress,
-      place: ad.place,
-      country: ad.country,
-      state: ad.state,
-      landmark: ad.landmark
-    }
-
-    const newOrder = new Order({
-      userId,
-      orderUserDetails: data,
-      products: cart.products,
-      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'online',
-      paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
-      totalAmount
-    });
-
-    console.log(newOrder,'dfdfddfdfedfdfdf');
-
-    //delete product from cart
-    await Cart.deleteOne({ userId: req.session.user });
-
-    await newOrder.save();
-    
-
-    // stock check and decrement
-    async function aa() {
-      for (const product of newOrder.products) {
-          let productId = product.productId;
-          let quantity = product.quantity; 
-  
-         const decrement =  await Product.findByIdAndUpdate(productId, { $inc: { quantity: -quantity } });
-         console.log(decrement , 'ihciasheud');
-      }
-  }
-  aa()
-  
-
-
-  // razorpay
-    if (paymentMethod === 'online') {
-      var instance = new Razorpay({ key_id: 'rzp_test_2gWPLmDC73KBec', key_secret: 'KXgNwcsIDb4x4y9MJCHmHtaG' })
-
-      const razo = await instance.orders.create({
-        amount: totalAmount*100,
-        currency: "INR",
-        receipt: newOrder._id,
-
-      })
-      console.log(razo);
-      res.json({ status: true, id: razo.id, receipt: razo.receipt, key_id: 'rzp_test_2gWPLmDC73KBec' });
-    }
-
-    else
-      res.json({ status: true });
+     const { userId, address, paymentMethod, totalAmount } = req.body;
+     console.log(userId, address, paymentMethod);
+     console.log(totalAmount, "diss");
+ 
+     const ad = await Address.findOne({ userId: req.session.user, _id: address });
+     const cart = await Cart.findOne({ userId: req.session.user });
+     console.log('this : ' + ad);
+ 
+     const data = {
+       name: ad.name,
+       phone: ad.phone,
+       pincode: ad.pincode,
+       locality: ad.locality,
+       streetaddress: ad.streetaddress,
+       place: ad.place,
+       country: ad.country,
+       state: ad.state,
+       landmark: ad.landmark
+     };
+ 
+     // Check if totalAmount is below 1000 and if all products are above 1000 Rs
+     if (totalAmount < 1000) {
+       let allProductsAbove1000 = true;
+       for (const product of cart.products) {
+         if (product.price < 1000) {
+           allProductsAbove1000 = false;
+           break;
+         }
+       }
+       if (!allProductsAbove1000) {
+         return res.status(400).json({ status: false, message: "Orders with a total amount below 1000 Rs can only include products above 1000 Rs." });
+       }
+     }
+ 
+     const newOrder = new Order({
+       userId,
+       orderUserDetails: data,
+       products: cart.products,
+       paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'online', 
+       paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
+       totalAmount
+     });
+ 
+     console.log(newOrder, 'dfdfddfdfedfdfdf');
+ 
+     // Delete product from cart
+     await Cart.deleteOne({ userId: req.session.user });
+ 
+     await newOrder.save();
+     
+     // Stock check and decrement
+     async function aa() {
+       for (const product of newOrder.products) {
+         let productId = product.productId;
+         let quantity = product.quantity; 
+ 
+         const decrement = await Product.findByIdAndUpdate(productId, { $inc: { quantity: -quantity } });
+         console.log(decrement, 'ihciasheud');
+       }
+     }
+     aa();
+ 
+     // Razorpay
+     if (paymentMethod === 'online') {
+       var instance = new Razorpay({ key_id: 'rzp_test_2gWPLmDC73KBec', key_secret: 'KXgNwcsIDb4x4y9MJCHmHtaG' });
+ 
+       const razo = await instance.orders.create({
+         amount: totalAmount * 100,
+         currency: "INR",
+         receipt: newOrder._id,
+       });
+       console.log(razo);
+       res.json({ status: true, id: razo.id, receipt: razo.receipt, key_id: 'rzp_test_2gWPLmDC73KBec' });
+     } else {
+       res.json({ status: true });
+     }
   } catch (error) {
-    console.error(error);
+     console.error(error);
+     res.status(500).json({ status: false, message: "An error occurred while placing your order." });
   }
-};
+ };
+ 
 
 
 
@@ -1521,6 +1531,22 @@ const returnOrder = async (req, res) => {
 };
 
 
+
+//set up invoice page
+const invoicePage = async (req,res)=>{
+  try {
+    const userData = await User.findOne({_id: req.session.user});
+    const orderId = req.params.orderId;
+
+    const orderDetails = await Order.findOne({ _id: orderId }).populate('products.productId');
+
+
+    res.render("pages/invoice" ,{userData , orderDetails})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 //======================================set up coupon============================================
 
 
@@ -1569,8 +1595,24 @@ const returnOrder = async (req, res) => {
   
 
 
+//contact Page
+const contactPage = async (req,res)=>{
+  try {
+    res.render('users/contact')
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
 
-
+//about page
+const aboutPage = async (req,res)=>{
+  try{
+    res.render('users/about')
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
 module.exports = {
@@ -1593,6 +1635,8 @@ module.exports = {
   loadResendOtp,
   home,
   logoutHome,
+  contactPage,
+  aboutPage,
 
 
 
@@ -1615,6 +1659,7 @@ module.exports = {
   orderDetails,
   cancelOrder,
   returnOrder,
+  invoicePage,
   getCoupon,
   applyCoupon
 

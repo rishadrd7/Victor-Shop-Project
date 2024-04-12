@@ -208,57 +208,48 @@ textarea.form-control {
 <!-- order cancel in user side -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Add event listener to cancel order buttons 
+  
     document.querySelectorAll('.cancel-order-btn').forEach(button => {
       button.addEventListener('click', () => {
         const orderId = button.dataset.orderId;
         const statusElement = document.getElementById(`deliveryStatus_${orderId}`);
         
-        // Check if the order is already cancelled
+        
         if (statusElement && statusElement.textContent.trim() === 'Cancelled') {
           Swal.fire('Already Cancelled!', 'This order has already been cancelled.', 'info');
-          return; // Exit the function if order is already cancelled
+          return; 
         }
         
-        // Display confirmation dialog with SweetAlert
+       
         Swal.fire({
-          title: 'Are you sure?',
-          text: 'Cancel the Order!',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Yes, cancel it!',
-          cancelButtonText: 'No, keep it'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // If user confirms, send request to cancel order
+        title: 'Are you sure?',
+        text: 'Cancel the Order!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
             fetch(`/orders/${orderId}/cancel`, {
-              method: 'POST'
+                method: 'POST'
             })
             .then(response => {
-              if (response.ok) {
-                // If cancellation is successful, show success message
-                Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success')
-                .then(() => {
-                  // Update status display to show "Cancelled"
-                  if (statusElement) {
-                    statusElement.textContent = 'Cancelled';
-                    statusElement.style.color = 'red'; // Optionally change color
-                  }
-                  // Hide the cancel button
-                  button.style.display = 'none';
-                });
-              } else {
-                // If cancellation fails, show error message
-                Swal.fire('Error!', 'Failed to cancel the order.', 'error');
-              }
+                if (response.ok) {
+                    Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success')
+                    .then(() => {
+                        window.location.href = '/profile/myorders';
+                    });
+                } else {
+                    Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+                }
             })
             .catch(error => {
-              console.error('Error:', error);
-              // Show error message if fetch fails
-              Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+                console.error('Error:', error);
+                Swal.fire('Error!', 'Failed to cancel the order.', 'error');
             });
-          }
-        });
+        }
+    });
+
       });
     });
   });
@@ -267,15 +258,14 @@ textarea.form-control {
 
 <!-- return order modal -->
 <script>
-  // Assuming each button has a data-order-id attribute
+
 document.querySelectorAll('.return-order-btn').forEach(button => {
     button.addEventListener('click', function() {
-        // Retrieve order name, total amount, and order ID from the button's data attributes
+    
         orderName = this.dataset.orderName;
         orderAmount = this.dataset.orderAmount;
-        const orderId = this.dataset.orderId; // Assuming you have a data-order-id attribute
+        const orderId = this.dataset.orderId; 
 
-        // Update the modal content with the order name and total amount
         document.getElementById('orderName').textContent = orderName;
         document.getElementById('orderAmount').textContent = orderAmount;
         console.log(orderName, orderAmount, orderId);
@@ -288,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const returnModal = document.getElementById('returnModal');
 
     returnBtn.addEventListener('click', function() {
-        // Show the modal when "Return Order" button is clicked
+        
         $(returnModal).modal('show');
     });
 
@@ -304,14 +294,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 text: 'Please enter a reason for return!',
             });
         } else {
-            // Prepare the data to be sent
+    
             var data = {
                 reason: reason,
                 orderAmount: orderAmount,
-                orderId: orderId // Include the order ID in the data sent to the server
+                orderId: orderId 
             };
 
-            // Make the POST request using Fetch API
+           
             fetch('/profile/myorders/returnOrder', {
                 method: 'POST',
                 headers: {
@@ -326,13 +316,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Show success alert
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: 'Return submitted successfully.',
                 });
-                $('#returnModal').modal('hide'); // Hide the modal after success
+                $('#returnModal').modal('hide'); 
                 // Reset the form
                 $('#returnForm')[0].reset();
 

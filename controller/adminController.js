@@ -71,15 +71,6 @@ const createAdmin = async (req, res) => {
 
 
 
-//dashboard
-const dashboard = async (req, res) => {
-    try {
-        res.render("admin/dashboard");
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 
 //logout
 const logout = async (req, res) => {
@@ -269,65 +260,56 @@ const showReport = async (req, res) => {
         console.log(formattedReportData, 'formmmmmmmmmmmmmmmmmmmmmmmmmmm');
 
 
-        if (req.query.format && req.query.format === 'pdf') {
-            // Generate PDF
+        if (req.query.format === 'pdf') {
             const doc = new PDFDocument();
-            const filename = 'sales_report.pdf';
+            const filename = `sales_report_${reportType}.pdf`;
             res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
             doc.pipe(res);
-
+        
+            doc.fontSize(12).text(`Report Type: ${reportType}`, { align: 'center' });
+            doc.moveDown();
+        
             doc.fontSize(16).text('Sales Report', { align: 'center' });
             doc.moveDown();
-
-           // Create table header
-           const tableHeader = ['Date', 'Sales Count', 'Revenue'];
-
-           // Set initial x and y positions
-           let xPos = 50;
-           let yPos = doc.y + 50;
-
-           // Draw header row
-           tableHeader.forEach(header => {
-               doc.text(header, xPos, yPos, { width: 150, align: 'left' });
-               xPos += 200;
-           });
-
-           // Draw data rows
-           yPos += 25;
-           formattedReportData.forEach(item => {
-               xPos = 50;
-               doc.text(item.date.toString(), xPos, yPos, { width: 150, align: 'left' });
-               xPos += 200;
-               doc.text(item.salesCount.toString(), xPos, yPos, { width: 150, align: 'left' });
-               xPos += 200;
-               doc.text(item.revenue.toString(), xPos, yPos, { width: 150, align: 'left' });
-               yPos += 25;
-           });
-
-           doc.end();
-
-           
-        }else if (req.query.format && req.query.format === 'excel') {
-             // Excel generation code
-             const workbook = new ExcelJS.Workbook();
-             const worksheet = workbook.addWorksheet('Sales Report');
- 
-             // Add headers
-             worksheet.addRow(['Date', 'Sales Count', 'Revenue']);
- 
-             // Add data rows
-             formattedReportData.forEach(item => {
-                 worksheet.addRow([item.date.toString(), item.salesCount, item.revenue]);
-             });
- 
-             // Set content type and disposition
-             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-             res.setHeader('Content-Disposition', 'attachment; filename="sales_report.xlsx"');
- 
-             // Stream Excel workbook to response
-             await workbook.xlsx.write(res);
-             res.end();
+        
+            const tableHeader = ['Date', 'Sales Count', 'Revenue'];
+            let xPos = 50;
+            let yPos = doc.y + 50;
+        
+            tableHeader.forEach(header => {
+                doc.text(header, xPos, yPos, { width: 150, align: 'left' });
+                xPos += 200;
+            });
+        
+            yPos += 25;
+            formattedReportData.forEach(item => {
+                xPos = 50;
+                doc.text(item.date.toString(), xPos, yPos, { width: 150, align: 'left' });
+                xPos += 200;
+                doc.text(item.salesCount.toString(), xPos, yPos, { width: 150, align: 'left' });
+                xPos += 200;
+                doc.text(item.revenue.toString(), xPos, yPos, { width: 150, align: 'left' });
+                yPos += 25;
+            });
+        
+            doc.end();
+        } else if (req.query.format === 'excel') {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Sales Report');
+        
+            worksheet.addRow(['Date', 'Sales Count', 'Revenue']);
+        
+            formattedReportData.forEach(item => {
+                worksheet.addRow([item.date.toString(), item.salesCount, item.revenue]);
+            });
+        
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename="sales_report.xlsx"');
+        
+            await workbook.xlsx.write(res);
+            res.end();
         }
+        
         
         else {
             // Respond with JSON data
@@ -336,6 +318,134 @@ const showReport = async (req, res) => {
 
     } catch (error) {
         console.error(error);
+    }
+}
+
+
+//dashboard
+const dashboard = async (req, res) => {
+    try {
+
+        const { top10Products, top10Categories } = await top10ProductsCategories(req, res)
+        const order = await Order.find()
+        let revenue = order.reduce((total, order) => total + order.totalAmount, 0);
+        let salesCount = order.length
+        let currentDate = new Date()
+        currentDate.setHours(0, 0, 0, 0)
+        let nextDay = new Date(currentDate)
+        nextDay.setDate(currentDate.getDate() + 1)
+        let dailyOrder = await Order.find({
+            orderDate: {
+                $gte: currentDate,
+                $lte: nextDay
+            }
+        })
+        let dailyRevenue = dailyOrder.reduce((total, order) => total + order.totalAmount, 0)
+        res.render("admin/dashboard" , { order, revenue, salesCount, dailyRevenue, top10Products, top10Categories});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const top10ProductsCategories = async (req, res) => {
+    try {
+        const top10Products = await Order.aggregate([
+            {
+                $match: {
+                    'status': 'Delivered'
+                }
+            },
+            {
+                $unwind: '$products'
+            },
+            {
+                $lookup: {
+                    'from': 'products',
+                    'localField': 'products.productId',
+                    'foreignField': '_id',
+                    'as': 'productDetails'
+                }
+            },
+            {
+                $unwind: '$productDetails'
+            },
+            {
+                $group: {
+                    '_id': '$productDetails._id',
+                    'name': { '$first': '$productDetails.name' },
+                    'image': { '$first': '$productDetails.image' },
+                    'count': { '$sum': '$products.quantity' }
+                }
+            },
+            {
+                $sort: { 'count': -1 }
+            },
+            {
+                $limit: 10
+            }
+        ]);
+
+        const top10Categories = await Order.aggregate([
+            {
+                $match: {
+                    'status': 'Delivered'
+                }
+            },
+            {
+                $unwind: '$products'
+            },
+            {
+                $lookup: {
+                    'from': 'products',
+                    'localField': 'products.productId',
+                    'foreignField': '_id',
+                    'as': 'productDetails'
+                }
+            },
+            {
+                $unwind: '$productDetails'
+            },
+            {
+                $group: {
+                    '_id': '$productDetails.category',
+
+                    'count': { '$sum': 1 }
+                }
+            },
+            {
+                $lookup: {
+                    'from': 'categories',
+                    'localField': '_id',
+                    'foreignField': '_id',
+                    'as': 'categoryDetails'
+                }
+            },
+            {
+                $unwind: '$categoryDetails'
+            },
+            {
+                $project: {
+                    _id: 0,
+                    categoryName: '$categoryDetails.name',
+                    count: 1
+                }
+            },
+            {
+                $sort: { 'count': -1 }
+            },
+            {
+                $limit: 10
+            }
+        ]);
+        console.log(top10Products, 'top10 products ');
+        console.log(top10Categories, 'top 10 categories ');
+
+
+        return { top10Products, top10Categories }
+
+    } catch (error) {
+        console.error('Error founded in top10Products and categories', error);
     }
 }
 

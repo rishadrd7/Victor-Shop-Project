@@ -13,6 +13,33 @@
     #collapseContent {
         display: none; /* Hide the content by default */
     }
+    #scrollableHistory {
+    overflow: auto;
+}
+
+#scrollableTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#scrollableTable th, #scrollableTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#scrollableTable th {
+    background-color: #f2f2f2;
+}
+
+#scrollableTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#scrollableTable tbody tr:hover {
+    background-color: #ddd;
+}
+
 </style>
 
 
@@ -40,13 +67,29 @@
                         <br>
                         <h4>Transaction History</h4>
                      <!-- Scrollable History -->
-                        <div id="scrollableHistory">
-                            <ul id="scrollableList">
+                     <div id="scrollableHistory">
+                        <table id="scrollableTable">
+                            <thead>
+                                <tr>
+                                    <th>Reason</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <% transactions.slice().reverse().forEach(transaction => { %>
-                                    <li><%= transaction.reason %> - ₹<%= transaction.transactionAmount %> (<%= transaction.type %>)</li>
+                                    <tr>
+                                        <td><%= transaction.reason %></td>
+                                        <td><%= transaction.date.toDateString() %></td>
+                                        <td>₹<%= transaction.transactionAmount %></td>
+                                        <td><%= transaction.type %></td>
+                                    </tr>
                                 <% }); %>
-                            </ul>
-                        </div>
+                            </tbody>
+                        </table>
+                    </div>
+                    
 
                         
                         <!-- Collapsible History -->
