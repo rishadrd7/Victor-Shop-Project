@@ -62,6 +62,7 @@
     
                              
                             </ul><!-- End .menu -->
+                            
                         </nav><!-- End .main-nav -->
     
                         <button class="mobile-menu-toggler">
@@ -79,14 +80,17 @@
                     <div class="header-right">
                         <div class="header-search header-search-extended header-search-visible">
                             <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                            <form action="#" method="get">
+                            <form id="searchForm" action="/search" method="get">
                                 <div class="header-search-wrapper">
                                     <label for="q" class="sr-only">Search</label>
-                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
+                                    <input type="search" class="form-control" name="q" id="searchQuery" placeholder="Search product ..." required>
+                                    <!-- Hidden input for category ID -->
+                                    <input type="hidden" name="categoryId" id="categoryId" value="">
                                     <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                                </div><!-- End .header-search-wrapper -->
+                                </div>
                             </form>
-                        </div><!-- End .header-search -->
+                        </div>
+                    </div>
                         
                         <!-- wishlist -->
                         <a href="/wishlistPage" class="wishlist-link">
@@ -604,3 +608,29 @@
     <%- include("../layouts/mobileNav") %>
     <%- include("../layouts/footer")  %>
     <%- include("../layouts/footerNav")  %>
+
+
+
+    <!-- search product in shop -->
+<script>
+    document.getElementById('searchForm').addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent default form submission
+    
+    const searchQuery = document.getElementById('searchQuery').value;
+    const categoryId = 'yourCategoryId'; // Replace 'yourCategoryId' with the actual category ID
+    
+    document.getElementById('categoryId').value = categoryId;
+    
+    try {
+        window.location.href = `/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`;
+    
+        // const response = await fetch(`/search?q=${encodeURIComponent(searchQuery)}&categoryId=${encodeURIComponent(categoryId)}`);
+        // const data = await response.json();
+        
+        // console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+    });
+    
+</script>

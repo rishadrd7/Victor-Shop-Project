@@ -52,6 +52,10 @@ textarea.form-control {
 .modal-footer .btn {
     margin-left: 5px;
     margin-right: 5px;
+    
+}.order-container{
+  overflow-y: auto; /* Enable vertical scrolling */
+  scroll-behavior: smooth;
 }
 
 </style>
@@ -96,7 +100,7 @@ textarea.form-control {
                           <div class="col-md-6 text-center">
                               <br>
                               <% if (order.products.status === 'Delivered') { %>
-                                <button class="btn btn-dark return-order-btn" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#returnModal">Return Order</button>
+                                <button class="btn btn-dark return-order-btn" style="margin-top: 5px;" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#returnModal">Return Order</button>
                                 
                               <% } else if (order.products.status === 'Cancelled') { %>
                                   <span class="can" style="font-size: larger; color: red;">Order Cancelled</span>

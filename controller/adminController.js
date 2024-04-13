@@ -322,42 +322,18 @@ const showReport = async (req, res) => {
 }
 
 
-//dashboard
-const dashboard = async (req, res) => {
+
+//Filter top products and category
+const topProductandCategory = async (req, res) => {
     try {
-
-        const { top10Products, top10Categories } = await top10ProductsCategories(req, res)
-        const order = await Order.find()
-        let revenue = order.reduce((total, order) => total + order.totalAmount, 0);
-        let salesCount = order.length
-        let currentDate = new Date()
-        currentDate.setHours(0, 0, 0, 0)
-        let nextDay = new Date(currentDate)
-        nextDay.setDate(currentDate.getDate() + 1)
-        let dailyOrder = await Order.find({
-            orderDate: {
-                $gte: currentDate,
-                $lte: nextDay
-            }
-        })
-        let dailyRevenue = dailyOrder.reduce((total, order) => total + order.totalAmount, 0)
-        res.render("admin/dashboard" , { order, revenue, salesCount, dailyRevenue, top10Products, top10Categories});
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
-const top10ProductsCategories = async (req, res) => {
-    try {
-        const top10Products = await Order.aggregate([
-            {
-                $match: {
-                    'status': 'Delivered'
-                }
-            },
+        const topProducts = await Order.aggregate([
             {
                 $unwind: '$products'
+            },
+            {
+                $match: {
+                    'products.status': 'Delivered'
+                }
             },
             {
                 $lookup: {
@@ -386,14 +362,14 @@ const top10ProductsCategories = async (req, res) => {
             }
         ]);
 
-        const top10Categories = await Order.aggregate([
-            {
-                $match: {
-                    'status': 'Delivered'
-                }
-            },
+        const topCategories = await Order.aggregate([
             {
                 $unwind: '$products'
+            },
+            {
+                $match: {
+                    'products.status': 'Delivered'
+                }
             },
             {
                 $lookup: {
@@ -409,7 +385,6 @@ const top10ProductsCategories = async (req, res) => {
             {
                 $group: {
                     '_id': '$productDetails.category',
-
                     'count': { '$sum': 1 }
                 }
             },
@@ -438,16 +413,140 @@ const top10ProductsCategories = async (req, res) => {
                 $limit: 10
             }
         ]);
-        console.log(top10Products, 'top10 products ');
-        console.log(top10Categories, 'top 10 categories ');
 
+        console.log(topProducts, 'top10 products ');
+        console.log(topCategories, 'top 10 categories ');
 
-        return { top10Products, top10Categories }
+        return { topProducts, topCategories };
 
     } catch (error) {
-        console.error('Error founded in top10Products and categories', error);
+        console.error('Error founded in topProducts and categories', error);
+        return { error: 'Error fetching top products and categories' };
     }
 }
+
+
+//dashboard
+const dashboard = async (req, res) => {
+    try {
+        console.log('dashboard');
+        const { topProducts, topCategories } = await topProductandCategory(req, res)
+        const order = await Order.find()
+        
+        let revenue = order.reduce((total, order) => total + order.totalAmount, 0);
+        let salesCount = order.length;
+        
+        let currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        let nextDay = new Date(currentDate);
+        nextDay.setDate(currentDate.getDate() + 1);
+        
+        let dailyOrder = await Order.find({
+            orderDate: {
+                $gte: currentDate,
+                $lt: nextDay // Use $lt instead of $lte to exclude orders on the next day
+            }
+        });
+        
+        let dailyRevenue = dailyOrder.reduce((total, order) => total + order.totalAmount, 0);
+        
+        let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        let nextMonth = currentDate.getMonth() + 1;
+        let endOfMonth = new Date(currentDate.getFullYear(), nextMonth, 0);
+        
+        let monthlyOrders = await Order.find({
+            orderDate: {
+                $gte: startOfMonth,
+                $lte: endOfMonth
+            }
+        });
+        
+        let monthlyRevenue = monthlyOrders.reduce((total, order) => total + order.totalAmount, 0);
+
+        res.render("admin/dashboard" , { 
+            order, 
+            revenue, 
+            salesCount, 
+            dailyRevenue, 
+            monthlyRevenue, 
+            topProducts, 
+            topCategories
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const graph = async (req, res) => {
+    try {
+        let { value } = req.query;
+        console.log(value, 'value in graph');
+
+        let pipeline = [];
+
+        if (value === 'monthly') {
+
+            const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+            const endOfYear = new Date(new Date().getFullYear(), 11, 31);
+
+            pipeline = [
+                {
+                    $match: {
+                        orderDate: { $gte: startOfYear, $lte: endOfYear }
+                    }
+                },
+                {
+                    $group: {
+                        _id: { $month: '$orderDate' },
+                        month: { $first: { $month: '$orderDate' } },
+                        monthlyTotalAmount: { $sum: '$totalAmount' },
+                        monthlyOrderCount: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {
+                        '_id': 1
+                    }
+                }
+            ];
+        } else if (value === 'yearly') {
+
+            const tenYearsAgo = new Date();
+            tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 9);
+
+            pipeline = [
+                {
+                    $match: {
+                        orderDate: { $gte: tenYearsAgo }
+                    }
+                },
+                {
+                    $group: {
+                        _id: { $year: '$orderDate' },
+                        yearlyTotalAmount: { $sum: '$totalAmount' },
+                        yearlyOrderCount: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {
+                        '_id': 1
+                    }
+                }
+            ];
+        }
+
+        const data = await Order.aggregate(pipeline);
+
+
+        console.log(data, 'data in graph');
+
+        res.json(data);
+    } catch (error) {
+        console.error('Error found in graph', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
 
@@ -463,5 +562,5 @@ module.exports = {
     unblockUser,
     loadReport,
     showReport,
-
+    topProductandCategory
 }
