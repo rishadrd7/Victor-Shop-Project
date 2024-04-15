@@ -56,8 +56,8 @@ adminRouter.post('/adminUser',adminController.blockUser);
 adminRouter.post('/adminUser',adminController.unblockUser);
 adminRouter.get('/salesReport' ,adminAuth.isLogin, adminController.loadReport);
 adminRouter.post('/loadReports' ,adminController.showReport);
-
-
+adminRouter.post('/graph' , adminController.graph);
+adminRouter.get('/graph' , adminController.graph);
 
 //========================================product side controller========================================
 

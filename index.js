@@ -77,5 +77,5 @@ app.get("/",(req,res)=>{
 //============================================PORT=============================================================
 
 app.listen(3000,()=>{
-    console.log("http://localhost:3000");
+    console.log("http://localhost:3000    http://localhost:3000/admin/login");
 })

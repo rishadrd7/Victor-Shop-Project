@@ -478,6 +478,8 @@ const dashboard = async (req, res) => {
 }
 
 
+
+
 const graph = async (req, res) => {
     try {
         let { value } = req.query;
@@ -562,5 +564,6 @@ module.exports = {
     unblockUser,
     loadReport,
     showReport,
-    topProductandCategory
+    topProductandCategory,
+    graph
 }

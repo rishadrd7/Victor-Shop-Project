@@ -33,20 +33,12 @@
 
 
 <main class="main">
-    <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+    <div class="page-header text-center" style="background-image: url('user/assets/images/new/page-header-bg.jpg')">
         <div class="container">
             <h1 class="page-title">My Account<span>Shop</span></h1>
         </div><!-- End .container -->
     </div><!-- End .page-header -->
-    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Shop</a></li>
-                <li class="breadcrumb-item active" aria-current="page">My Account</li>
-            </ol>
-        </div><!-- End .container -->
-    </nav><!-- End .breadcrumb-nav -->
+   
 
     <div class="page-content">
         <div class="dashboard">
@@ -55,22 +47,26 @@
                     <aside class="col-md-4 col-lg-3">
                         <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+                                <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="/profile" role="tab" aria-controls="tab-dashboard" aria-selected="true">Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                                <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="/profile/address" role="tab" aria-controls="tab-orders" aria-selected="false">Manage Address</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false">Downloads</a>
+                                <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="/profile/myorders" role="tab" aria-controls="tab-downloads" aria-selected="false">My Orders</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+                                <a class="nav-link" id="tab-address-link" data-toggle="tab" href="/wishlistPage" role="tab" aria-controls="tab-address" aria-selected="false">My Wishlist</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+                                <a class="nav-link" id="tab-account-link" data-toggle="tab" href="/profile/wallet" role="tab" aria-controls="tab-account" aria-selected="false">My Wallet</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Sign Out</a>
+                                <form action="/logout" method="post">              
+                                    <div class='nav-link'>
+                                        <button class='fw-bold btn' style="margin-left: -37px; margin-top: -15px;" onclick="logout()">Logout</button>
+                                    </div>
+                                </form>
                             </li>
                         </ul>
                     </aside><!-- End .col-lg-3 -->
@@ -102,3 +98,72 @@
 
 <!-- molla/dashboard.html  22 Nov 2019 10:03:13 GMT -->
 </html>
+
+
+
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <span class="fs-5 d-none d-sm-inline">Profile</span>
+                </a>
+
+                   <div class="dropdown pb-4">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/user/assets/images/new/profile-icon.png'" alt="hugenerd" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1">Hello </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <li><a class="dropdown-item" href="#">New project...</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                    </ul>
+                </div>
+
+
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                    <li class="nav-item">
+                        <a href="/profile" class="nav-link align-middle px-0">
+                            <i class="fs-4 fa-solid fa-user"></i> <span class="ms-1 d-none d-sm-inline">Profile Information</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/profile/address" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                            <i class="fs-4 fa-solid fa-location-arrow"></i> <span class="ms-1 d-none d-sm-inline">Manage Address</span> 
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/profile/myorders" class="nav-link px-0 align-middle">
+                            <i class="fs-4 fa-solid fa-box-open"></i> <span class="ms-1 d-none d-sm-inline">My Orders</span></a>
+                    </li>
+                    <li>
+                        <a href="/wishlistPage" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
+                            <i class="fs-4 fa-solid fa-heart"></i> <span class="ms-1 d-none d-sm-inline">My Wishlist</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/profile/wallet" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                        <i class="fs-4 fa-solid fa-wallet"></i> <span class="ms-1 d-none d-sm-inline">My Wallet</span> 
+                        </a>
+                    </li>
+                    <li>
+                        <form action="/logout" method="post"> 
+                        <a href="" class="nav-link px-0 align-middle">
+                         <i class="fs-4 fa-solid fa-sign-out"></i> <span class="ms-1 d-none d-sm-inline">Logout</span> </a>
+                        </form>
+                     </li>
+                </ul>
+                <hr>
+             
+            </div>
+        </div>
+       
+    </div>
+</div>

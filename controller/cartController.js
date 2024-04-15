@@ -79,7 +79,7 @@ const addToCart = async (req, res) => {
 const checkStock = async (req, res) => {
     try {
         const { productId } = req.params;
-        const { quantity } = req.body; // Get the requested quantity from the request body
+        const { quantity } = req.body;
         const product = await Product.findById(productId);
 
         if (!product) {
@@ -87,11 +87,9 @@ const checkStock = async (req, res) => {
         }
 
         if (quantity > product.quantity) {
-            // If the requested quantity exceeds the available stock, return a specific message
             return res.json({ success: false, message: 'The requested quantity exceeds the available stock.' });
         }
 
-        // If the requested quantity is within the available stock, return the stock information
         return res.json({ success: true, stock: product.quantity });
     } catch (error) {
         console.error(error);

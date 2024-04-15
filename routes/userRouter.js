@@ -31,6 +31,7 @@ router.get("/registration",userAuth.loginTrue,userController.signUp);
 router.post("/registration",userController.insertUser);
 router.get('/home',userAuth.user,userController.home);
 router.post('/logout',userController.logoutHome);
+router.get('/logout',userController.logoutHome);
 router.get("/forgotpass",userAuth.loginTrue,userController.forgotPass);
 router.post('/forgotpassword',userController.forgotVerify);
 router.get("/resetpass",userAuth.loginTrue,userController.loadConfirmPassword);
@@ -58,6 +59,7 @@ router.post('/checkout/edit-address', userController.editCheckoutAddress);
 router.post('/checkout/add-address',userController.addCheckoutAddress);
 router.post('/place-order', userController.placeOrder);
 router.post('/verify-razo',userController.verifyRazo);
+router.get('/checkout/payment',userAuth.user,userAuth.isBlocked,userController.failureRazo);
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
 router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);

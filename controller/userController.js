@@ -1380,6 +1380,17 @@ const verifyRazo = async (req, res) => {
   }
 };
 
+
+//razorpay failurePage
+const failureRazo = async (req,res)=>{
+  try {
+    res.render('pages/failurePage')
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
 //======================================set up orderpage============================================
 
 
@@ -1637,6 +1648,7 @@ module.exports = {
   logoutHome,
   contactPage,
   aboutPage,
+  failureRazo,
 
 
 

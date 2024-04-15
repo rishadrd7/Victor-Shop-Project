@@ -240,10 +240,15 @@ $(document).ready(function () {
                 incrementButton: '<i class="icon-plus"></i>',
                 groupClass: 'input-spinner',
                 buttonsClass: 'btn-spinner',
-                buttonsWidth: '26px'
+                buttonsWidth: '26px',
+                min: 0, // Minimum stock value
+                max: 100, // Maximum stock value
+                minMessage: 'Minimum stock reached',
+                maxMessage: 'Maximum stock reached'
             });
         }
     }
+    
 
     // Sticky Content - Sidebar - Social Icons etc..
     // Wrap elements with <div class="sticky-content"></div> if you want to make it sticky

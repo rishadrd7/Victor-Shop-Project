@@ -87,12 +87,16 @@ textarea.form-control {
                     <div>
                       <!-- <p><%= order.orderDate.toString().split(' ').slice(0, 4).join(' ') %></p> -->
                       <p style="font-size: larger; font-weight: 400;"><%= order.paymentMethod %></p>
-
+                  
                       <p><a href="/profile/myorders/orderDetails/<%= order._id %>"><button class="btn btn-primary">View Details</button></a></p>
-
-
+                  
+                      <% if (order.paymentMethod=== 'online' && order.products.status === 'Pending') { %>
+                          <p><button class="btn btn-outline-danger pay-now-btn"  onclick="retry()" data-order-id="<%= order._id %>" data-toggle="modal" data-target="#payNowModal">Pay Now</button></p>
+                      <% } %>
+                  
                       <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(73, 213, 75);" id="deliveryStatus_<%= order.products._id %>"><%= order.products.status %></span></p>
-                    </div>
+                  </div>
+                  
 
                     <!-- cancel and return -->
                     <div class="container">
@@ -107,7 +111,7 @@ textarea.form-control {
                               <% } else if (order.products.status === 'Returned') { %>
                                   <span class="can" style="font-size: larger;">Returned</span>
                               <% } else { %>
-                                <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#cancelOrder">Cancel Order</button>
+                                <button class="btn btn-danger cancel-order-btn" style="margin-top: 5px;" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#cancelOrder">Cancel Order</button>
                               <% } %>
                           </div>
                       </div>
@@ -206,7 +210,79 @@ textarea.form-control {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    function retry() {
+      var options = {
+          "key": "rzp_test_2gWPLmDC73KBec", // Enter the Key ID generated from the Dashboard
+          "amount": totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "currency": "INR",
+          "name": "Your Company Name",
+          "description": "Test Transaction",
+          "image": "/user/assets/images/new/Victor-Logo.png",
+          "order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of the previous step.
+          "handler": function (response) {
+            console.log(response);
+            fetch('/verify-razo', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                receipt: data.receipt,
+                order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to verify payment");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log(data.message); // Log the response from the server
+              // Extract order ID and paid amount from the response
+              const orderId = data.orderId;
+              const paidAmount = data.totalAmount;
 
+              // Display SweetAlert with order ID and paid amount
+              Swal.fire({
+                title: "Payment Verified",
+                text: `Your payment has been successfully verified.\nOrder ID: ${orderId}\nPaid Amount: ${paidAmount}`,
+                icon: "success",
+                showConfirmButton: true,
+              }).then((result) => {
+                // Redirect to the "My Orders" page when the user clicks the "OK" button
+                if (result.isConfirmed) {
+                 window.location.href = "/profile/myorders"; // Adjust the URL as necessary
+                }
+              });
+            })
+            .catch((error) => {
+              console.error(error.message);
+              Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
+            });
+          },
+          "prefill": {
+              "name": "Gaurav Kumar",
+              "email": "gaurav.kumar@example.com",
+              "contact": "9999999999"
+          },
+          "notes": {
+              "address": "Razorpay Corporate Office"
+          },
+          "theme": {
+              "color": "#F37254"
+          }
+        };
+        var rzp1 = new Razorpay(options);
+		rzp1.on('payment.failed' , function (){
+			window.location.href='/checkout/payment'
+		})
+        rzp1.open();
+    }
+</script>
 
 
 <!-- order cancel in user side -->

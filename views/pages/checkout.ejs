@@ -681,6 +681,9 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         };
         var rzp1 = new Razorpay(options);
+		rzp1.on('payment.failed' , function (){
+			window.location.href='/checkout/payment'
+		})
         rzp1.open();
       } else {
         // Handle other payment methods

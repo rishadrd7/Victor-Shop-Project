@@ -232,28 +232,21 @@
 
 
         
-
-        <div class="col-xl-12 d-flex grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body ">
-              <h3>Sales Profit</h3>
-              <select id="graphSelector" class="form-select  btn btn-outline-success" onchange="loadGraph()"
-          aria-label="Default select example">
-          <!-- <option selected>Open this select menu</option> -->
-
-
-          <option value="monthly">Monthly</option>
-          <option value="yearly">Yearly</option>
-        </select>
-
-
-              <div>
-                <canvas id="myChart"></canvas>
+            <div class="col-xl-12 d-flex grid-margin stretch-card">
+              <div class="card">
+                  <div class="card-body">
+                      <h3>Sales Profit</h3>
+                      <select id="graphSelector" class="form-select btn btn-outline-success" onchange="loadGraph()">
+                          <option value="monthly">Monthly</option>
+                          <option value="yearly">Yearly</option>
+                      </select>
+                      <div>
+                          <canvas id="myChart"></canvas>
+                      </div>
+                  </div>
               </div>
-            </div>
           </div>
-        </div>
-
+          
 
 
         <!-- top 10 products -->
@@ -338,4 +331,134 @@
 
 
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- graph chart -->
+  <script>
+    let myChart; 
+    async function loadGraph() {
+        const value = document.getElementById('graphSelector').value;
+
+        try {
+            const response = await fetch(`/admin/graph?value=${value}`);
+            const data = await response.json();
+
+            console.log(data);
+
+            const labels = [];
+            const values = [];
+
+            if (value === 'monthly') {
+            
+            const currentMonth = new Date().getMonth(); 
+            for (let i = currentMonth-1; i <= 11; i++) {
+                labels.push(getMonthName(i)); 
+            }
+            // Add remaining months from January to the current month
+            // for (let i = 0; i <= currentMonth; i++) {
+            //     labels.push(getMonthName(i));
+            // }
+
+            
+            data.forEach(monthData => {
+                values.push(monthData.monthlyTotalAmount);
+            });
+            } else if (value === 'yearly') {
+               
+                const currentYear = new Date().getFullYear();
+                for (let i = currentYear + 1; i >= 2023; i--) {
+                    labels.push(i.toString());
+                }
+                labels.reverse();
+
+                // Populate values with yearly sales data
+                data.forEach(yearData => {
+                    values.push(yearData.yearlyTotalAmount);
+                });
+            }
+
+            // Fill in dummy data if years or months are missing
+            fillDummyData(labels, values, value);
+
+           
+            if (myChart) {
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = values;
+                myChart.update(); 
+            } else {
+                // Create the chart if it doesn't exist
+                const ctx = document.getElementById('myChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: value === 'monthly' ? 'Monthly Sales' : 'Yearly Sales',
+                            data: values,
+                            borderWidth: 1,
+                            backgroundColor: 'rgba(54, 162, 235, 1)', // Set background color for bars
+                            borderColor: 'rgba(23, 31, 48)', // Set border color for bars
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching graph data', error);
+        }
+    }
+
+    // Function to get month name from index
+    function getMonthName(index) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return months[index];
+    }
+
+    // Function to fill dummy data for missing years or months
+    function fillDummyData(labels, values, value) {
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1; // Get current month (1-indexed)
+
+        if (value === 'monthly') {
+            // Fill dummy data for missing months
+            for (let i = 1; i < currentMonth; i++) {
+                const monthLabel = getMonthName(i - 1);
+                if (!labels.includes(monthLabel)) {
+                    labels.push(monthLabel);
+                    values.push(0); // Set dummy value to 0
+                }
+            }
+        } else if (value === 'yearly') {
+            // Fill dummy data for missing years
+            for (let i = currentYear; i >= 2023; i--) {
+                const yearLabel = i.toString();
+                if (!labels.includes(yearLabel)) {
+                    labels.push(yearLabel);
+                    values.push(0); // Set dummy value to 0
+                }
+            }
+        }
+    }
+
+    window.onload = loadGraph;
+</script>
+
+
+
+  
+  
+
+
+
       <%- include('../layouts/adminFooter') %>
+
+
+
+      

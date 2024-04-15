@@ -1,7 +1,9 @@
 <%- include("../layouts/header")  %>
 <%- include("../layouts/header2")  %>
 
-<style>
+
+
+<!-- <style>
     body{
         background-color: #F1F3F6;
         /* background-image: url("/user/assets/images/new/bg-image2.png"); */
@@ -84,11 +86,13 @@
         color: blue;
     }
     
-</style>
+</style> -->
     
 
 
-<div class="col-12 ac-box">
+
+
+<!-- <div class="col-12 ac-box">
 
     <div class='col-3' style="margin-left: 30px;">
             
@@ -130,7 +134,6 @@
 
         <form action="/logout" method="post">              
         <div class='pt-3' style="margin-top: -20px;">
-            <!-- <i class="fa-solid fa-arrow-right-from-bracket me-1" style="color: #142ac6; font-size: 19px;"></i> -->
             <svg width="30" height="30" class="log" style="margin-left: -4px;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#142ac6" stroke-width="0.3" stroke="#2874F0" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"></path></svg>
             <button class='fw-bold btn' style="margin-left: -55px; margin-top: -5px;" onclick="logout()">Logout</button>
         </div>
@@ -138,7 +141,187 @@
         
     </div>
     
-</div>
+</div> -->
+
+
+
+<style>
+    body{
+        background-color: #F1F3F6;
+        /* background-image: url("/user/assets/images/new/bg-image2.png"); */
+        background-repeat: no-repeat;
+        background-size: cover;
+        
+    }
+    .left-top{
+    background-color: #fff;
+    height: 90px;
+    width: 90%;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.08);
+    }
+    
+    .left-sidebar{
+        background-color: #fff;
+        width: 90%;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.08);
+    }
+    
+    .right{
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.08);
+        
+    }
+    
+    .profile{
+        background-color: #F1F3F6;
+        min-height: 100vh;
+    }
+    .profile .form-control{
+        height: 50px;
+        
+    }
+    
+    a{
+        text-decoration: none;
+        color: black;
+    }
+    a:hover{
+        text-decoration: none;
+    }
+    
+    .left-top .dp{
+        /* background-color: green; */
+        width: 50px;
+        height: 50px;
+        border-radius: 30px;
+        display: flex;
+    }
+    
+    .nameContainer{
+        line-height: 9px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .address{
+        background-color: white;
+        border-radius: 10px;
+        
+    }
+    .ac-box{
+        display: flex;
+        margin: 0;
+        margin-top: 130px;
+        margin-right: 80px;
+    }
+    .pt-3{
+        line-height: 40px;
+        margin-left:20px;
+        margin-top: -15px;
+    }
+    .txt{
+        color: black;
+    }
+    .fa-solid{
+        color: blue;
+    }
+    
+  </style>
+    
+  <style>
+    /* Your existing CSS styles */
+    .left-top {
+      max-width: 700px; /* Set maximum width */
+    }
+    
+    @media only screen and (max-width: 700px) {
+      /* Styles for screens with a maximum width of 320px */
+      .nameContainer {
+        display: none; /* Hide the name container */
+      }
+    }
+  </style>
+  
+  <style>
+    /* Media query for screens with a maximum width of 600px */
+    @media (max-width: 600px) {
+      /* Hide the text and show only icons */
+      .link-text {
+        display: none;
+      }
+    }
+  </style>
+  
+  
+  <div class="col-12 ac-box">
+  
+    <div class='col-3' style="margin-left: 0px;">
+            
+      <div class='left-top m-auto mb-4 row p-4 '>
+        <div class=' dp' style="background-image: url('/user/assets/images/new/profile-icon.png'); background-size: cover;">
+          <input type='file' name='image' title=' ' style='opacity: 0;' />
+        </div>
+                
+        <div class="col-6 nameContainer ms-4" style="color: black;">
+          <p>Hello</p>
+          <br>
+          <b class="fs-3"><%= locals.userData.name %></b>
+        </div>
+      </div>
+    
+      <div class='left-sidebar m-auto mb-5 ps-5'>
+        <div class='pt-3'>
+          <a href='/profile' class='fw-bold' style="margin-left: 10px;">
+            <i class="fa-solid fa-user me-4" style="color: #142ac6; font-size: 19px;"></i>
+            <span class="link-text">Profile Information</span>
+          </a>
+        </div>
+        <div class='pt-3'>
+          <a href='/profile/address' class='fw-bold' style="margin-left: 10px;">
+            <i class="fa-solid fa-location-arrow me-4" style="color: #142ac6; font-size: 19px;"></i>
+            <span class="link-text">Manage Address</span>
+          </a>
+        </div>
+        <div class='pt-3'>
+          <a href='/profile/myorders' class='fw-bold' style="margin-left: 10px;">
+            <i class="fa-solid fa-box-open me-4" style="color: #142ac6; font-size: 19px;"></i>
+            <span class="link-text">My Orders</span>
+          </a>
+        </div>
+        <div class='pt-3'>
+          <a href='/wishlistPage' class='fw-bold' style="margin-left: 10px;">
+            <i class="fa-solid fa-heart me-4" style="color: #142ac6; font-size: 19px;"></i>
+            <span class="link-text">My Wishlist</span>
+          </a>
+        </div>
+        <div class='pt-3'>
+          <a href='/profile/wallet' class='fw-bold' style="margin-left: 10px;">
+            <i class="fa-solid fa-wallet me-4" style="color: #142ac6; font-size: 19px;"></i>
+            <span class="link-text">My Wallet</span>
+          </a>
+        </div>
+        <div class='pt-3'>
+          <a href='/logout' class='fw-bold' style="margin-left: 10px;">
+            <i class="fa-solid fa-sign-out me-4" style="color: #142ac6; font-size: 19px;"></i>
+            <span class="link-text">Logout</span>
+          </a>
+        </div>
+  
+        <!-- <form action="/logout" method="post">              
+          <div class='pt-3' style="margin-top: -20px;">
+            <button class='fw-bold btn' style="margin-left: -55px; margin-top: -5px;" onclick="logout()">
+              <svg width="30" height="30" class="log" style="margin-left: -4px;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#142ac6" stroke-width="0.3" stroke="#2874F0" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"></path></svg>
+              Logout
+            </button>
+          </div>
+        </form> -->
+        
+      </div>
+    
+  </div>
+
 
 
 

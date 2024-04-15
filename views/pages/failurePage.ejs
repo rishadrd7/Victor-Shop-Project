@@ -1,0 +1,62 @@
+<%- include('../layouts/header')  %>
+<%- include('../layouts/header2')  %>
+<%- include('../layouts/mobileNav')  %>
+
+<br><br><br><br><br>
+<div class="container">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/home">Home</a></li>
+        <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+        <li class="breadcrumb-item"><a href="/cartPage">Cart</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+    </ol>
+</div><!-- End .container -->
+
+<div class="page-header text-center" style="background-image: url('user/assets/images/new/page-header-bg.jpg')">
+    <div class="container">
+        <h1 class="page-title">Checkout<span>Shop</span></h1>
+    </div><!-- End .container -->
+</div><!-- End .page-header -->
+<nav aria-label="breadcrumb" class="breadcrumb-nav">
+
+<br><br>
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="alert alert-danger" role="alert">
+                <strong>Payment Failed!</strong> Your payment was not successful.
+            </div>
+            <p>Would you like to try again?</p>
+            <button class="btn btn-primary" onclick="payAgain()">Pay Now</button>
+        </div>
+    </div>
+</div>
+
+<br><br><br><br><br><br><br><br>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+z68ew6LCy4o4B8wEIV1zBr/8kvGHOmDH+8E2Kb" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js" integrity="sha384-+DiTPTcRWGLg7fhe4CQzr2DIibekWe1U1EJ1Bz4+U6s0Pl/8FQZtAfq8s3Kg1Jw2" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha384-3C9lFyYLkRwKw4ZL4S+DtBC6Pp3X3+0NGxgk1JKOPOrUpWqOA5lQzVeO8PzGJj7r" crossorigin="anonymous"></script>
+
+
+<script>
+    function payAgain() {
+        // Your logic to handle payment again goes here
+        // For example, you can redirect the user to the payment page
+        window.location.href = "/profile/myorders";
+    }
+</script>
+
+
+
+
+
+
+
+
+<%- include('../layouts/footer')  %>
+<%- include('../layouts/footerNav')  %>
