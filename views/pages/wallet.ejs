@@ -1,6 +1,7 @@
 <%- include("../layouts/profileList")  %>
 
 <style>
+
     
     /* Styling for Scrollable History */
     #scrollableHistory {
@@ -41,25 +42,26 @@
     background-color: #ddd;
 }
 
+
 </style>
 
 
-<div class='col-md-5 p-5 right' style=" border-radius: 0;">
+<!-- <div class='col-md-8 p-0 right' style=" border-radius: 0;"> -->
 
 
 
-    <div id="tab-wallet" role="tabpanel" aria-labelledby="tab-wallet-link">
+    <!-- <div id="tab-wallet" role="tabpanel" aria-labelledby="tab-wallet-link"> -->
         <!-- <div class="row" style="padding: 20px; background-color: #f0f0f0;"> -->
-            <h3 style="color: #333;">My E-Wallet</h3>
-            <div class="col-lg-12" style="margin-top: 20px;">
-                <div class="card card-dashboard" style="background-color: #fff; border-radius: 10px; padding: 20px;">
-                    <div class="card-body">
+            <!-- <div class="col-lg-6" style="margin-top: 0px;"> -->
+                <div class="card card-dashboard" style="background-color: #fff; border-radius: 0px; padding: 20px;">
+                    <h3 style="color: #333;">My E-Wallet</h3>
+                    <!-- <div class="card-body"> -->
                         <div class="bg-white" style="padding: 10px; border-radius: 5px; border-width: 1px; border: solid;">
                             <h4 class="fw-bolder" style="color: #000000;">Available Balance</h4>
                             <h6 class="text-primary ">₹ <%= walletBalance %></h6>
                         </div>
                         <form id="addMoneyForm" action="/wallet/add-money" method="post">
-                            <input type="text" name="amount" id="amountInput"  placeholder="Enter Amount" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+                            <input type="text" name="amount" id="amountInput"  placeholder="Enter Amount" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
                             <button type="submit" class="btn btn-primary" style="margin-top: 10px; height: 40px; width: 100px; border-radius: 5px;">Add Now</button>
                         </form
                         

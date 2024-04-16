@@ -304,16 +304,13 @@ function updateSalesReportTable(data) {
    document.getElementById('download-pdf').addEventListener('click', function() {
     const element = document.getElementById('myTable');
     
-    // Get the report type from the page
     const reportType = document.getElementById('reportType').value;
 
-    // Set the filename based on the report type
     const filename = `sales_report_${reportType}.pdf`;
 
-    // Set options for PDF generation
     const opt = {
         margin: 0.5,
-        filename: filename, // Use the dynamically generated filename
+        filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }

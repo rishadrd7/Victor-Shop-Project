@@ -1338,8 +1338,6 @@ const placeOrder = async (req, res) => {
  };
  
 
-
-
 //verify razorpay
 const verifyRazo = async (req, res) => {
   try {
@@ -1391,6 +1389,34 @@ const failureRazo = async (req,res)=>{
   }
 }
 
+
+ //retry payment Razorpay
+ const retryRazo=async(req,res)=>{
+  try {
+    
+    const {orderid}=req.body
+ 
+    const details=await Order.findOne({userId:req.session.user,_id:orderid})
+      res.json({details:details})
+  } catch (error) {
+    
+  }
+}
+
+
+const updateStatus=async(req,res)=>{
+  try {
+    console.log('sttttttttt');
+    const {orderid}=req.body
+   console.log("order id",orderid);
+    // const update=Order.updateOne({_id:orderid},{$set:{status:"Delivered"}})
+    console.log(update);
+    res.json({success:true})
+  } catch (error) {
+    res.json({success:true})
+    
+  }
+}
 //======================================set up orderpage============================================
 
 
@@ -1626,6 +1652,7 @@ const aboutPage = async (req,res)=>{
 }
 
 
+
 module.exports = {
   loadAuth,
   successGoogleLogin,
@@ -1649,7 +1676,7 @@ module.exports = {
   contactPage,
   aboutPage,
   failureRazo,
-
+  updateStatus,
 
 
   shopPage,
@@ -1667,6 +1694,7 @@ module.exports = {
   addCheckoutAddress,
   placeOrder,
   verifyRazo,
+  retryRazo,
   orderPage,
   orderDetails,
   cancelOrder,

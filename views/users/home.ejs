@@ -93,18 +93,18 @@
                     </div>
                         
                         <!-- wishlist -->
-                        <a href="/wishlistPage" class="wishlist-link">
+                        <a href="/wishlistPage" class="wishlist-link" data-wishlist-count="0">
                             <i class="icon-heart-o"></i>
-                            <!-- <span class="wishlist-count"></span> -->
+                            <span id="wishlistCount" class="wishlist-count"></span> 
                         </a>
                       
                         <!-- cart -->
                         <div class="dropdown cart-dropdown">
-                            <a href="/cartPage" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <i class="icon-shopping-cart"></i>
-                                <!-- <span class="cart-count"></span> -->
+                                <span id="cartCount" class="cart-count"></span>
                             </a>
-    
+
                             <div class="dropdown-menu dropdown-menu-right">
                                 <div class="dropdown-cart-action">
                                     <a href="/cartPage" class="btn btn-primary">View Cart</a>
@@ -338,4 +338,32 @@
     }
     });
     
+</script>
+
+
+
+<script>
+    cartCount()
+    function cartCount(){
+        const cartt = document.getElementById('cartCount');
+        console.log(cartt.textContent);
+
+        fetch('/cartCount' , {method : 'post'}).then(res=>res.json()).then((data)=>{
+            cartt.textContent = data.success || 0
+        });
+    }
+
+</script>
+
+
+<script>
+    wishlistCount()
+    function wishlistCount(){
+        const wish = document.getElementById('wishlistCount');
+        console.log(wish.textContent);
+
+        fetch('/wishlistCount', {method: 'post'}).then(res=>res.json()).then((data)=>{
+            wish.textContent = data.success || 0
+        });
+    }
 </script>

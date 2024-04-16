@@ -65,8 +65,9 @@ router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.o
 router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);
 router.post('/orders/:orderId/cancel', userController.cancelOrder);
 router.post('/profile/myorders/returnOrder', userController.returnOrder);
-router.get('/profile/myorders/orderDetails/invoice/:orderId',userAuth.user,userAuth.isBlocked,userController.invoicePage);  
-
+router.get('/profile/myorders/orderDetails/invoice/:orderId',userAuth.user,userAuth.isBlocked,userController.invoicePage); 
+router.post('/retryPayment',userController.retryRazo); 
+router.post('/successPage',userController.updateStatus);
 
 //============================================cart side controller=========================================
 router.get('/cartPage',userAuth.user,userAuth.isBlocked,cartController.cartPage);
@@ -74,6 +75,8 @@ router.post('/add-to-cart', cartController.addToCart);
 router.get('/checkStock/:productId', cartController.checkStock);
 router.post('/updateCartQuantity/:productId',cartController.updateCartQuantity)
 router.delete('/removeProductFromCart/:cartId/:productId', cartController.removeProductFromCart);
+router.post('/cartCount', cartController.cartCount);
+
 
 router.get('/couponGet',userController.getCoupon);
 router.post('/applyCoupon',userController.applyCoupon);
@@ -82,6 +85,7 @@ router.post('/applyCoupon',userController.applyCoupon);
 router.get('/wishlistPage',userAuth.user,userAuth.isBlocked,wishlistController.wishlistPage);
 router.post('/addToWishlist', wishlistController.addtoWishlist);
 router.delete('/wishlist/remove/:productId',wishlistController.removeFromWishlist); 
+router.post('/wishlistCount', wishlistController.wishlistCount);
 
 //============================================wallet side controller=========================================
 router.get('/profile/wallet',userAuth.user,walletController.walletpage);

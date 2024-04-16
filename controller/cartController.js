@@ -2,6 +2,8 @@ const Cart = require("../models/cartModel");
 const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
 const Order = require("../models/ordersModel")
+const Wishlist = require('../models/wishlistModel')
+
 
 
 //setup cartPage
@@ -74,6 +76,28 @@ const addToCart = async (req, res) => {
         res.status(500).json({ success: false });
     }
 };
+
+
+const cartCount = async (req,res)=>{
+    try {
+        if(req.session.user){
+         
+          const findItem = await Cart.findOne({userId:req.session.user})
+         
+          const count = findItem.products?.length
+    
+        //   console.log(count , 'cartCount');
+          res.send({success:count})
+        }else{
+          res.send({success:0})
+        }
+        // const count = await 
+      } catch (error) {
+        console.log(error.message + 'cartcount')
+      }
+}
+
+
 
 
 const checkStock = async (req, res) => {
@@ -160,5 +184,6 @@ module.exports = {
     addToCart,
     checkStock,
     updateCartQuantity,
-    removeProductFromCart
+    removeProductFromCart,
+    cartCount
 }

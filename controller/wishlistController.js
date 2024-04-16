@@ -80,6 +80,27 @@ const wishlistPage = async (req, res) => {
 };
 
 
+const wishlistCount = async (req,res)=>{
+  try {
+      if(req.session.user){
+       
+        const findItem = await Wishlist.findOne({userId:req.session.user})
+       
+        const count = findItem.products.length
+  
+        // console.log(count , 'wishlistCount');
+        res.send({success:count})
+      }else{
+        res.send({success:0})
+      }
+      // const count = await 
+    } catch (error) {
+      console.log(error.message + 'wishlistcount')
+    }
+}
+
+
+
 
 
 
@@ -88,6 +109,7 @@ const wishlistPage = async (req, res) => {
 module.exports = {
   wishlistPage,
   addtoWishlist,
-  removeFromWishlist
+  removeFromWishlist,
+  wishlistCount
 
 }

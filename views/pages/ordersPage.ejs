@@ -75,12 +75,12 @@ textarea.form-control {
 
                   <div class="media" style="display: flex; justify-content: space-between;">
                     
-                    <div class="media col-2" style="width: 300px;">
+                    <div class="media col-2 " style="width: 300px;">
                     <img style="width: 100px; height: 100px;" src="/uploads/<%= order.productDetail.image[0] %>" class="mr-3 order-image" alt="<%= order.productDetail.name %>">
                   </div>
                     <div class="media-body" style="width: 33%; flex: none;">
                       <h5 class="mt-0"><%= order.productDetail.name %></h5>
-                      <p style="font-weight: 500;">₹<%= order.totalAmount %></p>
+                      <p  style="font-weight: 500;">₹<%= order.totalAmount %></p>
                       <p>Quantity: <%= order.products.quantity %></p>
                     </div>
 
@@ -90,9 +90,9 @@ textarea.form-control {
                   
                       <p><a href="/profile/myorders/orderDetails/<%= order._id %>"><button class="btn btn-primary">View Details</button></a></p>
                   
-                      <% if (order.paymentMethod=== 'online' && order.products.status === 'Pending') { %>
-                          <p><button class="btn btn-outline-danger pay-now-btn"  onclick="retry()" data-order-id="<%= order._id %>" data-toggle="modal" data-target="#payNowModal">Pay Now</button></p>
-                      <% } %>
+                      <!-- <% if (order.paymentMethod=== 'online' && order.products.status === 'Pending') { %>
+                          <p><button class="btn btn-danger pay-now-btn" id="retry"   data-order-id="<%= order._id %>" data-toggle="modal" data-target="#payNowModal">Retry</button></p>
+                      <% } %> -->
                   
                       <p style="font-size: larger; font-weight: 400;">Status: <span style="color: rgb(73, 213, 75);" id="deliveryStatus_<%= order.products._id %>"><%= order.products.status %></span></p>
                   </div>
@@ -105,14 +105,16 @@ textarea.form-control {
                               <br>
                               <% if (order.products.status === 'Delivered') { %>
                                 <button class="btn btn-dark return-order-btn" style="margin-top: 5px;" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#returnModal">Return Order</button>
-                                
-                              <% } else if (order.products.status === 'Cancelled') { %>
-                                  <span class="can" style="font-size: larger; color: red;">Order Cancelled</span>
-                              <% } else if (order.products.status === 'Returned') { %>
-                                  <span class="can" style="font-size: larger;">Returned</span>
-                              <% } else { %>
+                            <% } else if (order.products.status === 'Cancelled') { %>
+                                <span class="can" style="font-size: larger; color: red;">Order Cancelled</span>
+                            <% } else if (order.products.status === 'Returned') { %>
+                                <span class="can" style="font-size: larger;">Returned</span>
+                            <% } else if (order.paymentMethod === 'online' && order.products.status === 'Pending') { %>
+                                <button class="btn btn-danger pay-now-btn" id="retry" data-order-id="<%= order._id %>" data-toggle="modal" data-target="#payNowModal">Retry</button>
+                            <% } else { %>
                                 <button class="btn btn-danger cancel-order-btn" style="margin-top: 5px;" data-order-id="<%= order._id %>" data-order-name="<%= order.productDetail.name %>" data-order-amount="<%= order.totalAmount %>" data-toggle="modal" data-target="#cancelOrder">Cancel Order</button>
-                              <% } %>
+                            <% } %>
+                            
                           </div>
                       </div>
                   </div>
@@ -210,16 +212,30 @@ textarea.form-control {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<!-- retry razorpay -->
 <script>
-    function retry() {
-      var options = {
+ 
+   document.addEventListener('DOMContentLoaded',function(){
+    let button=document.getElementById("retry")
+    button.addEventListener('click',function(){
+      let orderid=this.getAttribute("data-order-id")
+      axios.post("/retryPayment",{orderid})
+      .then(res=>{
+      
+         const totalAmount= res.data.details.totalAmount
+         const data= res.data.details._id
+        var options = {
           "key": "rzp_test_2gWPLmDC73KBec", // Enter the Key ID generated from the Dashboard
           "amount": totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
           "currency": "INR",
-          "name": "Your Company Name",
+          "name": "Victor Shop",
           "description": "Test Transaction",
           "image": "/user/assets/images/new/Victor-Logo.png",
-          "order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of the previous step.
+          "order_id": data._id, //This is a sample Order ID. Pass the `id` obtained in the response of the previous step.
           "handler": function (response) {
             console.log(response);
             fetch('/verify-razo', {
@@ -228,7 +244,7 @@ textarea.form-control {
                 "Content-Type": "application/json"
               },
               body: JSON.stringify({
-                receipt: data.receipt,
+                receipt: data._id,
                 order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature
@@ -255,14 +271,19 @@ textarea.form-control {
               }).then((result) => {
                 // Redirect to the "My Orders" page when the user clicks the "OK" button
                 if (result.isConfirmed) {
-                 window.location.href = "/profile/myorders"; // Adjust the URL as necessary
+                  console.log("orderid",orderid);
+                  axios.post('/successPage',{orderid})
+                  .then(res=>{
+                     if(res.success){
+                      window.location.href="/profile/myorders"
+                     } 
+
+                  })
+                  
                 }
               });
             })
-            .catch((error) => {
-              console.error(error.message);
-              Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
-            });
+           
           },
           "prefill": {
               "name": "Gaurav Kumar",
@@ -281,7 +302,17 @@ textarea.form-control {
 			window.location.href='/checkout/payment'
 		})
         rzp1.open();
-    }
+ 
+ 
+ 
+      }).catch(err=>{
+        console.log(err);
+      })
+
+     
+
+    })
+   })
 </script>
 
 
