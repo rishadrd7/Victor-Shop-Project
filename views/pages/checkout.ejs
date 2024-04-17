@@ -180,7 +180,7 @@ label{
                         </div>
 
 						<!-- Modal -->
-						<div class="modalCoupon" id="couponModal">
+							<div class="modalCoupon" id="couponModal">
 							<div class="modalCoupon-dialog">
 								<div class="modalCoupon-content" style="width: 50%;">
 									<div class="modalCoupon-header">
@@ -567,7 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked');
     const address = document.querySelector('input[name="selectedAddress"]:checked');
 
-    if (!selectedPaymentMethod) {
+    if (!selectedPaymentMethod.value) {
       Swal.fire("Error", "Please select a payment method.", "error");
       return;
     }
@@ -682,7 +682,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         var rzp1 = new Razorpay(options);
 		rzp1.on('payment.failed' , function (){
-			window.location.href='/checkout/payment'
+			window.location.href='/checkout/paymentFailed'
 		})
         rzp1.open();
       } else {
@@ -707,7 +707,7 @@ document.addEventListener("DOMContentLoaded", function () {
         for (var i = 0; i < inputs.length; i++) {
             var value = inputs[i].value.trim();
             inputs[i].value = value; // Update value with trimmed one
-            if (!value) {
+            if (!value && inputs[i].name !== "landmark" && inputs[i].name !== "number") {
                 Swal.fire('Error!', 'Please fill in all fields.', 'error');
                 event.preventDefault();
                 return;

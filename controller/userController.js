@@ -1295,6 +1295,7 @@ const placeOrder = async (req, res) => {
        products: cart.products,
        paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'online', 
        paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
+      //  paymentStatus: paymentMethod === 'wallet' ? 'wallet' : "pending",
        totalAmount
      });
  
@@ -1388,6 +1389,17 @@ const failureRazo = async (req,res)=>{
     
   }
 }
+
+
+// const successRazo = async (req,res)=>{
+//   try {
+//     console.log('payment success');
+//     res.render('pages/successPage');
+//   } catch (error) {
+//     console.log(error);
+    
+//   }
+// }
 
 
  //retry payment Razorpay
@@ -1588,17 +1600,22 @@ const invoicePage = async (req,res)=>{
 
 
 // coupons set in chekout page
-  const getCoupon = async (req, res) => {
+const getCoupon = async (req, res) => {
     try {
-
-      const coupons = await Coupon.find()
-      console.log(coupons, "Get coupon");
-      res.json(coupons)
+        const currentDate = new Date(); // Get current date/time
+        const coupons = await Coupon.find({ expireDate: { $gte: currentDate } }); // Filter out coupons with expiry date greater than or equal to current date
+        if (coupons.length === 0) {
+            // If no valid coupons found, send error message
+            return res.status(404).json({ message: "No valid coupons found" });
+        }
+        console.log(coupons, "Get coupon");
+        res.json(coupons);
     } catch (error) {
-      console.log(error);
-
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  }
+};
+
 
 
 
@@ -1675,8 +1692,8 @@ module.exports = {
   logoutHome,
   contactPage,
   aboutPage,
-  failureRazo,
-  updateStatus,
+
+
 
 
   shopPage,
@@ -1695,6 +1712,8 @@ module.exports = {
   placeOrder,
   verifyRazo,
   retryRazo,
+  failureRazo,
+  updateStatus,
   orderPage,
   orderDetails,
   cancelOrder,

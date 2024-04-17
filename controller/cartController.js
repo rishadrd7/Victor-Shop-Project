@@ -78,6 +78,7 @@ const addToCart = async (req, res) => {
 };
 
 
+// along with cart count
 const cartCount = async (req,res)=>{
     try {
         if(req.session.user){
@@ -99,7 +100,7 @@ const cartCount = async (req,res)=>{
 
 
 
-
+// stock checking
 const checkStock = async (req, res) => {
     try {
         const { productId } = req.params;

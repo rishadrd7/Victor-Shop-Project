@@ -41,6 +41,7 @@ router.post("/otpVerify",userController.verifyOTP);
 router.get('/resendOtp', userController.loadResendOtp);
 router.get('/contact',userAuth.user,userAuth.isBlocked,userController.contactPage)
 router.get('/about',userAuth.user,userAuth.isBlocked,userController.aboutPage)
+// router.get('*' ,userController.pageNotFount)
 
 
 //==========================views/pages===================================================================
@@ -59,7 +60,8 @@ router.post('/checkout/edit-address', userController.editCheckoutAddress);
 router.post('/checkout/add-address',userController.addCheckoutAddress);
 router.post('/place-order', userController.placeOrder);
 router.post('/verify-razo',userController.verifyRazo);
-router.get('/checkout/payment',userAuth.user,userAuth.isBlocked,userController.failureRazo);
+router.get('/checkout/paymentFailed',userAuth.user,userAuth.isBlocked,userController.failureRazo);
+
 
 router.get('/profile/myorders',userAuth.user,userAuth.isBlocked,userController.orderPage);
 router.get('/profile/myorders/orderDetails/:orderId',userAuth.user,userAuth.isBlocked,userController.orderDetails);

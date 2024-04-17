@@ -80,13 +80,13 @@ const wishlistPage = async (req, res) => {
 };
 
 
-const wishlistCount = async (req,res)=>{
+const wishlistCount = async (req,res)=>{ 
   try {
       if(req.session.user){
        
         const findItem = await Wishlist.findOne({userId:req.session.user})
        
-        const count = findItem.products.length
+        const count = findItem.products?.length
   
         // console.log(count , 'wishlistCount');
         res.send({success:count})
@@ -95,7 +95,7 @@ const wishlistCount = async (req,res)=>{
       }
       // const count = await 
     } catch (error) {
-      console.log(error.message + 'wishlistcount')
+      console.log(error.message + 'wishlistount')
     }
 }
 

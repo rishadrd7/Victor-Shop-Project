@@ -110,8 +110,9 @@
 																value="<%= product.quantity %>" min="1"
 																max="<%= product.productId.quantity %>" step="1"
 																data-decimals="0" onkeydown="return false" required
-																onchange="updateTotalPrice(this,'<%= product.productId._id %>')">
+																onchange="updateTotalPrice(this,'<%= product.productId._id %>','<%= product.productId.quantity %>');"oninput="stock(this , '<%= product.productId.quantity %>')">
 														</div>
+														<input id="maxStock<%= product.productId.quantity %>" value="<%= product.productId.quantity %>" hidden>
 													</td>
 													
 													
@@ -262,11 +263,13 @@
 
 
 <script>
-	function updateCartQuantity(productId) {
+	function updateCartQuantity(productId,i,s) {
 		const quantity = $('#quantity_' + productId).val();
 		const maxQuantity = parseInt($('#quantity_' + productId).attr('max')) || 0;
 		const priceQuantity = parseFloat($('#offerPrice_' + productId).text().replace('₹', ''))
 		const totalPrice = priceQuantity * quantity;
+
+	
 	
 		// Check stock before updating
 		$.ajax({
@@ -309,21 +312,41 @@
 		});
 	}
 
-	function showAlert(icon, title, message) {
-		Swal.fire({
-			icon: icon,
-			title: title,
-			text: message,
-			toast: true,
-			position: 'bottom-start',
-			showConfirmButton: false,
-			timer: 3000,
-			timerProgressBar: true,
-		});
-	}
+	// function showAlert(icon, title, message) {
+	// 	Swal.fire({
+	// 		icon: icon,
+	// 		title: title,
+	// 		text: message,
+	// 		toast: true,
+	// 		position: 'bottom-start',
+	// 		showConfirmButton: false,
+	// 		timer: 3000,
+	// 		timerProgressBar: true,
+	// 	});
+	// }
 </script>
 
 
+<!-- quanity stock -->
+<script>
+	function stock(max,i){
+		maxStock = document.getElementById(`maxStock${i}`).value
+		console.log(maxStock , ' ssssssssssss');
+		if(maxStock==max.value){
+			Swal.fire({
+				title:'Available Stock Limit',
+				icon:'warning',
+				toast: true,
+				position: 'bottom-start',
+				showConfirmButton: false,
+				timer: 3000,
+				timerProgressBar: true,
+				
+			})
+		}
+		
+	}
+</script>
 	
 
 

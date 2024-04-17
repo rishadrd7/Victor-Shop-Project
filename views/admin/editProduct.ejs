@@ -102,17 +102,17 @@ button[type="submit"]:hover {
             </div>
 
             <div class="form-group">
-              <label for="image">Image:</label>
-              <input type="file" id="image" name="image" multiple class="form-control-file">
+              <!-- <label for="image">Image:</label> -->
+              <!-- <input type="file" id="image" name="image" multiple class="form-control-file"> -->
               <% product.image.forEach(image => { %>
                 <img src="/uploads/<%= image %>" alt="Product Image" style="width: 50px; height: 50px;">
                 <% }); %>
               </div>
               
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="editImage">Edit Image:</label>
                 <input type="file" id="editImage" name="editImage" multiple class="form-control-file">
-            </div>
+            </div> -->
             
             <!-- <div class="form-group">
                 <label for="editImage">Edited Images:</label><br>
@@ -123,7 +123,7 @@ button[type="submit"]:hover {
 
             <div class="form-group">
               <label for="description">Description:</label>
-              <textarea id="description" name="description" rows="4" class="form-control" value="<%= product.description %>" required></textarea>
+              <input id="description" name="description" rows="4" class="form-control" value="<%= product.description %>" required></input>
             </div>
 
         
@@ -166,7 +166,7 @@ button[type="submit"]:hover {
       var price = document.getElementById("price").value.trim();
       var offerPrice = document.getElementById("offerPrice").value.trim();
       var quantity = document.getElementById("quantity").value.trim();
-      // var description = document.getElementById("description").value.trim();
+      var description = document.getElementById("description");
 
       // Regular expression to check for negative numbers
       var negativeRegex = /^-?\d*\.?\d+$/;
