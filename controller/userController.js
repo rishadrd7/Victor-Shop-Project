@@ -151,13 +151,15 @@ const verifyLogin = async (req, res) => {
     const userData = await User.findOne({ email: email });
     console.log(userData);
 
-    if (userData.is_blocked) {
-      req.flash('message', 'Account is blocked');
-      return res.redirect('/login');
-    }
+   
 
     if (userData) {
       const passwordMatch = await bcrypt.compare(req.body.password, userData.password);
+
+       if (userData.is_blocked) {
+      req.flash('message', 'Account is blocked');
+      return res.redirect('/login');
+    }
 
       if (passwordMatch) {
         req.session.user = userData._id;
@@ -1258,6 +1260,30 @@ const placeOrder = async (req, res) => {
      const { userId, address, paymentMethod, totalAmount } = req.body;
      console.log(userId, address, paymentMethod);
      console.log(totalAmount, "diss");
+
+       // Check if payment method is 'wallet'
+       if (paymentMethod === 'wallet') {
+        // Find the user's wallet
+        const userWallet = await Wallet.findOne({ userId: userId });
+      
+        if (!userWallet) {
+          return res.status(400).json({ status: false, message: "Wallet not found for the user." });
+        }
+  
+        // Check if wallet balance is sufficient
+        if (userWallet.balance < totalAmount) {
+          return res.status(400).json({ status: false, message: "Insufficient balance in wallet." });
+        }
+ 
+        // Deduct the order amount from the wallet balance
+        userWallet.balance -= totalAmount;
+        userWallet.transactions.push({
+          type: 'debit',
+          reason: 'purchased product',
+          transactionAmount: totalAmount
+        });
+        await userWallet.save();
+      }
  
      const ad = await Address.findOne({ userId: req.session.user, _id: address });
      const cart = await Cart.findOne({ userId: req.session.user });
@@ -1293,9 +1319,8 @@ const placeOrder = async (req, res) => {
        userId,
        orderUserDetails: data,
        products: cart.products,
-       paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'online', 
+       paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'wallet' ? 'wallet' :'online' ,
        paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
-      //  paymentStatus: paymentMethod === 'wallet' ? 'wallet' : "pending",
        totalAmount
      });
  
@@ -1339,11 +1364,12 @@ const placeOrder = async (req, res) => {
  };
  
 
+
 //verify razorpay
 const verifyRazo = async (req, res) => {
   try {
     const { order_id, razorpay_payment_id, razorpay_signature, receipt } = req.body;
-    console.log( order_id, razorpay_payment_id, razorpay_signature,  receipt, "aaaa");
+    console.log( order_id, razorpay_payment_id, razorpay_signature,  receipt, "retry payment");
     const secret = "KXgNwcsIDb4x4y9MJCHmHtaG";
 
     const crypto = require("crypto");
@@ -1351,7 +1377,7 @@ const verifyRazo = async (req, res) => {
 
     hmac.update(order_id + "|" + razorpay_payment_id);
     let generatedSignature = hmac.digest('hex');
-    console.log(generatedSignature , "bbbb"); 
+    console.log(generatedSignature , "generateddddddddd"); 
      
     let isSignatureValid = generatedSignature == razorpay_signature;
 
@@ -1360,7 +1386,7 @@ const verifyRazo = async (req, res) => {
       console.log("Payment verified successfully");
 
       const  razoreceipt = await Order.findByIdAndUpdate({_id: receipt},{paymentStatus : "paid"});
-      console.log(razoreceipt , "dddd");
+      console.log(razoreceipt , "recccccccc");
 
 
       res.status(200).json({
@@ -1403,17 +1429,18 @@ const failureRazo = async (req,res)=>{
 
 
  //retry payment Razorpay
- const retryRazo=async(req,res)=>{
+ const retryRazo = async (req, res) => {
   try {
-    
-    const {orderid}=req.body
- 
-    const details=await Order.findOne({userId:req.session.user,_id:orderid})
-      res.json({details:details})
+    const { orderid } = req.body;
+    const details = await Order.findOne({ userId: req.session.user, _id: orderid });
+    res.json({ details: details });
   } catch (error) {
-    
+    // Handle error
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while retrying Razorpay payment" });
   }
-}
+};
+
 
 
 const updateStatus=async(req,res)=>{
@@ -1490,11 +1517,28 @@ const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
-    // Find the order by ID
+
     const order = await Order.findById(orderId);
 
     if (!order) {
       return res.status(404).send('Order not found');
+    }
+
+    if (order.paymentMethod === 'wallet') {
+      const userWallet = await Wallet.findOne({ userId: order.userId });
+
+      if (!userWallet) {
+        return res.status(400).json({ status: false, message: "Wallet not found for the user." });
+      }
+
+      // Refund the amount back to the user's wallet
+      userWallet.balance += order.totalAmount;
+      userWallet.transactions.push({
+        type: 'credit',
+        reason: 'refund',
+        transactionAmount: order.totalAmount
+      });
+      await userWallet.save();
     }
 
     // Iterate through the products in the order
@@ -1502,7 +1546,6 @@ const cancelOrder = async (req, res) => {
       const productId = product.productId;
       const quantity = product.quantity;
 
-      console.log("stock re-added");
       // Increment the product stock by the cancelled quantity
       await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
     }
@@ -1520,6 +1563,7 @@ const cancelOrder = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
 
 
 

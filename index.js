@@ -62,7 +62,7 @@ app.use('/',userRoutes);
 app.use('/admin',adminRoute);
 //400 page
 app.use('*', (req,res)=>{
-  res.render('users/400Page')
+  res.render('users/404Page')
 })
 
 
