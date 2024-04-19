@@ -557,163 +557,162 @@ label{
 
 
 	<!-- order place function -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
- const orderForm = document.getElementById("orderForm");
-
- orderForm.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent default form submission
-
-    const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked');
-    const address = document.querySelector('input[name="selectedAddress"]:checked');
-
-    if (!selectedPaymentMethod.value) {
-      Swal.fire("Error", "Please select a payment method.", "error");
-      return;
-    }
-
-	if (!address) {
-      Swal.fire("Error", "Please select an address.", "error");
-      return;
-    }
-
-    console.log(document.getElementById("totalPrice").innerText);
-    const totalAmount = Number(document.getElementById("totalPrice").innerText);
-    const formData = {
-      userId: "<%= userData._id %>",
-      address: address.value,
-      paymentMethod: selectedPaymentMethod.value,
-      totalAmount: totalAmount
-    };
-
-    // Check if totalAmount is above 1000 and if COD is selected, show an error
-    if (totalAmount > 1000 && selectedPaymentMethod.value === 'cod') {
-      Swal.fire("Error", "Orders with a total amount above 1000 Rs cannot choose Cash on Delivery.", "error");
-      return;
-    }
-
-	axios.post("/place-order", formData, {
-    headers: {
-        "Content-Type": "application/json",
-    }
-})
-.then((response) => {
-	let data = response.data
-    console.log(response.data, 'araaaaaaaaa');
-    if (!response.data.status) {
-        Swal.fire({
-			title : " Balance Unavailable",
-			icon : "warning",
-
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+		 const orderForm = document.getElementById("orderForm");
+		
+		 orderForm.addEventListener("submit", function (event) {
+			event.preventDefault(); // Prevent default form submission
+		
+			const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked');
+			const address = document.querySelector('input[name="selectedAddress"]:checked');
+		
+			if (!selectedPaymentMethod.value) {
+			  Swal.fire("Error", "Please select a payment method.", "error");
+			  return;
+			}
+		
+			if (!address) {
+			  Swal.fire("Error", "Please select an address.", "error");
+			  return;
+			}
+		
+			console.log(document.getElementById("totalPrice").innerText);
+			const totalAmount = Number(document.getElementById("totalPrice").innerText);
+			const formData = {
+			  userId: "<%= userData._id %>",
+			  address: address.value,
+			  paymentMethod: selectedPaymentMethod.value,
+			  totalAmount: totalAmount
+			};
+		
+			// Check if totalAmount is above 1000 and if COD is selected, show an error
+			if (totalAmount > 1000 && selectedPaymentMethod.value === 'cod') {
+			  Swal.fire("Error", "Orders with a total amount above 1000 Rs cannot choose Cash on Delivery.", "error");
+			  return;
+			}
+		
+			axios.post("/place-order", formData, {
+			headers: {
+				"Content-Type": "application/json",
+			}
 		})
-    }
-    // Handle successful response
-    console.log(response.data);
-
-
-   
-      console.log(data);
-	  if(selectedPaymentMethod.value !== 'online'){
-
-      Swal.fire({
-        icon: "success",
-        title: "Order Placed Successfully!",
-        text: "Thank you for your order.",
-        showConfirmButton: true,
-      }).then((result) => {
-       
-        if (result.isConfirmed) {
-          window.location.href = "/profile/myorders"; // Adjust the URL as necessary
-        }
-      });
-	}
-      if (selectedPaymentMethod.value === 'online') {
-        // Initialize Razorpay payment
-        var options = {
-          "key": "rzp_test_2gWPLmDC73KBec", 
-          "amount": totalAmount * 100, 
-          "currency": "INR",
-          "name": "Victor Shop",
-          "description": "Test Transaction",
-          "image": "/user/assets/images/new/Victor-Logo.png",
-          "order_id": data.id,
-          "handler": function (response) {
-            console.log(response);
-            fetch('/verify-razo', {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                receipt: data.receipt,
-                order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              })
-            })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Failed to verify payment");
-              }
-              return response.json();
-            })
-            .then((data) => {
-              console.log(data.message); 
-              const orderId = data.orderId;
-              const paidAmount = data.totalAmount;
-
-              // Display SweetAlert with order ID and paid amount
-              Swal.fire({
-                title: "Payment Verified",
-                text: `Your payment has been successfully verified.\nOrder ID: ${orderId}\nPaid Amount: ${paidAmount}`,
-                icon: "success",
-                showConfirmButton: true,
-              }).then((result) => {
-                // Redirect to the "My Orders" page when the user clicks the "OK" button
-                if (result.isConfirmed) {
-                 window.location.href = "/profile/myorders"; // Adjust the URL as necessary
-                }
-              });
-            })
-            .catch((error) => {
-              console.error(error.message);
-              Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
-            });
-          },
-          "prefill": {
-              "name": "Gaurav Kumar",
-              "email": "gaurav.kumar@example.com",
-              "contact": "9999999999"
-          },
-          "notes": {
-              "address": "Razorpay Corporate Office"
-          },
-          "theme": {
-              "color": "#F37254"
-          }
-        };
-        var rzp1 = new Razorpay(options);
-		rzp1.on('payment.failed' , function (){
-			window.location.href='/checkout/paymentFailed'
-		})
-        rzp1.open();
-      } else {
-        // Handle other payment methods
-      }
-    })
-    .catch((error) => {
-      console.error(error.message);
-	  console.log(error);
-      Swal.fire({
-			title : error.response.data.message,
-			icon : "warning",
-			
-		})
-    });
- });
-});
-</script>
-
+		.then((response) => {
+			let data = response.data
+			console.log(response.data, 'araaaaaaaaa');
+			if (!response.data.status) {
+				Swal.fire({
+					title : " Balance Unavailable",
+					icon : "warning",
+		
+				})
+			}
+			// Handle successful response
+			console.log(response.data);
+		
+		
+		   
+			  console.log(data);
+			  if(selectedPaymentMethod.value !== 'online'){
+		
+			  Swal.fire({
+				icon: "success",
+				title: "Order Placed Successfully!",
+				text: "Thank you for your order.",
+				showConfirmButton: true,
+			  }).then((result) => {
+			   
+				if (result.isConfirmed) {
+				  window.location.href = "/profile/myorders"; // Adjust the URL as necessary
+				}
+			  });
+			}
+			  if (selectedPaymentMethod.value === 'online') {
+				// Initialize Razorpay payment
+				var options = {
+				  "key": "rzp_test_2gWPLmDC73KBec", 
+				  "amount": totalAmount * 100, 
+				  "currency": "INR",
+				  "name": "Victor Shop",
+				  "description": "Test Transaction",
+				  "image": "/user/assets/images/new/Victor-Logo.png",
+				  "order_id": data.id,
+				  "handler": function (response) {
+					console.log(response);
+					fetch('/verify-razo', {
+					  method: "POST",
+					  headers: {
+						"Content-Type": "application/json"
+					  },
+					  body: JSON.stringify({
+						receipt: data.receipt,
+						order_id: response.razorpay_order_id,
+						razorpay_payment_id: response.razorpay_payment_id,
+						razorpay_signature: response.razorpay_signature
+					  })
+					})
+					.then((response) => {
+					  if (!response.ok) {
+						throw new Error("Failed to verify payment");
+					  }
+					  return response.json();
+					})
+					.then((data) => {
+					  console.log(data.message); 
+					  const orderId = data.orderId;
+					  const paidAmount = data.totalAmount;
+		
+					  // Display SweetAlert with order ID and paid amount
+					  Swal.fire({
+						title: "Payment Verified",
+						text: `Your payment has been successfully verified.\nOrder ID: ${orderId}\nPaid Amount: ${paidAmount}`,
+						icon: "success",
+						showConfirmButton: true,
+					  }).then((result) => {
+						// Redirect to the "My Orders" page when the user clicks the "OK" button
+						if (result.isConfirmed) {
+						 window.location.href = "/profile/myorders"; // Adjust the URL as necessary
+						}
+					  });
+					})
+					.catch((error) => {
+					  console.error(error.message);
+					  Swal.fire("Error", "An error occurred while verifying payment. Please try again later.", "error");
+					});
+				  },
+				  "prefill": {
+					  "name": "Gaurav Kumar",
+					  "email": "gaurav.kumar@example.com",
+					  "contact": "9999999999"
+				  },
+				  "notes": {
+					  "address": "Razorpay Corporate Office"
+				  },
+				  "theme": {
+					  "color": "#F37254"
+				  }
+				};
+				var rzp1 = new Razorpay(options);
+				rzp1.on('payment.failed' , function (){
+					window.location.href='/checkout/paymentFailed'
+				})
+				rzp1.open();
+			  } else {
+				// Handle other payment methods
+			  }
+			})
+			.catch((error) => {
+			  console.error(error.message);
+			  console.log(error);
+			  Swal.fire({
+					title : error.response.data.message,
+					icon : "warning",
+					
+				})
+			});
+		 });
+		});
+		</script>
 
 
 

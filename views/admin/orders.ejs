@@ -41,8 +41,8 @@
                                 <tr>
                                     <td><%= index + 1 %></td>
                                     <td><%= order._id %></td>
-                                    <td ><%= order.userId.name %></td>
-                                    <td><%= order.userId.email %></td>
+                                    <td ><%= order.userId?.name %></td>
+                                    <td><%= order.userId?.email %></td>
                                     <td><%= order.orderDate.toString().split(' ').slice(0, 4).join(' ') %></td>
                                     <td><%= order.paymentMethod %></td>
                                     <% order.products.forEach(product => { %>

@@ -77,9 +77,9 @@ passport.deserializeUser(function (obj, cb) {
 });
 
 passport.use(new FacebookStrategy({
-  clientID: config.facebookAuth.CliendID,
-  clientSecret: config.facebookAuth.CliendSecret,
-  callbackURL: config.facebookAuth.callbackURL
+  clientID: process.env.FACEBOOK_AUTH__CLIENT_ID,
+  clientSecret: process.env.FACEBOOK_AUTH__CLIENT_SECRET,
+  callbackURL: process.env.FACEBOOK_AUTH__CALLBACK_URL
 }, function (accessToken, refreshToken, profile, done) {
   return done(null, profile);
 }
@@ -596,7 +596,7 @@ const verifyOTP = async (req, res) => {
 
           req.session.otp = undefined;    //  Deleting The otp after login user
 
-          req.session.user = userSessionData; //  Save User Data in Session (Orginal)
+          req.session.user = userSessionData._id; //  Save User Data in Session (Orginal)
 
           await User.findByIdAndUpdate({ _id: userSessionData._id }, { $set: { is_verified: true } });
 
@@ -1464,6 +1464,7 @@ const orderPage = async (req, res) => {
   try {
     const userData = await User.findOne({ _id: req.session.user });
     // const orders = await Order.find({ userId: req.session.user }).populate('products.productId').sort({ orderDate: 1 });
+    console.log(req.session.user , 'sss');
     const orderlist = await Order.aggregate([
       {
         $match: {
@@ -1517,7 +1518,6 @@ const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
-
     const order = await Order.findById(orderId);
 
     if (!order) {
@@ -1532,6 +1532,21 @@ const cancelOrder = async (req, res) => {
       }
 
       // Refund the amount back to the user's wallet
+      userWallet.balance += order.totalAmount;
+      userWallet.transactions.push({
+        type: 'credit',
+        reason: 'refund',
+        transactionAmount: order.totalAmount
+      });
+      await userWallet.save();
+    } else if (order.paymentMethod === 'online') { // Check if payment method is 'online'
+      // Credit the amount back to the user's wallet if payment method is 'online'
+      const userWallet = await Wallet.findOne({ userId: order.userId });
+
+      if (!userWallet) {
+        return res.status(400).json({ status: false, message: "Wallet not found for the user." });
+      }
+
       userWallet.balance += order.totalAmount;
       userWallet.transactions.push({
         type: 'credit',
@@ -1563,6 +1578,7 @@ const cancelOrder = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
 
 
 

@@ -12,7 +12,7 @@ require('dotenv').config();
 const app=express();
 
 //connect to MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/Victor");
+mongoose.connect(process.env.mongoUrl);
 
 
 //set up flach and nocache
