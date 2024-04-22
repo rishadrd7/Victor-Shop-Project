@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema({
             default: 'Pending'
 
         },
-        priceAtOrder: {
+        orderPrice: {
             type: Number // Store the price at the time of ordering
         }
     }],

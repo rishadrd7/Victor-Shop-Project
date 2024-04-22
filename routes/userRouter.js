@@ -11,7 +11,7 @@ const walletController=require('../controller/walletController');
 const userAuth = require("../middleware/userAuth");
 require('dotenv').config();
 const passport = require("passport");
-require('../passport');
+// require('../passport');
 
 
 //session

@@ -1,7 +1,6 @@
 const mongoose=require("mongoose");
 const express=require("express");
 const session = require("express-session");
-const passport= require("passport");
 const nocache = require('nocache');
 const flash = require('express-flash');
 const path=require("path");
@@ -81,6 +80,6 @@ app.get("/",(req,res)=>{
 
 //============================================PORT=============================================================
 
-app.listen(3000,()=>{
+app.listen(process.env.PORT,()=>{
     console.log("http://localhost:3000    http://localhost:3000/admin/login");
 })
