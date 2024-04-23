@@ -79,7 +79,7 @@ app.get("/",(req,res)=>{
 // });
 
 //============================================PORT=============================================================
-
-app.listen(process.env.PORT,()=>{
-    console.log("http://localhost:3000    http://localhost:3000/admin/login");
+const PORT=process.env.PORT || 3000
+app.listen(PORT,()=>{
+    console.log(`http://localhost:${PORT}    http://localhost:${PORT}/admin/login`);
 })
