@@ -1432,14 +1432,19 @@ const failureRazo = async (req,res)=>{
  const retryRazo = async (req, res) => {
   try {
     const { orderid } = req.body;
-    const details = await Order.findOne({ userId: req.session.user, _id: orderid });
-    res.json({ details: details });
+    const details = await Order.findOneAndUpdate(
+      { userId: req.session.user, _id: orderid },
+      { paymentStatus: "paid" }, // Update payment status to "paid"
+      { new: true }
+    );
+    res.json({ details });
   } catch (error) {
     // Handle error
     console.error(error);
     res.status(500).json({ error: "An error occurred while retrying Razorpay payment" });
   }
 };
+
 
 
 
@@ -1517,7 +1522,6 @@ const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
 
-
     const order = await Order.findById(orderId);
 
     if (!order) {
@@ -1532,6 +1536,28 @@ const cancelOrder = async (req, res) => {
       }
 
       // Refund the amount back to the user's wallet
+      userWallet.balance += order.totalAmount;
+      userWallet.transactions.push({
+        type: 'credit',
+        reason: 'refund',
+        transactionAmount: order.totalAmount
+      });
+      await userWallet.save();
+    } else if (order.paymentMethod === 'online') {
+      // Refund the amount if paymentMethod is 'online'
+
+      // Perform the refund process here
+
+      // For now, let's assume the refund process is successful
+      // and the amount is refunded back to the user's wallet
+
+      const userWallet = await Wallet.findOne({ userId: order.userId });
+
+      if (!userWallet) {
+        return res.status(400).json({ status: false, message: "Wallet not found for the user." });
+      }
+
+      // Add refunded amount back to the user's wallet
       userWallet.balance += order.totalAmount;
       userWallet.transactions.push({
         type: 'credit',
@@ -1563,6 +1589,7 @@ const cancelOrder = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
 
 
 
