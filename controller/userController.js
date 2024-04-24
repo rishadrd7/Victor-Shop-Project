@@ -471,7 +471,7 @@ const otpPage = async (req, res) => {
     const invalidOtp = req.flash('flash')
     const tokkken = req.query.token || null;
 
-    console.log(invalidOtp);
+    // console.log(invalidOtp);
 
     res.render("users/otppage", { queryEmail, tokkken, msg: invalidOtp, otpMsg: "invalidOtp" });
 
@@ -552,7 +552,7 @@ const verifyOTP = async (req, res) => {
     const getQueryEMail = req.body.email;
     const getToken = req.body.token;
 
-    console.log(getToken);
+    // console.log(getToken);
 
 
     const bodyOtp = req.body.inp1 + req.body.inp2 + req.body.inp3 + req.body.inp4;
@@ -600,8 +600,8 @@ const verifyOTP = async (req, res) => {
 
           await User.findByIdAndUpdate({ _id: userSessionData._id }, { $set: { is_verified: true } });
 
-          req.flash("flash", "Verified Successfully");    //  Sweet Alert
-          res.redirect('/home');
+          // req.flash("flash", "Verified Successfully");    //  Sweet Alert
+          res.redirect('/login');
 
         }
 
@@ -1467,7 +1467,7 @@ const orderPage = async (req, res) => {
     const orderlist = await Order.aggregate([
       {
         $match: {
-          userId: new ObjectId(req.session.user._id)
+          userId: new ObjectId(req.session.user)
         }
       },
       {
@@ -1483,10 +1483,10 @@ const orderPage = async (req, res) => {
       },
       { $unwind: '$productDetail' }
     ]
-    )
+  )
     // console.log(orderlist);
-
-    res.render('pages/ordersPage', { userData, orderlist });
+    
+    res.render('pages/ordersPage', { userData, orderlist});
   } catch (error) {
     console.error(error);
   }

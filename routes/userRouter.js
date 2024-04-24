@@ -25,9 +25,9 @@ router.use(session({
 //================================userController====================================================
 
 router.get("/",userAuth.loginTrue,userController.loadHome);
-router.get("/login",userAuth.loginTrue,userController.loginPage);
+router.get("/login",userController.loginPage);
 router.post("/login",userController.verifyLogin);
-router.get("/registration",userAuth.loginTrue,userController.signUp);
+router.get("/registration",userController.signUp);
 router.post("/registration",userController.insertUser);
 router.get('/home',userAuth.user,userController.home);
 router.post('/logout',userController.logoutHome);

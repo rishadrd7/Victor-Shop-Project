@@ -65,10 +65,10 @@ textarea.form-control {
 
   <div class="order-container">
     <div class="order-list">
-      
-  <% if (orderlist.length > 0) { %>
-    <% orderlist.slice().reverse().forEach(order => { %>
-      
+
+      <% if (orderlist.length > 0) { %>
+        <% orderlist.slice().reverse().forEach(order => { %>
+          
       <ul class="product-list">
               <li class="product-item">
                 <div class="product-container">
@@ -78,6 +78,7 @@ textarea.form-control {
                     <div class="media col-2 " style="width: 300px;">
                     <img style="width: 100px; height: 100px;" src="/uploads/<%= order.productDetail.image[0] %>" class="mr-3 order-image" alt="<%= order.productDetail.name %>">
                   </div>
+                  
                     <div class="media-body" style="width: 33%; flex: none;">
                       <h5 class="mt-0"><%= order.productDetail.name %></h5>
                       <p  style="font-weight: 500;">₹<%= order.totalAmount %></p>

@@ -12,6 +12,7 @@ const cartPage = async (req, res) => {
         const carts = await Cart.find().populate('products.productId');
         let listedProductsExist = false;
         let unavailableProducts = [];
+        let outOfStockProducts = [];
 
         for (const cart of carts) {
             for (const product of cart.products) {
@@ -23,7 +24,9 @@ const cartPage = async (req, res) => {
         }
 
         let errorMessage = '';
-        if (listedProductsExist) {
+        if (outOfStockProducts.length > 0) {
+            errorMessage = `The following products in your cart are out of stock and cannot be proceeded to checkout: ${outOfStockProducts.join(', ')}`;
+        } else if (listedProductsExist) {
             errorMessage = `The following products in your cart are listed and no longer available: ${unavailableProducts.join(', ')}`;
         }
 
