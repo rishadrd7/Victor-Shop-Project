@@ -19,7 +19,8 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const config = require("../config/config");
 require('dotenv').config();
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require('mongodb');
+const { type } = require("os");
 
 
 //google
@@ -151,15 +152,15 @@ const verifyLogin = async (req, res) => {
     const userData = await User.findOne({ email: email });
     console.log(userData);
 
-   
+
 
     if (userData) {
       const passwordMatch = await bcrypt.compare(req.body.password, userData.password);
 
-       if (userData.is_blocked) {
-      req.flash('message', 'Account is blocked');
-      return res.redirect('/login');
-    }
+      if (userData.is_blocked) {
+        req.flash('message', 'Account is blocked');
+        return res.redirect('/login');
+      }
 
       if (passwordMatch) {
         req.session.user = userData._id;
@@ -689,234 +690,234 @@ const shopPage = async (req, res) => {
     console.log(selectedCategory, 'Category Selected');
 
     const sortBy = req.query.sortby || 'popularity';
-  
-    console.log(sortBy ,'next' ,selectedCategory);
+
+    console.log(sortBy, 'next', selectedCategory);
 
     let pipeline;
 
     //LowToHigh
     switch (sortBy) {
       case 'lowToHigh':
-         pipeline = [
+        pipeline = [
           {
-              $match: {
-                  status: false,
-                  quantity: { $gte: 0 },
-                  // ...categoryMatch
-              }
+            $match: {
+              status: false,
+              quantity: { $gte: 0 },
+              // ...categoryMatch
+            }
           },
           {
-              $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categorys"
-              }
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "categorys"
+            }
           },
           {
-              $unwind: "$categorys"
+            $unwind: "$categorys"
           }
-      ];
+        ];
 
-      if (selectedCategory) {
-        
-        console.log(selectedCategory);
+        if (selectedCategory) {
+
+          console.log(selectedCategory);
           pipeline.push({
-              $match: {
-                  "category.name": selectedCategory,
-                  "category.listed": true
-              }
+            $match: {
+              "category.name": selectedCategory,
+              "category.listed": true
+            }
           });
-      }
-      
-      pipeline.push({ $sort: { offerPrice: 1 } });
-      
-      break;
-     
+        }
+
+        pipeline.push({ $sort: { offerPrice: 1 } });
+
+        break;
+
       //HighToLow
       case 'highToLow':
-         pipeline = [
+        pipeline = [
           {
-              $match: {
-                  status: false,
-                  quantity: { $gte: 0 },
-                  // ...categoryMatch
-              }
+            $match: {
+              status: false,
+              quantity: { $gte: 0 },
+              // ...categoryMatch
+            }
           },
           {
-              $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categorys"
-              }
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "categorys"
+            }
           },
           {
-              $unwind: "$categorys"
+            $unwind: "$categorys"
           }
-      ];
-      
-      if (selectedCategory) {
+        ];
+
+        if (selectedCategory) {
           pipeline.push({
-              $match: {
-                  "category.name": selectedCategory,
-                  "category.listed": true
-              }
+            $match: {
+              "category.name": selectedCategory,
+              "category.listed": true
+            }
           });
-      }
-      
-      pipeline.push({ $sort: { offerPrice: -1 } });
-      
-      break;
+        }
+
+        pipeline.push({ $sort: { offerPrice: -1 } });
+
+        break;
 
       //Aa-Zz
       case 'alphabetical':
-         pipeline = [
+        pipeline = [
           {
-              $match: {
-                  status: false,
-                  quantity: { $gte: 0 },
-                  // ...categoryMatch
-              }
+            $match: {
+              status: false,
+              quantity: { $gte: 0 },
+              // ...categoryMatch
+            }
           },
           {
-              $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categorys"
-              }
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "categorys"
+            }
           },
           {
-              $unwind: "$categorys"
+            $unwind: "$categorys"
           }
-      ];
-      
-      if (selectedCategory) {
+        ];
+
+        if (selectedCategory) {
           pipeline.push({
-              $match: {
-                  "category.name": selectedCategory,
-                  "category.listed": true
-              }
+            $match: {
+              "category.name": selectedCategory,
+              "category.listed": true
+            }
           });
-      }
-      
-      pipeline.push({ $sort: { name: 1 } });
-      
-      break;
-      
+        }
+
+        pipeline.push({ $sort: { name: 1 } });
+
+        break;
+
       //Zz-Aa
       case 'analphabetic':
-         pipeline = [
+        pipeline = [
           {
-              $match: {
-                  status: false,
-                  quantity: { $gte: 0 },
-                  // ...categoryMatch
-              }
+            $match: {
+              status: false,
+              quantity: { $gte: 0 },
+              // ...categoryMatch
+            }
           },
           {
-              $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categorys"
-              }
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "categorys"
+            }
           },
           {
-              $unwind: "$categorys"
+            $unwind: "$categorys"
           }
-      ];
-      
-      if (selectedCategory) {
+        ];
+
+        if (selectedCategory) {
           pipeline.push({
-              $match: {
-                  "category.name": selectedCategory,
-                  "category.listed": true
-              }
+            $match: {
+              "category.name": selectedCategory,
+              "category.listed": true
+            }
           });
-      }
-      
-      pipeline.push({ $sort: { name: -1 } });
-      
-      break;
+        }
+
+        pipeline.push({ $sort: { name: -1 } });
+
+        break;
 
       //Latest Products
       case 'latest':
-         pipeline = [
-          {
-              $match: {
-                  status: false,
-                  quantity: { $gte: 0 },
-                  // ...categoryMatch
-              }
-          },
-          {
-              $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categorys"
-              }
-          },
-          {
-              $unwind: "$categorys"
-          }
-      ];
-      
-      if (selectedCategory) {
-          pipeline.push({
-              $match: {
-                  "category.name": selectedCategory,
-                  "category.listed": true
-              }
-          });
-      }
-      
-      pipeline.push({ $sort: { _id: -1 } });
-      
-      break;
-      
-      default:
-
-      //Category Select
         pipeline = [
           {
-              $match: {
-                  status: false,
-                  quantity: { $gte: 0 },
-                  // ...categoryMatch
-              }
+            $match: {
+              status: false,
+              quantity: { $gte: 0 },
+              // ...categoryMatch
+            }
           },
           {
-              $lookup: {
-                  from: "categories",
-                  localField: "category",
-                  foreignField: "_id",
-                  as: "categorys"
-              }
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "categorys"
+            }
           },
-          {  
-              $unwind: "$categorys"
+          {
+            $unwind: "$categorys"
           }
-      ];
-      
-      if (selectedCategory) {
-        console.log("Category Selected")
+        ];
+
+        if (selectedCategory) {
           pipeline.push({
-              $match: {
-                  "categorys.name": selectedCategory,
-                  "categorys.listed": false,
-              }
+            $match: {
+              "category.name": selectedCategory,
+              "category.listed": true
+            }
           });
-      }
+        }
+
+        pipeline.push({ $sort: { _id: -1 } });
+
+        break;
+
+      default:
+
+        //Category Select
+        pipeline = [
+          {
+            $match: {
+              status: false,
+              quantity: { $gte: 0 },
+              // ...categoryMatch
+            }
+          },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "categorys"
+            }
+          },
+          {
+            $unwind: "$categorys"
+          }
+        ];
+
+        if (selectedCategory) {
+          console.log("Category Selected")
+          pipeline.push({
+            $match: {
+              "categorys.name": selectedCategory,
+              "categorys.listed": false,
+            }
+          });
+        }
         break;
     }
 
     const productss = await Product.aggregate(pipeline);
 
 
-    res.render('pages/shop', { categories: categories, products: productss, selectedCategory ,categoryMatch:selectedCategory })
+    res.render('pages/shop', { categories: categories, products: productss, selectedCategory, categoryMatch: selectedCategory })
   } catch (error) {
     console.log(error);
   }
@@ -942,10 +943,10 @@ const productDetails = async (req, res) => {
 //product search in shop
 const searchProducts = async (req, res) => {
   try {
-   
+
     const { q } = req.query;
 
-    
+
     const [products, categories] = await Promise.all([
       Product.find({
         $or: [
@@ -954,7 +955,7 @@ const searchProducts = async (req, res) => {
       }),
       Category.find({ name: { $regex: new RegExp(q, 'i') } })
     ]);
-   
+
     res.render('pages/shop', { products, categories });
   } catch (error) {
     console.error(error);
@@ -1257,119 +1258,119 @@ const addCheckoutAddress = async (req, res) => {
 
 const placeOrder = async (req, res) => {
   try {
-     const { userId, address, paymentMethod, totalAmount } = req.body;
-     console.log(userId, address, paymentMethod);
-     console.log(totalAmount, "diss");
+    const { userId, address, paymentMethod, totalAmount } = req.body;
+    console.log(userId, address, paymentMethod);
+    console.log(totalAmount, "diss");
 
-       // Check if payment method is 'wallet'
-       if (paymentMethod === 'wallet') {
-        // Find the user's wallet
-        const userWallet = await Wallet.findOne({ userId: userId });
-      
-        if (!userWallet) {
-          return res.status(400).json({ status: false, message: "Wallet not found for the user." });
-        }
-  
-        // Check if wallet balance is sufficient
-        if (userWallet.balance < totalAmount) {
-          return res.status(400).json({ status: false, message: "Insufficient balance in wallet." });
-        }
- 
-        // Deduct the order amount from the wallet balance
-        userWallet.balance -= totalAmount;
-        userWallet.transactions.push({
-          type: 'debit',
-          reason: 'purchased product',
-          transactionAmount: totalAmount
-        });
-        await userWallet.save();
+    // Check if payment method is 'wallet'
+    if (paymentMethod === 'wallet') {
+      // Find the user's wallet
+      const userWallet = await Wallet.findOne({ userId: userId });
+
+      if (!userWallet) {
+        return res.status(400).json({ status: false, message: "Insufficient balance in wallet." });
       }
- 
-     const ad = await Address.findOne({ userId: req.session.user, _id: address });
-     const cart = await Cart.findOne({ userId: req.session.user });
-     console.log('this : ' + ad);
- 
-     const data = {
-       name: ad.name,
-       phone: ad.phone,
-       pincode: ad.pincode,
-       locality: ad.locality,
-       streetaddress: ad.streetaddress,
-       place: ad.place,
-       country: ad.country,
-       state: ad.state,
-       landmark: ad.landmark
-     };
- 
-     // Check if totalAmount is below 1000 and if all products are above 1000 Rs
-     if (totalAmount < 1000) {
-       let allProductsAbove1000 = true;
-       for (const product of cart.products) {
-         if (product.price < 1000) {
-           allProductsAbove1000 = false;
-           break;
-         }
-       }
-       if (!allProductsAbove1000) {
-         return res.status(400).json({ status: false, message: "Orders with a total amount below 1000 Rs can only include products above 1000 Rs." });
-       }
-     }
- 
-     const newOrder = new Order({
-       userId,
-       orderUserDetails: data,
-       products: cart.products,
-       paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'wallet' ? 'wallet' :'online' ,
-       paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
-       totalAmount
-     });
- 
-     console.log(newOrder, 'dfdfddfdfedfdfdf');
- 
-     // Delete product from cart
-     await Cart.deleteOne({ userId: req.session.user });
- 
-     await newOrder.save();
-     
-     // Stock check and decrement
-     async function aa() {
-       for (const product of newOrder.products) {
-         let productId = product.productId;
-         let quantity = product.quantity; 
- 
-         const decrement = await Product.findByIdAndUpdate(productId, { $inc: { quantity: -quantity } });
-         console.log(decrement, 'ihciasheud');
-       }
-     }
-     aa();
- 
-     // Razorpay
-     if (paymentMethod === 'online') {
-       var instance = new Razorpay({ key_id: 'rzp_test_2gWPLmDC73KBec', key_secret: 'KXgNwcsIDb4x4y9MJCHmHtaG' });
- 
-       const razo = await instance.orders.create({
-         amount: totalAmount * 100,
-         currency: "INR",
-         receipt: newOrder._id,
-       });
-       console.log(razo);
-       res.json({ status: true, id: razo.id, receipt: razo.receipt, key_id: 'rzp_test_2gWPLmDC73KBec' });
-     } else {
-       res.json({ status: true });
-     }
+
+      // Check if wallet balance is sufficient
+      if (userWallet.balance < totalAmount) {
+        return res.status(400).json({ status: false, message: "Insufficient balance in wallet." });
+      }
+
+      // Deduct the order amount from the wallet balance
+      userWallet.balance -= totalAmount;
+      userWallet.transactions.push({
+        type: 'debit',
+        reason: 'purchased product',
+        transactionAmount: totalAmount
+      });
+      await userWallet.save();
+    }
+
+    const ad = await Address.findOne({ userId: req.session.user, _id: address });
+    const cart = await Cart.findOne({ userId: req.session.user });
+    console.log('this : ' + ad);
+
+    const data = {
+      name: ad.name,
+      phone: ad.phone,
+      pincode: ad.pincode,
+      locality: ad.locality,
+      streetaddress: ad.streetaddress,
+      place: ad.place,
+      country: ad.country,
+      state: ad.state,
+      landmark: ad.landmark
+    };
+
+    // Check if totalAmount is below 1000 and if all products are above 1000 Rs
+    if (totalAmount < 1000) {
+      let allProductsAbove1000 = true;
+      for (const product of cart.products) {
+        if (product.price < 1000) {
+          allProductsAbove1000 = false;
+          break;
+        }
+      }
+      if (!allProductsAbove1000) {
+        return res.status(400).json({ status: false, message: "Orders with a total amount below 1000 Rs can only include products above 1000 Rs." });
+      }
+    }
+
+    const newOrder = new Order({
+      userId,
+      orderUserDetails: data,
+      products: cart.products,
+      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'wallet' ? 'wallet' : 'online',
+      paymentStatus: paymentMethod === 'cod' ? 'cod' : "pending",
+      totalAmount
+    });
+
+    console.log(newOrder, 'dfdfddfdfedfdfdf');
+
+    // Delete product from cart
+    await Cart.deleteOne({ userId: req.session.user });
+
+    await newOrder.save();
+
+    // Stock check and decrement
+    async function aa() {
+      for (const product of newOrder.products) {
+        let productId = product.productId;
+        let quantity = product.quantity;
+
+        const decrement = await Product.findByIdAndUpdate(productId, { $inc: { quantity: -quantity } });
+        console.log(decrement, 'ihciasheud');
+      }
+    }
+    aa();
+
+    // Razorpay
+    if (paymentMethod === 'online') {
+      var instance = new Razorpay({ key_id: 'rzp_test_2gWPLmDC73KBec', key_secret: 'KXgNwcsIDb4x4y9MJCHmHtaG' });
+
+      const razo = await instance.orders.create({
+        amount: totalAmount * 100,
+        currency: "INR",
+        receipt: newOrder._id,
+      });
+      console.log(razo);
+      res.json({ status: true, id: razo.id, receipt: razo.receipt, key_id: 'rzp_test_2gWPLmDC73KBec' });
+    } else {
+      res.json({ status: true });
+    }
   } catch (error) {
-     console.error(error);
-     res.status(500).json({ status: false, message: "An error occurred while placing your order." });
+    console.error(error);
+    res.status(500).json({ status: false, message: "An error occurred while placing your order." });
   }
- };
- 
+};
+
 
 
 //verify razorpay
 const verifyRazo = async (req, res) => {
   try {
     const { order_id, razorpay_payment_id, razorpay_signature, receipt } = req.body;
-    console.log( order_id, razorpay_payment_id, razorpay_signature,  receipt, "retry payment");
+    console.log(order_id, razorpay_payment_id, razorpay_signature, receipt, "retry payment");
     const secret = "KXgNwcsIDb4x4y9MJCHmHtaG";
 
     const crypto = require("crypto");
@@ -1377,24 +1378,24 @@ const verifyRazo = async (req, res) => {
 
     hmac.update(order_id + "|" + razorpay_payment_id);
     let generatedSignature = hmac.digest('hex');
-    console.log(generatedSignature , "generateddddddddd"); 
-     
+    console.log(generatedSignature, "generateddddddddd");
+
     let isSignatureValid = generatedSignature == razorpay_signature;
 
     if (isSignatureValid) {
-      console.log(isSignatureValid , "cccc");
+      console.log(isSignatureValid, "cccc");
       console.log("Payment verified successfully");
 
-      const  razoreceipt = await Order.findByIdAndUpdate({_id: receipt},{paymentStatus : "paid"});
-      console.log(razoreceipt , "recccccccc");
+      const razoreceipt = await Order.findByIdAndUpdate({ _id: receipt }, { paymentStatus: "paid" });
+      console.log(razoreceipt, "recccccccc");
 
 
       res.status(200).json({
-         message: "Payment verified successfully",
-         orderId: order_id, // Send order ID in the response
-         totalAmount: totalAmount // Send paid amount in the response
+        message: "Payment verified successfully",
+        orderId: order_id, // Send order ID in the response
+        totalAmount: totalAmount // Send paid amount in the response
 
-     });
+      });
     } else {
       console.log("Invalid signature");
       res.status(400).json({ error: "Invalid signature" });
@@ -1407,12 +1408,12 @@ const verifyRazo = async (req, res) => {
 
 
 //razorpay failurePage
-const failureRazo = async (req,res)=>{
+const failureRazo = async (req, res) => {
   try {
     res.render('pages/failurePage')
   } catch (error) {
     console.log(error);
-    
+
   }
 }
 
@@ -1423,13 +1424,13 @@ const failureRazo = async (req,res)=>{
 //     res.render('pages/successPage');
 //   } catch (error) {
 //     console.log(error);
-    
+
 //   }
 // }
 
 
- //retry payment Razorpay
- const retryRazo = async (req, res) => {
+//retry payment Razorpay
+const retryRazo = async (req, res) => {
   try {
     const { orderid } = req.body;
     const details = await Order.findOneAndUpdate(
@@ -1448,17 +1449,17 @@ const failureRazo = async (req,res)=>{
 
 
 
-const updateStatus=async(req,res)=>{
+const updateStatus = async (req, res) => {
   try {
     console.log('sttttttttt');
-    const {orderid}=req.body
-   console.log("order id",orderid);
+    const { orderid } = req.body
+    console.log("order id", orderid);
     // const update=Order.updateOne({_id:orderid},{$set:{status:"Delivered"}})
     console.log(update);
-    res.json({success:true})
+    res.json({ success: true })
   } catch (error) {
-    res.json({success:true})
-    
+    res.json({ success: true })
+
   }
 }
 //======================================set up orderpage============================================
@@ -1488,10 +1489,10 @@ const orderPage = async (req, res) => {
       },
       { $unwind: '$productDetail' }
     ]
-  )
+    )
     // console.log(orderlist);
-    
-    res.render('pages/ordersPage', { userData, orderlist});
+
+    res.render('pages/ordersPage', { userData, orderlist });
   } catch (error) {
     console.error(error);
   }
@@ -1505,14 +1506,14 @@ const orderDetails = async (req, res) => {
     const userData = await User.findOne({ _id: req.session.user });
     const orderId = req.params.orderId;
 
-  
+
     const orderDetails = await Order.findOne({ _id: orderId }).populate('products.productId');
-    
+
 
     res.render("pages/orderDetail", { userData, orderDetails });
   } catch (error) {
     console.log(error);
-    
+
   }
 };
 
@@ -1521,8 +1522,9 @@ const orderDetails = async (req, res) => {
 const cancelOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
-
+    console.log(orderId,'fdfd');
     const order = await Order.findById(orderId);
+    console.log(order,'order ');
 
     if (!order) {
       return res.status(404).send('Order not found');
@@ -1532,160 +1534,169 @@ const cancelOrder = async (req, res) => {
       const userWallet = await Wallet.findOne({ userId: order.userId });
 
       if (!userWallet) {
-        return res.status(400).json({ status: false, message: "Wallet not found for the user." });
+        const newWallet = new Wallet({
+          userId: order.userId,
+          balance: 0, // Set balance to 0 when creating a new wallet
+          transactions: [] // Initialize transactions array
+        });
+        await newWallet.save();
+      }
+      
+
+
+        // Refund the amount back to the user's wallet
+        userWallet.balance += order.totalAmount;
+        userWallet.transactions.push({
+          type: 'credit',
+          reason: 'refund',
+          transactionAmount: order.totalAmount
+        });
+        await userWallet.save();
+      } else if (order.paymentMethod === 'online') {
+
+        const userWallet = await Wallet.findOne({ userId: order.userId });
+        
+        if (!userWallet) {
+          console.log(order.totalAmount,'order.totalAmount');
+          const newWallet = new Wallet({
+            userId: order.userId,
+            balance: order.totalAmount,
+            transactions: [{
+              type: 'credit',
+              reason: 'refund',
+              transactionAmount: order.totalAmount
+            }]
+          });
+          await newWallet.save()
+        }else{
+          userWallet.balance += order.totalAmount;
+        userWallet.transactions.push({
+          type: 'credit',
+          reason: 'refund',
+          transactionAmount: order.totalAmount
+        });
+        await userWallet.save();
+      }
+        }
+
+      for (const product of order.products) {
+        const productId = product.productId;
+        const quantity = product.quantity;
+
+        await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
       }
 
-      // Refund the amount back to the user's wallet
-      userWallet.balance += order.totalAmount;
-      userWallet.transactions.push({
-        type: 'credit',
-        reason: 'refund',
-        transactionAmount: order.totalAmount
-      });
-      await userWallet.save();
-    } else if (order.paymentMethod === 'online') {
-      // Refund the amount if paymentMethod is 'online'
+      // Update order status to Cancelled
+      const updatedOrder = await Order.findByIdAndUpdate(orderId, {
+        $set: {
+          'products.$[].status': 'Cancelled'
+        }
+      }, { new: true });
 
-      // Perform the refund process here
+      res.status(200).send('Order cancelled successfully');
+    
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
 
-      // For now, let's assume the refund process is successful
-      // and the amount is refunded back to the user's wallet
 
-      const userWallet = await Wallet.findOne({ userId: order.userId });
+
+
+
+  //return order
+  const returnOrder = async (req, res) => {
+    try {
+      console.log('Return order request received');
+      console.log(req.body);
+      let { orderId, orderAmount, reason } = req.body; // Assuming orderId is sent from the client
+      console.log(orderAmount, reason);
+      orderAmount = Number(orderAmount);
+      const userId = req.session.user;
+
+      const order = await Order.findByIdAndUpdate(orderId, { status: 'Returned' }, { new: true });
+
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+
+
+      let userWallet = await Wallet.findOne({ userId });
+
 
       if (!userWallet) {
-        return res.status(400).json({ status: false, message: "Wallet not found for the user." });
-      }
+        userWallet = new Wallet({
+          userId,
+          balance: orderAmount,
+          transactions: [{
+            type: 'credit',
+            reason: 'refund',
+            transactionAmount: orderAmount,
+            returnReason: reason
 
-      // Add refunded amount back to the user's wallet
-      userWallet.balance += order.totalAmount;
-      userWallet.transactions.push({
-        type: 'credit',
-        reason: 'refund',
-        transactionAmount: order.totalAmount
-      });
-      await userWallet.save();
-    }
-
-    // Iterate through the products in the order
-    for (const product of order.products) {
-      const productId = product.productId;
-      const quantity = product.quantity;
-
-      // Increment the product stock by the cancelled quantity
-      await Product.findByIdAndUpdate(productId, { $inc: { quantity: quantity } });
-    }
-
-    // Update order status to Cancelled
-    const updatedOrder = await Order.findByIdAndUpdate(orderId, {
-      $set: {
-        'products.$[].status': 'Cancelled'
-      }
-    }, { new: true });
-
-    res.status(200).send('Order cancelled successfully');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
-};
-
-
-
-
-
-//return order
-const returnOrder = async (req, res) => {
-  try {
-    console.log('Return order request received');
-    console.log(req.body);
-    let { orderId, orderAmount, reason } = req.body; // Assuming orderId is sent from the client
-    console.log(orderAmount, reason);
-    orderAmount = Number(orderAmount);
-    const userId = req.session.user;
-
-    const order = await Order.findByIdAndUpdate(orderId, { status: 'Returned' }, { new: true });
-
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-    
-    
-    let userWallet = await Wallet.findOne({ userId });
-
-  
-    if (!userWallet) {
-      userWallet = new Wallet({
-        userId,
-        balance: orderAmount,
-        transactions: [{
+          }]
+        });
+      } else {
+        // Update wallet balance and add transaction record
+        userWallet.balance += orderAmount;
+        userWallet.transactions.push({
           type: 'credit',
           reason: 'refund',
           transactionAmount: orderAmount,
-          returnReason: reason 
-        
-        }]
-      });
-    } else {
-      // Update wallet balance and add transaction record
-      userWallet.balance += orderAmount;
-      userWallet.transactions.push({
-        type: 'credit',
-        reason: 'refund',
-        transactionAmount: orderAmount,
-        returnReason: reason
-      
-      });
-    }
-    console.log("Cash refund to wallet");
+          returnReason: reason
 
-    // Save or update wallet
-    await userWallet.save();
-    
+        });
+      }
+      console.log("Cash refund to wallet");
 
-    res.status(200).json({ message: 'Return processed successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
-  }
-};
+      // Save or update wallet
+      await userWallet.save();
 
 
-
-//set up invoice page
-const invoicePage = async (req,res)=>{
-  try {
-    const userData = await User.findOne({_id: req.session.user});
-    const orderId = req.params.orderId;
-
-    const orderDetails = await Order.findOne({ _id: orderId }).populate('products.productId');
-
-
-    res.render("pages/invoice" ,{userData , orderDetails})
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-//======================================set up coupon============================================
-
-
-// coupons set in chekout page
-const getCoupon = async (req, res) => {
-    try {
-        const currentDate = new Date(); // Get current date/time
-        const coupons = await Coupon.find({ expireDate: { $gte: currentDate } }); // Filter out coupons with expiry date greater than or equal to current date
-        if (coupons.length === 0) {
-            // If no valid coupons found, send error message
-            return res.status(404).json({ message: "No valid coupons found" });
-        }
-        console.log(coupons, "Get coupon");
-        res.json(coupons);
+      res.status(200).json({ message: 'Return processed successfully' });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred' });
     }
-};
+  };
+
+
+
+  //set up invoice page
+  const invoicePage = async (req, res) => {
+    try {
+      const userData = await User.findOne({ _id: req.session.user });
+      const orderId = req.params.orderId;
+
+      const orderDetails = await Order.findOne({ _id: orderId }).populate('products.productId');
+
+
+      res.render("pages/invoice", { userData, orderDetails })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //======================================set up coupon============================================
+
+
+  // coupons set in chekout page
+  const getCoupon = async (req, res) => {
+    try {
+      const currentDate = new Date(); // Get current date/time
+      const coupons = await Coupon.find({ expireDate: { $gte: currentDate } }); // Filter out coupons with expiry date greater than or equal to current date
+      if (coupons.length === 0) {
+        // If no valid coupons found, send error message
+        return res.status(404).json({ message: "No valid coupons found" });
+      }
+      console.log(coupons, "Get coupon");
+      res.json(coupons);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 
 
 
@@ -1697,101 +1708,101 @@ const getCoupon = async (req, res) => {
       console.log(couponCode, 'coupon code');
       const coupon = await Coupon.findOne({ code: couponCode });
       console.log(coupon, 'coupon in apply code apply coupon ');
-      
+
 
       if (!coupon) {
         return res.json({ success: false, message: 'Coupon not found' });
       }
-  
+
       // Check if the coupon has expired
       if (coupon.expireDate && new Date() > coupon.expireDate) {
         return res.json({ success: false, message: 'Coupon has expired' });
       }
-      
+
       const discountAmount = coupon.discountAmount || 0;
       console.log(discountAmount, 'discount amount in apply code');
-  
+
       res.json({ success: true, message: 'Coupon applied', discountAmount });
     } catch (error) {
       console.log(error.message);
       res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
   }
-  
 
 
-//contact Page
-const contactPage = async (req,res)=>{
-  try {
-    res.render('users/contact')
-  } catch (error) {
-    console.log(error);
-    
+
+  //contact Page
+  const contactPage = async (req, res) => {
+    try {
+      res.render('users/contact')
+    } catch (error) {
+      console.log(error);
+
+    }
   }
-}
 
-//about page
-const aboutPage = async (req,res)=>{
-  try{
-    res.render('users/about')
-  } catch (error) {
-    console.log(error);
+  //about page
+  const aboutPage = async (req, res) => {
+    try {
+      res.render('users/about')
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
 
 
 
-module.exports = {
-  loadAuth,
-  successGoogleLogin,
-  failureLogin,
-  securedPassword,
-  loadHome,
-  loginPage,
-  verifyLogin,
-  forgotPass,
-  forgotVerify,
-  sendMailForgotPassword,
-  loadConfirmPassword,
-  verifyConfirmPassword,
-  signUp,
-  insertUser,
-  otpPage,
-  verifyOTP,
-  loadResendOtp,
-  home,
-  logoutHome,
-  contactPage,
-  aboutPage,
+  module.exports = {
+    loadAuth,
+    successGoogleLogin,
+    failureLogin,
+    securedPassword,
+    loadHome,
+    loginPage,
+    verifyLogin,
+    forgotPass,
+    forgotVerify,
+    sendMailForgotPassword,
+    loadConfirmPassword,
+    verifyConfirmPassword,
+    signUp,
+    insertUser,
+    otpPage,
+    verifyOTP,
+    loadResendOtp,
+    home,
+    logoutHome,
+    contactPage,
+    aboutPage,
 
 
 
 
-  shopPage,
-  searchProducts,
-  productDetails,
-  userProfile,
-  editProfile,
-  changePassword,
-  addressPage,
-  addAddress,
-  deleteAddress,
-  editAddress,
-  checkoutPage,
-  editCheckoutAddress,
-  addCheckoutAddress,
-  placeOrder,
-  verifyRazo,
-  retryRazo,
-  failureRazo,
-  updateStatus,
-  orderPage,
-  orderDetails,
-  cancelOrder,
-  returnOrder,
-  invoicePage,
-  getCoupon,
-  applyCoupon
+    shopPage,
+    searchProducts,
+    productDetails,
+    userProfile,
+    editProfile,
+    changePassword,
+    addressPage,
+    addAddress,
+    deleteAddress,
+    editAddress,
+    checkoutPage,
+    editCheckoutAddress,
+    addCheckoutAddress,
+    placeOrder,
+    verifyRazo,
+    retryRazo,
+    failureRazo,
+    updateStatus,
+    orderPage,
+    orderDetails,
+    cancelOrder,
+    returnOrder,
+    invoicePage,
+    getCoupon,
+    applyCoupon
 
 
-};
+  };
