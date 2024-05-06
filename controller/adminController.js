@@ -117,9 +117,30 @@ const resetPass = async (req, res) => {
 // set usersPage
 const userpage = async (req, res) => {
     try {
-        const users = await User.find({ is_admin: false });
+
+        let page = 1;
+        const limit =10;
+        if(req.query.page) {
+            page = parseInt(req.query.page);
+        }
+
+        const users = await User.find({ is_admin: false })
+        .limit(limit)
+        .skip((page - 1) * limit)
+        .exec();
+
+
+        const count = await User.find().countDocuments();
+
         // console.log(users,'users in dashboars'); 
-        res.render('admin/adminUser', { users: users, formatDate: formatDate })
+        res.render('admin/adminUser',{
+         users: users,
+         formatDate: formatDate ,
+         users, 
+         totalPages: Math.ceil(count / limit), 
+         currentPage : page})
+
+
     } catch (error) {
         console.log(error);
 

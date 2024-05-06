@@ -1685,9 +1685,8 @@ const cancelOrder = async (req, res) => {
   const getCoupon = async (req, res) => {
     try {
       const currentDate = new Date(); // Get current date/time
-      const coupons = await Coupon.find({ expireDate: { $gte: currentDate } }); // Filter out coupons with expiry date greater than or equal to current date
+      const coupons = await Coupon.find({ expireDate: { $gte: currentDate } });
       if (coupons.length === 0) {
-        // If no valid coupons found, send error message
         return res.status(404).json({ message: "No valid coupons found" });
       }
       console.log(coupons, "Get coupon");

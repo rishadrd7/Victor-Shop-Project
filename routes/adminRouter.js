@@ -77,6 +77,7 @@ adminRouter.get('/category',adminAuth.isLogin,categoryController.category);
 adminRouter.get('/addCategory',adminAuth.isLogin,categoryController.categoryAdd);
 adminRouter.post('/submit_category',categoryController.addCategory);
 adminRouter.post('/update-category',categoryController.editCAtegory);
+adminRouter.post('/check-category', categoryController.checkCategory);
 adminRouter.get('/categories/delete/:id', categoryController.postDeleteCategory);
 adminRouter.patch('/list-unlist',categoryController.listUnlistCategory);
 

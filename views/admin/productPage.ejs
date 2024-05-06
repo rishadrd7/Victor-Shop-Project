@@ -1,6 +1,29 @@
 <%- include('../layouts/adminHeader')  %>
 
 
+<style>
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-link {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.pagination-link:hover {
+    background-color: #f0f0f0;
+}
+
+
+</style>
+
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -20,8 +43,7 @@
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                  
-                   
+         
                     </p>
                     <div class="table-responsive">
                           <table class="table table-dark" style="color: white;">
@@ -40,6 +62,7 @@
                               </thead>
 
                               <tbody>
+                                
                                 <% locals.products.forEach?.((product, index) => { %>
                                   <tr>
                                     <td><%= index + 1 %></td>
@@ -96,18 +119,38 @@
                                       </td>
                                   </tr>
                                 <% }); %>
+                               
                               </tbody>
                             </table>
-
+                            
                       
                     </div>
                   </div>
+
+                
                 </div>
               </div>
+
+              <div class="pagination" style="margin-left: 30%;">
+                <% if (currentPage > 1) { %>
+                    <a class="pagination-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                <% } %>
+            
+                <% for (let j = 1; j <= totalPages; j++) { %>
+                    <a class="pagination-link <%= j === currentPage ? 'active' : '' %>" href="?page=<%= j %>"><%= j %></a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a class="pagination-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                <% } %>
+            </div>
+            
 
 
             </div>
           </div>
+
+  
        
 
 
@@ -136,6 +179,16 @@
         }
     }
 </script>
+
+
+
+
+
+
+
+
+
+
 
 
 

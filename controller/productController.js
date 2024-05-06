@@ -12,17 +12,36 @@ const id = new ObjectId()
 
 
 // set up adminproduct
-const product= async(req,res)=>{
+const product = async (req, res) => {
     try {
-        
-        const products = await Product.find().populate('category');
-        // console.log(products)
-        res.render('admin/productPage', { products });
+        let page = 1;
+        const limit = 5;
+
+        if (req.query.page) {
+            page = parseInt(req.query.page); // Parse the page query parameter to an integer
+        }
+
+        const products = await Product.find()
+            .populate('category')
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .exec();
+
+        const count = await Product.find().populate('category').countDocuments();
+
+        res.render('admin/productPage', { 
+            products,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page 
+        });
     } catch (error) {
         console.log(error);
-        
+        // Handle error appropriately, maybe send an error response to the client
+        res.status(500).send("Internal Server Error");
     }
 }
+
+
 
 
 //setup add product page
@@ -42,6 +61,11 @@ const addProduct = async (req, res) => {
         log("product added")
         const { name, category, price, quantity, date, description, offerPrice, offer } = req.body;
         const images = req.files.map(file => file.filename);
+
+        const existingProduct = await Product.findOne({ name });
+        if (existingProduct) {
+            return res.status(400).json({ message: 'Product name is already in use' });
+        }
         
         // Convert status to Boolean
         const status = req.body.status === 'on';
@@ -63,7 +87,7 @@ const addProduct = async (req, res) => {
         await newProduct.save();
 
         // Send a success response
-        res.status(200).json({ message: 'Product added successfully', redirectUrl: '/admin/products' });
+        res.status(200).json({ message: 'Product added successfully'});
     } catch (error) {
         console.error(error);
         // Send an error response
@@ -87,19 +111,29 @@ const editProduct = async (req, res) => {
 
 
 //update product
-const updateProduct = async(req,res)=>{
-    try{
+const updateProduct = async (req, res) => {
+    try {
         console.log('product');
-        const {productId}=req.params;
+        const { productId } = req.params;
         console.log(productId);
-        const { name,category, description,offerPrice,price,quantity, } = req.body;
-        console.log(name,category);
-        await Product.updateOne({_id: productId}, {$set: {name:name, category:category, description:description,  offerPrice:offerPrice, price:price , quantity:quantity} });
+        const { name, category, description, offerPrice, price, quantity } = req.body;
+        console.log(name, category);
+
+        let updateData = { name, category, description, offerPrice, price, quantity };
+
+        // Check if there are new images
+        if (req.files && req.files.length > 0) {
+            const images = req.files.map(file => file.filename);
+            updateData.image = images;
+        }
+
+        await Product.updateOne({ _id: productId }, { $set: updateData });
         res.redirect('/admin/products');
-    }catch(error){
+    } catch (error) {
         console.log(error.message);
     }
 }
+
 
 
 

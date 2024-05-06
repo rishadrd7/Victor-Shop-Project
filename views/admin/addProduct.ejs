@@ -75,11 +75,11 @@
               <label for="image">Image 1:</label><br>
               <input type="file" id="image" name="image" multiple  required><br><br>
               <label for="image">Image 2:</label><br>
-              <input type="file" id="image" name="image" multiple  required><br><br>
+              <input type="file" id="image" name="image" multiple  ><br><br>
               <label for="image">Image 3:</label><br>
-              <input type="file" id="image" name="image" multiple  required><br><br>
+              <input type="file" id="image" name="image" multiple  ><br><br>
               <label for="image">Image 4:</label><br>
-              <input type="file" id="image" name="image" multiple  required><br><br>
+              <input type="file" id="image" name="image" multiple  ><br><br>
               
               <!-- <input type="submit" value="Submit" class="sub" style="font-size: 20px; "> -->
             
@@ -109,71 +109,81 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-      const form = document.getElementById('form');
-      form.addEventListener('submit', async function(event) {
-          event.preventDefault(); // Prevent the default form submission
-  
-          const name = document.getElementById('productName').value.trim(); // Trim white spaces
-          const price = document.getElementById('price').value;
-          const offerPrice = document.getElementById('offerPrice').value;
-          const quantity = document.getElementById('quantity').value;
-          const image = document.getElementById('image').files.length;
-  
-          // Check if name is empty or contains only white spaces
-          if (!name || name.length === 0) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Product name cannot be empty or contain only white spaces!',
-              });
-              return; // Stop further execution if name is invalid
-          } else if (price <= 0 || offerPrice <= 0 || quantity <= 0 || image === 0) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Price, offer price, quantity, and image must be valid!',
-              });
-              return; // Stop further execution if other validations fail
-          }
-  
-          // If all validations pass, submit the form
-          const formData = new FormData(form);
-          try {
-              const response = await fetch('/admin/submit_product', {
-                  method: 'POST',
-                  body: formData
-              });
-  
-              const data = await response.json();
-              if (response.ok) {
-                  // Redirect or show success message
-                  Swal.fire({
-                      icon: 'success',
-                      title: 'Success',
-                      text: data.message,
-                      onClose: () => {
-                          window.location.href = data.redirectUrl;
-                      }
-                  });
-              } else {
-                  // Show error message
-                  Swal.fire({
-                      icon: 'error',
-                      title: 'Oops...',
-                      text: data.message,
-                  });
-              }
-          } catch (error) {
-              console.error('Error:', error);
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'An unexpected error occurred.',
-              });
-          }
-      });
-  });
-  </script>
+    const form = document.getElementById('form');
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const name = document.getElementById('productName').value.trim(); // Trim white spaces
+        const price = parseFloat(document.getElementById('price').value); // Parse to float
+        const offerPrice = parseFloat(document.getElementById('offerPrice').value); // Parse to float
+        const quantity = parseInt(document.getElementById('quantity').value); // Parse to integer
+        const image = document.getElementById('image').files.length;
+
+        // Check if name is empty or contains only white spaces
+        if (!name || name.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Product name cannot be empty or contain only white spaces!',
+            });
+            return; // Stop further execution if name is invalid
+        } else if (price <= 0 || offerPrice <= 0 || quantity <= 0 || image === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Price, offer price, quantity, and image must be valid!',
+            });
+            return; // Stop further execution if other validations fail
+        } else if (offerPrice >= price) { // Check if offer price is greater than or equal to price
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Offer price must be less than the regular price!',
+            });
+            return; // Stop further execution if offer price is invalid
+        }
+
+        // If all validations pass, submit the form
+        const formData = new FormData(form);
+        try {
+            const response = await fetch('/admin/submit_product', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Redirect or show success message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message
+                    
+                });
+                setTimeout(() => {
+                  
+                  window.location.href='/admin/products'
+                }, 1000);
+            } else {
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: data.message,
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An unexpected error occurred.',
+            });
+        }
+    });
+});
+
+</script>
   
   
 
@@ -194,37 +204,44 @@
 
 <!-- product add sumbit option -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const submitButton = document.getElementById("submitButton");
-
-  submitButton.addEventListener("click", async function() {
-    try {
-      const formData = new FormData(document.getElementById('submitButton')); // Use the form ID directly
-
-      // Make a fetch request to submit the form data
-      const response = await fetch('/admin/products', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        Swal.fire({
-          title: "Success!",
-          text: "Product added successfully!",
-          icon: "success"
+  document.addEventListener("DOMContentLoaded", function() {
+    const submitButton = document.getElementById("submitButton");
+  
+    submitButton.addEventListener("click", async function() {
+      try {
+        const formData = new FormData(document.getElementById('yourFormId')); // Replace 'yourFormId' with the actual ID of your form
+  
+        // Make a fetch request to submit the form data
+        const response = await fetch('/admin/products', {
+          method: 'POST',
+          body: formData
         });
-      } else {
-        console.error('Failed to add product');
+  
+        if (response.ok) {
+          Swal.fire({
+            title: "Success!",
+            text: "Product added successfully!",
+            icon: "success",
+            showConfirmButton : true,
+            confirmButtonText: "OK"
+          }).then((result)=>{
+            if(result.isConfirmed) {
+               window.location.href = "/admin/products" ;
+            }
+          });
+        } else {
+          console.error('Failed to add product');
+          // Handle error if needed
+        }
+      } catch (error) {
+        console.error('Error:', error);
         // Handle error if needed
       }
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle error if needed
-    }
+    });
   });
-});
-
-</script>
+  
+  </script>
+  
 
 
 

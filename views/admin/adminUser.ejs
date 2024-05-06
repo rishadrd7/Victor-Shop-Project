@@ -1,6 +1,29 @@
 <%- include('../layouts/adminHeader')  %>
 
 
+<style>
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+  }
+  
+  .pagination-link {
+      margin: 0 5px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+  }
+  
+  .pagination-link:hover {
+      background-color: #f0f0f0;
+  }
+  
+  
+  </style>
+
 
 <style>
 
@@ -168,12 +191,32 @@
                   </div>
                 </div>
               </div>
+
+              <div class="pagination" style="margin-left: 30%;">
+                <% if (currentPage > 1) { %>
+                    <a class="pagination-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                <% } %>
+            
+                <% for (let j = 1; j <= totalPages; j++) { %>
+                    <a class="pagination-link <%= j === currentPage ? 'active' : '' %>" href="?page=<%= j %>"><%= j %></a>
+                <% } %>
+            
+                <% if (currentPage < totalPages) { %>
+                    <a class="pagination-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                <% } %>
+            </div>
+
                
              
             </div>
           </div>
           <!-- content-wrapper ends -->
 
+
+
+
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
  <script>
           function blockUser(usersId,i) {
@@ -258,8 +301,7 @@
     }
  </script>
       
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
       
 
 <!-- date formate -->

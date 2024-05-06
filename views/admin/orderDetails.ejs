@@ -66,8 +66,8 @@ p{
 
                       <% deliveryAddress.products.forEach(product => { %>
 
-                        <img style="width: 100px; height: 100px;" src="/uploads/<%= product.productId.image[0] %>" class="mr-3 order-image">
-                          <p>Product Name: <%= product.productId.name %></p>
+                        <img style="width: 100px; height: 100px;" src="/uploads/<%= product.productId?.image[0] %>" class="mr-3 order-image">
+                          <p>Product Name: <%= product.productId?.name %></p>
                           <p>Total Price: <%= deliveryAddress.totalAmount %></p>
                           <p>Quantity: <%= product.quantity %></p>
 

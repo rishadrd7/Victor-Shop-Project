@@ -86,6 +86,31 @@ const editCAtegory = async (req, res) => {
   }
 };
 
+
+const checkCategory = async (req, res) => {
+  try {
+    const { editedName, categoryId } = req.body;
+
+    // Convert edited name to lowercase for case-insensitive comparison
+    const lowerCaseEditedName = editedName.toLowerCase();
+
+    // Check if any other category with the same name already exists (case-insensitive)
+    const existingCategory = await Category.findOne({ 
+      _id: { $ne: categoryId }, // Exclude the current category from the search
+      name: { $regex: new RegExp(`^${lowerCaseEditedName}$`, 'i') } 
+    });
+    
+    if (existingCategory) {
+      return res.json({ available: false });
+    } else {
+      return res.json({ available: true });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 //category delete option
 const postDeleteCategory = async (req, res) => {
   try {
@@ -131,5 +156,6 @@ module.exports = {
   categoryAdd,
   editCAtegory,
   postDeleteCategory,
-  listUnlistCategory
+  listUnlistCategory,
+  checkCategory
 }
